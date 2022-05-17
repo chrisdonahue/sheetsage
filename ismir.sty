@@ -1,0 +1,455 @@
+% Latex Paper Template for ISMIR 2022
+%
+% Updated for 2022 Template, 02.02.22 by Ajay Srinivasamurthy
+% - changed the location to "Bangalore,India"
+% 
+% Updated for 2021 Template, 01.30.21 by Ajay Srinivasamurthy
+% - changed the location to "online"
+% - merged LBD style file
+%
+% Updated for 2020 Template, 05.20.20 by Eva Zangerle
+% - changed to IEEE bibliography style
+%
+% Updated for 2020 Template, 01.01.2020 by Johanna Devnaey
+% - line numbers added
+% - reduced spacing between paragraphs to align better with the Microsoft Word template
+%
+% Updated for 2019 conference, 04.02.2019 by Stefan Balke
+%  - UTF-8 as input encoding
+%  - allow special characters in font encoding
+%  - cite.sty updated (thanks to Jan Schlueter)
+%
+% Updated for 2018 conference, 02.05.2018 by Stefan Balke
+%
+% Updated for 2017 conference, 12.27.2016 by Zhiyao Duan
+%
+% Updated for 2016 conference, 02.02.2016 by Doug Turnbull
+%
+% Changes after submission, 23.07.2015 by Meinard Mueller
+% Inclusion of "\multauthor" ...
+%
+%
+% Version 20140604
+% Replaced \setauthorname with automatic setting from \oneauthor etc.
+% Added variable for edition of conference, e.g. 15th
+% Fixed spacing of authors to give equal rubber space between and around
+%   author/addresses in title block instead of a fixed space
+% Added a comma between conference name and year in copyright notice
+% Corrected \eqnref to not contain a dot after Eqn (the rule is that a dot is
+%   used if the abbreviation does not end with the last letter of the full word)
+%
+% Version 20140508
+% Added variables for
+%		- conference year (to be set in this .sty file, by Program Chairs)
+%		- author names (to be set in the .tex file, by the authors)
+% Added stuff from the setspace package
+% Changed the copyright footnote
+%
+% Version 20130205
+% changed 2009 -> 2010 -> 2012 -> 2013
+% \bibliographystyle{unsrt} -> \bibliographystyle{plain}
+%
+% Version 20090507
+% The specification of reference order was corrected.
+% \bibliographystyle{plain} -> \bibliographystyle{unsrt}
+%
+% Version 20090430
+% A problem regarding references to sections was fixed.
+% This caused doubled periods at the end of sentences.
+% Example: Section \ref{sec:introduction}
+% Old version: Section 1.
+% New version: Section 1 (period was removed)
+
+
+
+%%%<<<<<<<<<<>>>>>>>>>>>%%%
+%%%TO BE CHANGED EVERY YEAR
+\newcommand{\conferenceyear}{2022}
+\newcommand{\conferenceedition}{23rd}
+\newcommand{\conferenceplace}{Bengaluru, India}
+%%%<<<<<<<<<<>>>>>>>>>>>%%%
+%%%<<<<<<<<<<>>>>>>>>>>>%%%
+
+\ifdefined\lbd
+\def\papersubject{Extended Abstracts for the Late-Breaking Demo Session of the \conferenceedition\ Int. Society for Music Information Retrieval Conf., \conferenceplace, \conferenceyear}
+\else
+\def\papersubject{Proceedings of the \conferenceedition\ Int. Society for Music Information Retrieval Conf., \conferenceplace, \conferenceyear}
+\fi
+
+%\newcommand\setauthorname[1]{\def\authorname{#1}}
+%Do this in the oneauthor, twoauthor, etc. commands
+
+\def\Hline{\noalign{\hrule height 0.4mm}}
+\newcommand{\bm}[1]{\mbox{\boldmath{$#1$}}}
+\newcommand{\range}[2]{{#1,\cdots,#2\;}}
+\newcommand{\secref}[1]{\mbox{Section~\ref{#1}}}
+\newcommand{\tabref}[1]{\mbox{Table~\ref{#1}}}
+\newcommand{\figref}[1]{\mbox{Figure~\ref{#1}}}
+\newcommand{\eqnref}[1]{\mbox{Eqn~(\ref{#1})}}
+
+% Remove line breaks
+\newcommand{\removelinebreaks}[1]{%
+  \begingroup\def\\{ }#1\endgroup}
+
+\renewcommand{\sfdefault}{phv}
+\renewcommand{\rmdefault}{ptm}
+\renewcommand{\ttdefault}{pcr}
+
+\setlength{\paperheight}{297mm}
+\setlength{\paperwidth}{210mm}
+\setlength{\textheight}{252mm}
+\setlength{\textwidth}{172mm}
+\setlength{\columnsep}{8mm}
+\setlength{\headheight}{0mm}
+\setlength{\voffset}{-12mm}
+\setlength{\hoffset}{0mm}
+\setlength{\marginparwidth}{0mm}
+\setlength{\parindent}{1pc}
+\setlength{\topmargin}{-5mm}
+\setlength{\oddsidemargin}{-6mm}
+\setlength{\evensidemargin}{-6mm}
+
+\setlength\normallineskip{1\p@}
+%\setlength\parskip{0\p@ \@minus 4\p@}
+%\def\baselinestretch{0.98}
+
+\def\normalsize{\@setsize\normalsize{12.2pt}\txpt\@xpt}
+\def\small{\@setsize\small{10pt}\ixpt\@ixpt}
+\def\footnotesize{\@setsize\footnotesize{9pt}\viiipt\@viiipt}
+\def\scriptsize{\@setsize\scriptsize{8pt}\viipt\@viipt}
+\def\tiny{\@setsize\tiny{7pt}\vipt\@vipt}
+\def\large{\@setsize\large{14pt}\xiipt\@xiipt}
+\def\Large{\@setsize\Large{16pt}\xivpt\@xivpt}
+\def\LARGE{\@setsize\LARGE{20pt}\xviipt\@xviipt}
+\def\huge{\@setsize\huge{23pt}\xxpt\@xxpt}
+\def\Huge{\@setsize\Huge{28pt}\xxvpt\@xxvpt}
+
+\twocolumn
+\pagestyle{empty}
+
+\def\maketitle{\par
+  \begingroup
+  \def\thefootnote{}
+  \def\@makefnmark{
+    \hbox
+    {$^{\@thefnmark}$\hss}
+  }
+  \twocolumn[\@maketitle]
+  \permission
+  \@thanks
+  \endgroup
+  \setcounter{footnote}{0}
+  \let\maketitle\relax
+  \let\@maketitle\relax
+  \gdef\thefootnote{
+  \arabic{footnote}
+  }
+  \gdef\@@savethanks{}
+  \gdef\@thanks{}
+  \gdef\@author{}
+  \gdef\@title{}
+  \let\thanks\relax
+}
+
+\def\@maketitle{
+  \newpage
+  \null
+  \begin{center} {
+    \Large \bf \uppercase \@title \par
+  }
+  \vskip 2.0em {
+    \large \lineskip .5em
+    \begin{tabular}[t]{c}
+    \@author \\
+    \end{tabular}
+    \par
+  }
+  \end{center}
+  \par
+  \vskip 2.0em
+}
+
+%%%From the setspace package
+\newcommand{\setstretch}[1]{%
+  \def\baselinestretch{#1}%
+  \@currsize
+}
+\newcommand{\restore@spacing}{%
+    \par
+    \vskip \parskip
+    \vskip \baselineskip
+  \endgroup
+  \vskip -\parskip
+  \vskip -\baselineskip
+}
+\newenvironment{spacing}[1]{%
+  \par
+  \begingroup
+    \setstretch {#1}%
+}{%
+  \restore@spacing
+}
+%%%
+
+\newcommand{\permission}{%
+\begin{figure}[b]{%
+\footnotesize
+%{\includegraphics[height=0.45cm]{figs/88x31}}
+{\includegraphics[height=0.45cm]{figs/cc_by.pdf}}
+\vskip -.45cm
+\begin{spacing}{1.1}
+\hskip 1.5cm \copyright \hskip .1cm \authorname.
+Licensed under a Creative Commons Attribution 4.0 International License (CC BY 4.0).
+{\bf Attribution: } \authorname,
+``\removelinebreaks{\@title}'', in 
+\ifdefined\lbd
+\emph{Extended Abstracts for the Late-Breaking Demo Session of the \conferenceedition\ Int. Society for Music Information Retrieval Conf.,} \conferenceplace, \conferenceyear.
+\else
+\emph{Proc. of the \conferenceedition\ Int. Society for Music Information Retrieval Conf.,} \conferenceplace, \conferenceyear.
+\fi
+\end{spacing}
+}
+\end{figure}
+}
+
+
+\def\multauthor#1#2{
+  \gdef\@author{
+  \begin{tabular}{@{}c@{}}
+    {\bf #1} \\
+    #2\relax
+   \end{tabular}%\hskip .3in
+  }
+%  \def\authorname{#1}
+}
+
+\def\oneauthor#1#2{
+  \gdef\@author{
+  \begin{tabular}{@{}c@{}}
+    {\bf #1} \\
+    #2\relax
+   \end{tabular}%\hskip .3in
+  }
+  \def\authorname{#1}
+}
+
+\def\twoauthors#1#2#3#4{
+%  \gdef\@author{
+%  \begin{tabular}{@{}c@{}}
+%    {\bf #1} \\
+%    #2
+%  \end{tabular}\hskip .3in
+%  \begin{tabular}{@{}c@{}}
+%    {\bf #3} \\
+%    #4\relax
+%  \end{tabular}
+%  }
+  \gdef\@author{
+    \makebox[\textwidth]{%
+      \hfill
+      \begin{tabular}{@{}c@{}}
+        {\bf #1} \\
+        #2
+      \end{tabular}
+      \hfill
+      \begin{tabular}{@{}c@{}}
+        {\bf #3} \\
+        #4\relax
+      \end{tabular}
+      \hfill
+    }
+  }
+  \def\authorname{#1, #3}
+}
+
+\def\threeauthors#1#2#3#4#5#6{
+  \gdef\@author{
+    \makebox[\textwidth]{%
+      \hfill
+      \begin{tabular}{@{}c@{}}
+        {\bf #1} \\
+        #2
+      \end{tabular}
+      \hfill
+      \begin{tabular}{@{}c@{}}
+        {\bf #3} \\
+        #4
+      \end{tabular}
+      \hfill
+      \begin{tabular}{@{}c@{}}
+        {\bf #5} \\
+        #6\relax
+      \end{tabular}
+      \hfill
+    }
+%  \begin{tabular}{@{}c@{}}
+%    {\bf #1} \\
+%    #2
+%  \end{tabular}\hskip .3in
+%  \begin{tabular}{@{}c@{}}
+%    {\bf #3} \\
+%    #4
+%  \end{tabular}\hskip .3in
+%  \begin{tabular}{@{}c@{}}
+%    {\bf #5} \\
+%    #6\relax
+%  \end{tabular}
+  }
+  \def\authorname{#1, #3, #5}
+}
+
+
+\def\fourauthors#1#2#3#4#5#6#7#8{
+  \gdef\@author{
+    \makebox[\textwidth]{%
+      \hfill
+      \begin{tabular}{@{}c@{}}
+        {\bf #1} \\
+        #2
+      \end{tabular}
+      \hfill
+      \begin{tabular}{@{}c@{}}
+        {\bf #3} \\
+        #4
+      \end{tabular}
+      \hfill
+      \begin{tabular}{@{}c@{}}
+        {\bf #5} \\
+        #6
+      \end{tabular}
+      \hfill
+      \begin{tabular}{@{}c@{}}
+        {\bf #7} \\
+        #8\relax
+      \end{tabular}
+      \hfill
+    }
+%  \begin{tabular}{@{}c@{}}
+%    {\bf #1} \\
+%    #2
+%  \end{tabular}\hskip .2cm
+%  \begin{tabular}{@{}c@{}}
+%    {\bf #3} \\
+%    #4
+%  \end{tabular}\hskip .2cm
+%  \begin{tabular}{@{}c@{}}
+%    {\bf #5} \\
+%    #6\relax
+%  \end{tabular}\hskip .2cm
+%  \begin{tabular}{@{}c@{}}
+%    {\bf #7} \\
+%    #8\relax
+%  \end{tabular}
+  }
+  \def\authorname{#1, #3, #5, #7}
+}
+
+\def\abstract{
+  \begin{center}{
+  \bf ABSTRACT
+  }
+  \end{center}
+}
+\def\endabstract{\par}
+
+%\def\title#1{\gdef\@title{\uppercase{#1}}}
+\def\title#1{\gdef\@title{{#1}}}
+
+\newif\if@ismirsection
+
+\renewcommand\section{
+  \@ismirsectiontrue
+  \@startsection
+  {section}
+  {1}
+  {\z@}
+  {-3.5ex \@plus -1ex \@minus -.2ex}
+  {6pt \@plus.2ex}
+  {\large\bf\centering}
+}
+
+\renewcommand\subsection{
+  \@ismirsectionfalse
+  \@startsection
+  {subsection}
+  {2}
+  {\z@}
+  {-2.5ex \@plus -1ex \@minus -.2ex}
+  {6pt \@plus.2ex}
+  {\normalsize\bf\raggedright}
+}
+
+\renewcommand\subsubsection{
+  \@ismirsectionfalse
+  \@startsection
+  {subsubsection}
+  {3}
+  {\z@}
+  {-1.5ex \@plus -1ex \@minus -.2ex}
+  {6pt \@plus.2ex}
+  {\normalsize\it\raggedright}
+}
+
+\def\@sect#1#2#3#4#5#6[#7]#8{
+  \refstepcounter{#1}
+  \if@ismirsection
+    \edef\@svsec{\csname the#1\endcsname.\hskip 0.6em}
+  \else
+    \edef\@svsec{\csname the#1\endcsname\hskip 0.6em}
+  \fi
+  \begingroup
+    \ifnum #2=1
+      \bf\centering{\interlinepenalty \@M \@svsec\uppercase{#8}\par}
+    \else
+      \ifnum #2=2
+        \bf\raggedright
+        \noindent{\interlinepenalty \@M \@svsec #8\par}
+      \else
+        \it\raggedright
+        \noindent{\interlinepenalty \@M \@svsec #8\par}
+      \fi
+    \fi
+  \endgroup
+  \csname #1mark\endcsname{#7}\addcontentsline
+  {toc}{#1}{\protect\numberline
+  \if@ismirsection
+    {\csname the#1\endcsname.}
+  \else
+    {\csname the#1\endcsname}
+  \fi
+  #7}
+  \@tempskipa #5\relax
+  \@xsect{\@tempskipa}
+}
+
+\bibliographystyle{IEEEtran}
+
+\def\thebibliography#1{
+  \section{References}\list
+  {[\arabic{enumi}]}{
+  \settowidth\labelwidth{[#1]}\leftmargin 1em
+  \advance\leftmargin\labelsep
+  \usecounter{enumi}
+  }
+  \def\newblock{\hskip .01em plus .01em minus .01em}
+  \sloppy\clubpenalty4000\widowpenalty4000
+  \sfcode`\.=1000\relax
+}
+
+\let\endthebibliography=\endlist
+
+\long\def\@makecaption#1#2{
+  \vskip 10pt
+  \setbox\@tempboxa\hbox{#1. #2}
+  \ifdim
+    \wd\@tempboxa >\hsize #1. #2\par
+  \else
+    \hbox
+    to\hsize{\hfil\box\@tempboxa\hfil}
+  \fi
+}
+
+\def\fnum@figure{{\bf Figure\ \thefigure}}
+\def\fnum@table{{\bf Table \thetable}}
+
+\flushbottom
