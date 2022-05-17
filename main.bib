@@ -1,42 +1,180 @@
-% Example bibtex file for ISMIR Template
+% Transformers
 
-@INPROCEEDINGS{ISMIR17Author:01,
-        AUTHOR = {A. Author and B. Author},
-        TITLE = {The title of the conference paper},
-        BOOKTITLE = {Proc. of the 18th Int. Society for Music Information Retrieval Conf.},
-        PAGES = {111--117},
-        YEAR = {2017},
-        ADDRESS = {Suzhou, China}
-        }
-
-
-@BOOK{Book20Person:01,
-	AUTHOR = {O. Person},
-	TITLE = {Title of the Book},
-	PUBLISHER = {McGill-Queen's University Press},
-	YEAR = {2021},
-        ADDRESS = {Montr\'{e}al, Canada}
-	}
-
-@INCOLLECTION{Chapter09Person:01,
-        AUTHOR = {F. Person and S. Person},
-        TITLE = {Title of a chapter this book}, 
-        BOOKTITLE = {A Book Containing Delightful Chapters}, 
-        EDITOR = {A. G. Editor}, 
-        ADDRESS = {Tokyo, Japan}, 
-        PUBLISHER = {The Publisher}, 
-        PAGES = {58--102}, 
-        YEAR = {2009}
+@inproceedings{vaswani2017attention,
+  title={Attention is all you need},
+  author={Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N and Kaiser, {\L}ukasz and Polosukhin, Illia},
+  booktitle={NeurIPS},
+  year={2017}
 }
 
-@ARTICLE{JNMR10Someone:01,
-	AUTHOR = {A. Someone and B. Someone and C. Someone},
-	TITLE = {The Title of the Journal Paper},
-	JOURNAL = {Journal of New Music Research},
-	VOLUME = {A},
-	NUMBER = {B},
-	PAGES = {111--222},
-	YEAR = {2010},
-        MONTH = {September},
-	}
+% Jukebox
 
+@article{dhariwal2020jukebox,
+  title={Jukebox: A generative model for music},
+  author={Dhariwal, Prafulla and Jun, Heewoo and Payne, Christine and Kim, Jong Wook and Radford, Alec and Sutskever, Ilya},
+  journal={arXiv:2005.00341},
+  year={2020}
+}
+
+% madmom
+
+@inproceedings{bock2016madmom,
+  title={\madmom: A new python audio and music signal processing library},
+  author={B{\"o}ck, Sebastian and Korzeniowski, Filip and Schl{\"u}ter, Jan and Krebs, Florian and Widmer, Gerhard},
+  booktitle={International Conference on Multimedia},
+  year={2016}
+}
+
+@inproceedings{bock2016joint,
+  title={Joint Beat and Downbeat Tracking with Recurrent Neural Networks.},
+  author={B{\"o}ck, Sebastian and Krebs, Florian and Widmer, Gerhard},
+  booktitle={ISMIR},
+  year={2016}
+}
+
+% HookTheory
+
+@misc{hooktheory,
+  title={{Hooktheory TheoryTab DB}},
+  author={Anderson, Chris and Carlton, Dave and Miyakawa, Ryan and Schwachhofer, Dennis},
+  howpublished={\url{https://www.hooktheory.com/theorytab}}
+}
+
+% HookTheory - Chord recognition
+
+@article{jiang2019mirex,
+  title={{MIREX} 2019 submission: Crowd annotation for audio key estimation},
+  author={Jiang, Junyan and Xia, Gus G and Carlton, David B},
+  journal={MIREX},
+  year={2019}
+}
+
+% HookTheory - Harmonization
+
+@article{yeh2021automatic,
+  title={Automatic melody harmonization with triad chords: A comparative study},
+  author={Yeh, Yin-Cheng and Hsiao, Wen-Yi and Fukayama, Satoru and Kitahara, Tetsuro and Genchel, Benjamin and Liu, Hao-Min and Dong, Hao-Wen and Chen, Yian and Leong, Terence and Yang, Yi-Hsuan},
+  journal={Journal of New Music Research},
+  year={2021}
+}
+
+@article{chen2021surprisenet,
+  title={SurpriseNet: Melody Harmonization Conditioning on User-controlled Surprise Contours},
+  author={Chen, Yi-Wei and Lee, Hung-Shin and Chen, Yen-Hsing and Wang, Hsin-Min},
+  journal={arXiv:2108.00378},
+  year={2021}
+}
+
+@article{zeng2021automatic,
+  title={Automatic Melody Harmonization via Reinforcement Learning by Exploring Structured Representations for Melody Sequences},
+  author={Zeng, Te and Lau, Francis},
+  journal={Electronics},
+  year={2021},
+}
+
+% HookTheory - Representation learning
+
+@inproceedings{jiang2020transformer,
+  title={Transformer{VAE}: A hierarchical model for structure-aware and interpretable music representation learning},
+  author={Jiang, Junyan and Xia, Gus G and Carlton, Dave B and Anderson, Chris N and Miyakawa, Ryan H},
+  booktitle={ICASSP},
+  year={2020}
+}
+
+% HookTheory - Melody generation
+
+@inproceedings{li2020novel,
+  title={A novel dataset for the identification of computer generated melodies in the CSMT challenge},
+  author={Li, Shengchen and Jing, Yinji and Fazekas, Gy{\"o}rgy},
+  booktitle={National Conference on Sound and Music Technology},
+  year={2020}
+}
+
+% HookTheory - Chord generation
+
+@inproceedings{shukla2018automatic,
+  title={An automatic chord progression generator based on reinforcement learning},
+  author={Shukla, Shipra and Banka, Haider},
+  booktitle={International Conference on Advances in Computing, Communications and Informatics},
+  year={2018},
+}
+
+% Baselines
+
+@article{ryynanen2008automatic,
+  title={Automatic transcription of melody, bass line, and chords in polyphonic music},
+  author={Ryyn{\"a}nen, Matti P and Klapuri, Anssi P},
+  journal={Computer Music Journal},
+  year={2008}
+}
+
+@article{salamon2014melody,
+  title={Melody extraction from polyphonic music signals: Approaches, applications, and challenges},
+  author={Salamon, Justin and G{\'o}mez, Emilia and Ellis, Daniel PW and Richard, Ga{\"e}l},
+  journal={IEEE Signal Processing Magazine},
+  year={2014}
+}
+
+@article{hennequin2020spleeter,
+  title={Spleeter: a fast and efficient music source separation tool with pre-trained models},
+  author={Hennequin, Romain and Khlif, Anis and Voituret, Felix and Moussallam, Manuel},
+  journal={Journal of Open Source Software},
+  year={2020}
+}
+
+@inproceedings{mauch2015computer,
+  title={Computer-aided melody note transcription using the {Tony} software: Accuracy and efficiency},
+  author={Mauch, Matthias and Cannam, Chris and Bittner, Rachel and Fazekas, George and Salamon, Justin and Dai, Jiajie and Bello, Juan and Dixon, Simon},
+  booktitle={International Conference on Technologies for Music Notation and Representation},
+  year={2015}
+}
+
+@article{hawthorne2021sequence,
+  title={Sequence-to-sequence piano transcription with transformers},
+  author={Hawthorne, Curtis and Simon, Ian and Swavely, Rigel and Manilow, Ethan and Engel, Jesse},
+  journal={arXiv:2107.09142},
+  year={2021}
+}
+
+@inproceedings{gardner2021mt3,
+  title={{MT3}: Multi-Task Multitrack Music Transcription},
+  author={Gardner, Josh and Simon, Ian and Manilow, Ethan and Hawthorne, Curtis and Engel, Jesse},
+  booktitle={ICLR},
+  year={2022}
+}
+
+@article{stevens1937scale,
+  title={A scale for the measurement of the psychological magnitude pitch},
+  author={Stevens, Stanley Smith and Volkmann, John and Newman, Edwin Broomell},
+  journal={The Journal of the Acoustical Society of America},
+  year={1937},
+  publisher={Acoustical Society of America}
+}
+
+@article{hawthorne2017onsets,
+  title={Onsets and frames: Dual-objective piano transcription},
+  author={Hawthorne, Curtis and Elsen, Erich and Song, Jialin and Roberts, Adam and Simon, Ian and Raffel, Colin and Engel, Jesse and Oore, Sageev and Eck, Douglas},
+  journal={arXiv:1710.11153},
+  year={2017}
+}
+
+@inproceedings{goto2002rwc,
+  title={{RWC Music Database}: Popular, Classical and Jazz Music Databases},
+  author={Goto, Masataka and Hashiguchi, Hiroki and Nishimura, Takuichi and Oka, Ryuichi},
+  booktitle={ISMIR},
+  year={2002}
+}
+
+@inproceedings{goto2003rwc,
+  title={{RWC Music Database}: Music genre database and musical instrument sound database},
+  author={Goto, Masataka and Hashiguchi, Hiroki and Nishimura, Takuichi and Oka, Ryuichi},
+  booktitle={ISMIR},
+  year={2003}
+}
+
+@inproceedings{goto2004development,
+  title={Development of the {RWC Music Database}},
+  author={Goto, Masataka},
+  booktitle={International Congress on Acoustics},
+  year={2004}
+}
