@@ -6,6 +6,10 @@
 \usepackage{graphicx}
 \usepackage{color}
 
+\newcommand{\cd}[1]{{\textcolor{blue}{[CD: #1]}}}
+\newcommand{\jt}[1]{{\textcolor{magenta}{[JT: #1]}}}
+\newcommand{\pl}[1]{\textcolor{red}{[PL: #1]}}
+\newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
 
 \usepackage{lineno}
 \linenumbers
@@ -34,6 +38,7 @@ Melody transcription via generative pre-training
 % My dependencies
 \usepackage{booktabs}
 \usepackage{cleveref}
+\usepackage{amsfonts}
 
 % My macros
 \newcommand{\madmom}{\texttt{madmom}}
@@ -43,6 +48,7 @@ Melody transcription via generative pre-training
 \newcommand{\hooktheory}{HookTheory}
 \newcommand{\rwc}{RWC-MDB}
 \newcommand{\sheetsage}{Sheet Sage}
+\newcommand{\fone}{F1}
 
 \begin{document}
 
@@ -133,23 +139,23 @@ $77$\%
 compared to the strongest available baseline. 
 While data from \hooktheory{} has been used previously for tasks like harmonization~\cite{chen2021surprisenet,yeh2021automatic}, chord recognition~\cite{jiang2019mirex}, and representation learning~\cite{jiang2020transformer}, making use of this platform for MIR is currently cumbersome and involves web scraping, reverse engineering a proprietary score format, and audio-to-score alignment. 
 To ease this burden, we release all of the annotations in a simplified MIDI-like format under a Creative Commons license, with links and alignments to the audio on YouTube. 
-We also release all code, models, and Docker containers needed for precisely reproducing all of our evaluations, enabling direct comparison in future work even as some audio inevitably disappears from YouTube.\footnote{Released upon publication}
+We also release all code, models, and Docker containers needed for precisely reproducing all of our evaluations, facilitating comparison in future work even as some audio inevitably disappears from YouTube.\footnote{Released upon publication}
+
+We also propose a new strategy for training transcription models in the presence of imprecise alignments. 
+User annotations from \hooktheory{} have coarse alignments with the audio---users only provide the starting and ending timestamp of a segment. 
+We use beat tracking to refine these alignments, but they are still not as precise as the flawless alignments found in other transcription datasets (e.g.,~piano transcription datasets captured using a Disklavier) which existing methods rely on. 
+To address this, our approach involves aggregating input features (evenly spaced in \emph{time}) into proxy features which represent individual sixteenth notes (evenly spaced in \emph{beats}), 
+which effectively smooths over alignment jitter. 
+This approach has a secondary benefit of trivializing the process of converting output from the transcription model into a human-readable score format. %which is simpler for musicians to interpret compared to MIDI.
 
 \begin{figure*}
     \centering
     \includegraphics[width=\linewidth]{figs/sheet_sage.pdf}
     \caption{
     % TODO: Clean this up. YouTube as input
-    Inference procedure for Sheet Sage, our proposed system which transcribes multitrack audio into lead sheets (scores which depict melody as notes and harmony as chord names). The blue, green, and yellow boxes respectively take audio, features, and symbolic music data as input. Green boxes are modules that we built as part of this work---both are Transformers~\cite{vaswani2017attention} trained on their respective tasks using audio features from Jukebox~\cite{dhariwal2020jukebox} and data from \hooktheory~\cite{hooktheory}.}
+    Inference procedure for Sheet Sage, our proposed system which transcribes any Western music audio into lead sheets (scores which depict melody as notes and harmony as chord names). The blue, green, and yellow boxes respectively take audio, features, and symbolic music data as input. Green boxes are modules that we built as part of this work---both are Transformers~\cite{vaswani2017attention} trained on their respective tasks using audio features from Jukebox~\cite{dhariwal2020jukebox} and data from \hooktheory~\cite{hooktheory}.}
     \label{fig:sheet_sage}
 \end{figure*}
-
-We also propose a new strategy for training transcription models in the presence of imprecise alignments. 
-User annotations from \hooktheory{} are aligned to the audio at the segment level. 
-We use beat tracking to refine these alignments, but they are still not as precise as the flawless alignments found in other transcription datasets (e.g.,~piano transcription datasets captured using a Disklavier) which existing methods rely on. 
-Our approach involves aggregating input features (evenly spaced in \emph{time}) into proxy features which represent individual sixteenth notes (evenly spaced in \emph{beats}), 
-which effectively smooths over alignment jitter. 
-This approach has a secondary benefit of trivializing the process of converting output from the transcription model into a human-readable score-like format. %which is simpler for musicians to interpret compared to MIDI.
 
 Finally, enabled by our state-of-the-art melody transcription approach, we present \emph{\sheetsage}, a system capable of automatically transcribing Western music audio into \emph{lead sheets}. 
 A lead sheet is a human-readable musical score depicting a song's melody as notes on a staff and its harmony as chord names. 
@@ -160,22 +166,84 @@ By automatically transcribing music audio into lead sheets, our work helps reduc
 
 \section{Related work}
 
-% Melody extraction
+\input{sections/related}
 
 \section{Task definition}
-
 
 \begin{figure}
     \centering
     \includegraphics[width=8.1cm]{figs/heuristic_offsets.pdf}
     \caption{
 The same note onsets engraved with ground truth~(top) vs. heuristic~(bottom) offsets. 
-We argue that onset prediction suffices for producing human-readable melody transcriptions.
+We argue that onset prediction suffices for producing melody transcriptions that are both recognizable and readable. 
 }
  \label{fig:heuristic_offsets}
 \end{figure}
 
-\section{Methods}
+We examine melody transcription, defined here as the task of converting music audio into a \emph{monophonic} (non-overlapping) sequence of \emph{notes} which constitute its melody. 
+A note canonically consists of an onset time, a musical pitch, and an offset time, though here (and as in~\cite{laaksonen2014automatic}) we disregard offsets for several reasons. 
+First, accuracy of onsets has been found to be far more important to human perception of transcription quality than accuracy of offsets~\cite{ycart2020investigating}. 
+Second, in our dataset (which represents a crowdsourced proxy in lieu of a precise definition of melody), a heuristically-determined offset is identical to the ground truth offset for $89\%$ of notes.\footnote{The heuristic we adopt sets the offset of one note equal to the onset of the next, i.e., it assumes the melody is legato.}
+Finally, we argue intuitively that onsets and pitches suffice for both recognizing and reading melodies---see~\Cref{fig:heuristic_offsets} for an example. 
+
+Formally, the task of melody transcription is to convert music audio $\bm{a}$, sampled at rate $f_s$, into a list of notes $\bm{y}$, where a note $y_i$ is a pair of onset time $t_i$ and musical pitch $n_i$. Hence, 
+\begin{align*}
+    \bm{a} &= a_1, \ldots, a_S, \text{where}~S = Tf_s \\
+    \bm{y} &= y_1, \ldots, y_N, \text{where}~y_i = (t_i, n_i).
+        %&&t_i \leq T, \text{and} n_i \in \{\text{A0}, \ldots, \text{C8}\}
+\end{align*}
+To handle the high dimensionality of audio, transcription algorithms typically extract features $\bm{X}$ (a matrix) from audio, which are sampled at $f_k \ll f_s$:
+\begin{align*}
+    \text{Extract}(\bm{a}) = \bm{X} = \bm{x_1}, \ldots, \bm{x_M}, \\ 
+    \text{where}~M = Tf_k~\text{and}~\bm{x_i} \in \mathbb{R}^d.
+\end{align*}
+Hence, in practice, our goal is to build a transcription method $f$ which maps features $\bm{X}$ to notes $\bm{y}$. 
+
+\subsection{Evaluation}
+
+To evaluate a melody transcription method $f$, 
+we incorporate a standard approach~\cite{raffel2014eval} for computing an \fone{} score between reference $\bm{y}$ and estimate $f(\bm{X})$. 
+This approach---shown in~\cite{ycart2020investigating} to correlate with human perception---scores estimates by aligning their onsets to the reference onsets with $50$ms of tolerance, and then computes a standard \fone{} score, where an estimated note is treated as correct if it is the same pitch as the matched reference:
+\begin{equation*}
+    \text{Score} : f(\bm{X}), y \mapsto [0, 1].
+\end{equation*}
+
+In other transcription settings, evaluation conventionally requires that estimates match the octave of the reference. 
+In melody transcription, where transcriptions are prone to be performed on different instruments or by vocalists with different ranges, predicting the correct octave is less critical for downstream use. 
+Previous evaluations for melody extraction gave full credit for estimates with the right pitch class (see~\cite{poliner2007melody} for a summary), however we argue that \emph{relative} octave information is important for transcription accuracy. 
+Hence, we modify the evaluation criteria to allow models to achieve a perfect score if they produce the correct notes but are off by a fixed octave shift:
+\begin{equation*}
+    \max_{i \in \mathbb{Z}} \text{Score}(\text{OctaveShift}(f(\bm{X}), i), \mathbf{y}).
+\end{equation*}
+
+\section{Dataset overview}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=8.1cm]{figs/alignment.pdf}
+    \caption{We refine coarse, user-specified alignments from \hooktheory{} by using beat tracking. The first segment beat is mapped to the detected downbeat nearest to the user-specified starting timestamp, and remaining beats are mapped to subsequent detected beats.}
+ \label{fig:alignment}
+\end{figure}
+
+We collect and release a dataset of crowdsourced melody and chord annotations from \hooktheory{}. 
+The dataset comprises annotations for $22$k segments of $13$k unique recordings---together, these segments comprise $50$ hours of labeled audio. 
+We create an artist-stratified $8$:$1$:$1$ split of the dataset for training, validation, and testing. 
+\hooktheory{} users annotate the audio in a proprietary ``functional'' format, i.e., one which uses scale degrees and roman numerals relative to a key signature instead of absolute notes and chord names. 
+Absolute labels are used by the vast majority of transcription work---hence, we convert this proprietary functional format into a simple absolute one. 
+Note that users annotate melodies with only relative octave information, i.e.,~intervals between melody notes should be accurate, but the absolute octave of the melody may be incorrect relative to the recording.
+
+\subsection{Alignment}
+
+With the release of this dataset, we also make an effort to improve the alignments between the annotations and the audio. 
+By default, users provide only a coarse audio alignment, specifying the starting and ending timestamps of the annotated segment. 
+These alignments are overall poor---the starting/ending timestamps are often sloppy, and any tempo fluctuations within a segment will further jeopardize the alignment.
+
+We use the beat and downbeat detection algorithm from \madmom{}~\cite{bock2016joint,bock2016madmom} to refine these alignments. 
+Our approach aligns the first beat of the segment to the detected downbeat which is nearest to the user-specified starting timestamp. 
+Then, we align the remaining beats to the subsequent consecutive detected beats (see~\Cref{fig:alignment} for an example). 
+This provides a beat-level alignment for the entire segment, and we use linear interpolation for fractional beat subdivisions. 
+In an informal listening test, this produces an excellent alignment in around $95\%$ of cases, where the primary failure mode in the remaining $5\%$ occurs when \madmom{} detects the wrong beat as the downbeat. 
+We use these refined alignments for training and evaluation, accepting the glitched alignments as noise in the dataset.
 
 \section{Experiments}
 
@@ -183,7 +251,7 @@ We argue that onset prediction suffices for producing human-readable melody tran
     \centering
     \begin{tabular}{lcc}
 \toprule
-Features & $d$ & Onset F1 \\
+Features & $d$ & Onset \fone{} \\
 \midrule
 \mel{} & $229$ & $0.514$ \\
 \mtthree{} & $512$ & $0.550$ \\
@@ -202,7 +270,7 @@ Features & $d$ & Onset F1 \\
     \centering
     \begin{tabular}{lcc}
 \toprule
- & Onset F1 & Onset F1 \\
+ & Onset \fone{} & Onset \fone{} \\
 Approach & \emph{Vox Only} & \emph{All} \\
 \midrule
 MT3 Zero-shot~\cite{gardner2021mt3} & $0.085$ & $0.133$ \\
