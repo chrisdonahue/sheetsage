@@ -36,6 +36,10 @@ $f : \bm{X} \mapsto \bm{y}$.
 \subsection{Evaluation}
 \label{sec:eval}
 
+\todo{Draw distinction from frame-based metrics used to evaluate melody extraction}
+% CHRIS: This maps cleanly onto our contributions (standardized evaluation and new datasets), but may be too snarky for paragraph 2
+%Finally, we argue that a historical focus on the important but disparate task of melody \emph{extraction}---detecting the time-varying fundamental frequency of the melody as opposed to its discrete notes---has led to a lack of work on transcription and systemic issues in evaluation.
+
 \john{Leading with an MIR implementation of F1 is a little confusing, especially since it is not typically applied to this task (you are defining the task, right?)}
 To evaluate a melody transcription method $f$, 
 we incorporate a standard approach~\cite{raffel2014eval} for computing an \fone{} score between reference $\bm{y}$ and estimate $f(\bm{X})$. 

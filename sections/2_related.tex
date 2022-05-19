@@ -1,13 +1,35 @@
 \section{Related work}\label{sec:related}
 
-\todo{Paiva}
-\todo{Segmentation}
+% Melody transcription is often cast as a melody \emph{extraction} task, which requires us to annotate an audio recording with a time-varying, continuous fundamental frequency (F0) estimate \cite{goto2004real}. 
+Melody transcription is closely related to but distinct from the task of \emph{melody extraction}, originally referred to as predominant fundamental frequency (\fnot) estimation~\cite{goto1999real,goto2004real}. 
+The goal of melody extraction is to estimate the time-varying, continuous \fnot{} trajectory of the melody in an audio mixture. 
+% CHRIS: I think we shouldn't talk about lead sheets as our goal here. We're pitching lead sheets purely as a bonus (since I failed to evaluate them in time)
+% In contrast, our work is concerned with transcription to human-readable \emph{lead sheets}: this task requires us to indicate the positions of notes within a metrical structure, belonging to discrete pitch classes.
+In contrast, the goal of melody transcription is to output the \emph{notes} of the melody, where a note is defined by an onset time, a discrete pitch, and an offset time. 
+% Melody extraction has been popularized by annual results of the MIREX Audio Melody Extraction tasks \cite{downie2014ten}, 
+% garnering significant interest from the MIR community over the last two decades \cite{salamon2014melody,rao2022melody}. 
+Melody extraction has received significant interest from the MIR community over the last two decades (see~\cite{salamon2014melody,rao2022melody} for comprehensive reviews), 
+and is the subject of an annual MIREX competition~\cite{downie2014ten}. 
+However, 
+while melody extraction is useful for several downstream tasks (e.g.,~query-by-humming) and more inclusive of music which does not use equal temperament, 
+its outputs cannot be readily converted into familiar formats like MIDI or scores. 
+%, which can be readily converted to symbolic formats. 
+Melody extraction may be a component of a melody transcription approach in combination with a strategy to segment F0 trajectories into notes~\cite{salamon2015midi,nishikimi2016musical,nishikimi2017scale}---we directly compare to such an approach.
 
-Melody transcription is often cast as a melody \emph{extraction} task, which requires us to annotate an audio recording with a time-varying, continuous fundamental frequency (F0) estimate \cite{goto2004real}. Melody extraction has been popularized by annual results of the MIREX Audio Melody Extraction tasks \cite{downie2014ten}, garnering significant interest from the MIR community over the last two decades \cite{salamon2014melody,rao2022melody}. In contrast, our work is concerned with transcription to human-readable \emph{lead sheets}: this task requires us to indicate the positions of notes within a metrical structure, belonging to discrete pitch classes.
+%Lead-sheet melody transcription has received considerably less attention. 
+Compared to melody extraction, melody transcription has received considerably less attention. 
+Earlier efforts use sophisticated DSP-based pipelines~\cite{paiva2004auditory,paiva2005detection,ryynanen2008automatic,weil2009automatic}---unfortunately none of these methods provide code, though~\cite{ryynanen2008automatic} provides examples which we use to facilitate direct comparison. 
+A more recent effort uses ground truth chord labels as extra information to improve melody transcription~\cite{laaksonen2014automatic}---in contrast, our method does not require extra information. 
+% Poliner et. al. observed in 2007 that ``an attempt was made to evaluate the lead voice transcription at the lowest level of abstraction [melody extraction], and as such, the concept of segmenting the fundamental frequency predictions into notes has been largely omitted from consideration'' \cite{poliner2007melody}. 
+% This omission largely remains true today. 
+Another line of work seeks to transcribe solo vocal performances into notes~\cite{mauch2015computer,nishikimi2020bayesian,nishikimi2021audio}. 
+As singing voice often carries the melody in popular music, we directly compare to a baseline which firsts isolates the vocals (using~\cite{hennequin2020spleeter}) and then transcribes them.
 
-Lead-sheet melody transcription has received considerably less attention. Poliner et. al. observed in 2007 that ``an attempt was made to evaluate the lead voice transcription at the lowest level of abstraction [melody extraction], and as such, the concept of segmenting the fundamental frequency predictions into notes has been largely omitted from consideration'' \cite{poliner2007melody}. This omission largely remains true today. To the best of our knowledge, there have been only three efforts to transcribe melodies to lead sheets since 2007 \cite{ryynanen2008automatic,weil2009automatic,laaksonen2014automatic}; we compare our melody transcription results with \cite{ryynanen2008automatic} in \cref{sec:experiments}.
-
-Polyphonic music transcription has received substantial attention, with its own MIREX task (Multiple Fundamental F0 Estimation) and a growing collection of supervised training data resources \cite{benetos2013automatic,thickstun2017learning,hawthorne2019enabling,manilow2019cutting}. Like melody transcription, polyphonic transcription is typically formalized as a low-level \emph{frame-based} transcription task, which requires us to annotate an audio recording with a time-aligned piano roll. Like melody extraction, this task does not result in a human-readable lead sheet or score. Nevertheless, the similarity of the polyphonic and melody transcription problems, together with recent progress towards polyphonic transcription, motivate us to consider whether representations learned by a polyphonic music transcription system, MT3 \cite{gardner2021mt3}, are useful for melody transcription.
-
-% CHRIS: This maps cleanly onto our contributions (standardized evaluation and new datasets), but may be too snarky for paragraph 2
-%Finally, we argue that a historical focus on the important but disparate task of melody \emph{extraction}---detecting the time-varying fundamental frequency of the melody as opposed to its discrete notes---has led to a lack of work on transcription and systemic issues in evaluation.
+Polyphonic music transcription is another related task which involves transcribing \emph{all} of the notes present in a recording (not just the melody).
+This task has its own MIREX contest (Multiple Fundamental \fnot{} Estimation) alongside a growing collection of supervised training data resources \cite{benetos2013automatic,thickstun2017learning,hawthorne2019enabling,manilow2019cutting}. 
+% Like melody transcription, polyphonic transcription is typically formalized as a low-level \emph{frame-based} transcription task, which requires us to annotate an audio recording with a time-aligned piano roll. 
+% Like melody extraction, this task does not result in a human-readable lead sheet or score. 
+% Nevertheless,
+The similarity of the polyphonic and melody transcription problems
+%, together with recent progress towards polyphonic transcription, 
+motivate us to consider whether representations learned by a polyphonic music transcription system---specifically, MT3 \cite{gardner2021mt3}---are useful for melody transcription.

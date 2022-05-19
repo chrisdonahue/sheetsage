@@ -87,7 +87,7 @@ A handful of earlier works investigate melody transcription~\cite{ryynanen2008au
 Fortunately,~\cite{ryynanen2008automatic} provide melody transcriptions for a small subset of $10$ songs from RWC-MDB~\cite{goto2002rwc,goto2003rwc,goto2004development}, 
 which we adopt as an evaluation set for our holistic comparisons.
 
-In addition to~\cite{ryynanen2008accompaniment}, we also compare to a baseline which applies a note segmentation heuristic to a melody extraction algorithm~\cite{salamon2014melody}. 
+In addition to~\cite{ryynanen2008accompaniment}, we also compare to a baseline which applies a note segmentation heuristic~\cite{salamon2015midi} to a melody extraction algorithm~\cite{salamon2014melody}. 
 While \mtthree{} was not trained on melody transcription, it was trained on some tasks which involve vocal transcription---we examine zero-shot performance of this model as a baseline. 
 Finally, because the vocals often carry the melody in popular music, we compare to a baseline of running the Tony~\cite{mauch2015computer} monophonic instrument transcription software on source-separated vocals isolated with Spleeter~\cite{hennequin2020spleeter}. 
 Because this approach will only work for vocals, we also separately report performance on a subset of our evaluation set where the vocals represent the melody. 

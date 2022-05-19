@@ -105,18 +105,18 @@
 
 % Baselines
 
-@article{ryynanen2008automatic,
-  title={Automatic transcription of melody, bass line, and chords in polyphonic music},
-  author={Ryyn{\"a}nen, Matti P and Klapuri, Anssi P},
-  journal={Computer Music Journal},
-  year={2008}
-}
-
 @article{salamon2014melody,
   title={Melody extraction from polyphonic music signals: Approaches, applications, and challenges},
   author={Salamon, Justin and G{\'o}mez, Emilia and Ellis, Daniel PW and Richard, Ga{\"e}l},
   journal={IEEE Signal Processing Magazine},
   year={2014}
+}
+
+@misc{salamon2015midi,
+  title={\texttt{audio\_to\_midi\_melodia}},
+  author={Salamon, Justin},
+  howpublished={\url{https://github.com/justinsalamon/audio_to_midi_melodia}},
+  year={2015},
 }
 
 @article{hennequin2020spleeter,
@@ -154,31 +154,6 @@
   year={1937},
   publisher={Acoustical Society of America}
 }
-
-% RWC
-
-@inproceedings{goto2002rwc,
-  title={{RWC Music Database}: Popular, Classical and Jazz Music Databases},
-  author={Goto, Masataka and Hashiguchi, Hiroki and Nishimura, Takuichi and Oka, Ryuichi},
-  booktitle={ISMIR},
-  year={2002}
-}
-
-@inproceedings{goto2003rwc,
-  title={{RWC Music Database}: Music genre database and musical instrument sound database},
-  author={Goto, Masataka and Hashiguchi, Hiroki and Nishimura, Takuichi and Oka, Ryuichi},
-  booktitle={ISMIR},
-  year={2003}
-}
-
-@inproceedings{goto2004development,
-  title={Development of the {RWC Music Database}},
-  author={Goto, Masataka},
-  booktitle={International Congress on Acoustics},
-  year={2004}
-}
-
-
 
 % Use cases
 
@@ -230,70 +205,20 @@
   year={2019}
 }
 
-% Related work
-
-@article{poliner2007melody,
-  title={Melody transcription from music audio: Approaches and evaluation},
-  author={Poliner, Graham E and Ellis, Daniel PW and Ehmann, Andreas F and G{\'o}mez, Emilia and Streich, Sebastian and Ong, Beesuan},
-  journal={IEEE Transactions on Audio, Speech, and Language Processing},
-  year={2007},
-}
-
-@inproceedings{ryynanen2006transcription,
-  title={Transcription of the Singing Melody in Polyphonic Music},
-  author={Ryyn{\"a}nen, Matti and Klapuri, Anssi},
-  booktitle={ISMIR},
-  year={2006}
-}
-
-@article{benetos2013automatic,
-  title={Automatic music transcription: challenges and future directions},
-  author={Benetos, Emmanouil and Dixon, Simon and Giannoulis, Dimitrios and Kirchhoff, Holger and Klapuri, Anssi},
-  journal={Journal of Intelligent Information Systems},
-  year={2013}
-}
-
-@inproceedings{thickstun2017learning,
-  title={Learning features of music from scratch},
-  author={Thickstun, John and Harchaoui, Zaid and Kakade, Sham},
-  booktitle={International Conference on Learning Representations},
-  year={2017}
-}
-
-@inproceedings{manilow2019cutting,
-  title={Cutting music source separation some Slakh: A dataset to study the impact of training data quality and quantity},
-  author={Manilow, Ethan and Wichern, Gordon and Seetharaman, Prem and Le Roux, Jonathan},
-  booktitle={2019 IEEE Workshop on Applications of Signal Processing to Audio and Acoustics (WASPAA)},
-  pages={45--49},
-  year={2019},
-  organization={IEEE}
-}
-
-@inproceedings{paiva2005detection,
-  title={On the Detection of Melody Notes in Polyphonic Audio},
-  author={Paiva, Rui Pedro and Mendes, Teresa and Cardoso, Am{\'\i}lcar},
-  booktitle={ISMIR},
-  year={2005}
-}
-
-% Related work - transfer learning
-
-@inproceedings{choi2017transfer,
-  title={Transfer learning for music classification and regression tasks},
-  author={Choi, Keunwoo and Fazekas, Gy{\"o}rgy and Sandler, Mark and Cho, Kyunghyun},
-  booktitle={ISMIR},
-  year={2017}
-}
-
-% Related - melody extraction
+% Related work - melody extraction
 
 @inproceedings{goto1999real,
   title={A real-time music scene description system: Detecting melody and bass lines in audio signals},
   author={Goto, Masataka and Hayamizu, Satoru},
   booktitle={Working Notes of the IJCAI-99 Workshop on Computational Auditory Scene Analysis},
-  pages={31--40},
-  year={1999},
-  organization={Citeseer}
+  year={1999}
+}
+
+@inproceedings{eggink2004extracting,
+  title={Extracting Melody Lines From Complex Audio},
+  author={Eggink, Jana and Brown, Guy J},
+  booktitle={ISMIR},
+  year={2004}
 }
 
 @article{goto2004real,
@@ -317,7 +242,103 @@
   year={2022}
 }
 
-% Related - piano transcription
+% Related work - segmentation
+
+@inproceedings{nishikimi2016musical,
+  title={Musical Note Estimation for {F0} Trajectories of Singing Voices Based on a {B}ayesian Semi-Beat-Synchronous {HMM}},
+  author={Nishikimi, Ryo and Nakamura, Eita and Itoyama, Katsutoshi and Yoshii, Kazuyoshi},
+  booktitle={ISMIR},
+  year={2016}
+}
+
+@inproceedings{nishikimi2017scale,
+  title={Scale-and Rhythm-Aware Musical Note Estimation for Vocal {F0} Trajectories Based on a Semi-Tatum-Synchronous Hierarchical Hidden Semi-Markov Model},
+  author={Nishikimi, Ryo and Nakamura, Eita and Goto, Masataka and Itoyama, Katsutoshi and Yoshii, Kazuyoshi},
+  booktitle={ISMIR},
+  year={2017}
+}
+
+% Related work - melody transcription
+
+@inproceedings{paiva2004auditory,
+  title={An auditory model based approach for melody detection in polyphonic musical recordings},
+  author={Paiva, Rui Pedro and Mendes, Teresa and Cardoso, Am{\'\i}lcar},
+  booktitle={International Symposium on Computer Music Modeling and Retrieval},
+  year={2004}
+}
+
+@inproceedings{paiva2005detection,
+  title={On the Detection of Melody Notes in Polyphonic Audio},
+  author={Paiva, Rui Pedro and Mendes, Teresa and Cardoso, Am{\'\i}lcar},
+  booktitle={ISMIR},
+  year={2005}
+}
+
+@article{poliner2005classification,
+  title={A classification approach to melody transcription},
+  author={Poliner, Graham E and Ellis, Daniel PW},
+  year={2005}
+}
+
+@inproceedings{ryynanen2006transcription,
+  title={Transcription of the Singing Melody in Polyphonic Music},
+  author={Ryyn{\"a}nen, Matti and Klapuri, Anssi},
+  booktitle={ISMIR},
+  year={2006}
+}
+
+@article{poliner2007melody,
+  title={Melody transcription from music audio: Approaches and evaluation},
+  author={Poliner, Graham E and Ellis, Daniel PW and Ehmann, Andreas F and G{\'o}mez, Emilia and Streich, Sebastian and Ong, Beesuan},
+  journal={IEEE Transactions on Audio, Speech, and Language Processing},
+  year={2007},
+}
+
+@inproceedings{laaksonen2014automatic,
+  title={Automatic Melody Transcription based on Chord Transcription},
+  author={Laaksonen, Antti},
+  booktitle={ISMIR},
+  year={2014}
+}
+
+% Related work - lead sheet transcription
+
+@article{ryynanen2008automatic,
+  title={Automatic transcription of melody, bass line, and chords in polyphonic music},
+  author={Ryyn{\"a}nen, Matti P and Klapuri, Anssi P},
+  journal={Computer Music Journal},
+  year={2008}
+}
+
+@inproceedings{weil2009automatic,
+  title={Automatic Generation of Lead Sheets from Polyphonic Music Signals},
+  author={Weil, Jan and Sikora, Thomas and Durrieu, Jean-Louis and Richard, Ga{\"e}l},
+  booktitle={ISMIR},
+  year={2009}
+}
+
+% Related work - other transcription
+
+@article{benetos2013automatic,
+  title={Automatic music transcription: challenges and future directions},
+  author={Benetos, Emmanouil and Dixon, Simon and Giannoulis, Dimitrios and Kirchhoff, Holger and Klapuri, Anssi},
+  journal={Journal of Intelligent Information Systems},
+  year={2013}
+}
+
+@inproceedings{thickstun2017learning,
+  title={Learning features of music from scratch},
+  author={Thickstun, John and Harchaoui, Zaid and Kakade, Sham},
+  booktitle={International Conference on Learning Representations},
+  year={2017}
+}
+
+@inproceedings{manilow2019cutting,
+  title={Cutting music source separation some Slakh: A dataset to study the impact of training data quality and quantity},
+  author={Manilow, Ethan and Wichern, Gordon and Seetharaman, Prem and Le Roux, Jonathan},
+  booktitle={IEEE Workshop on Applications of Signal Processing to Audio and Acoustics (WASPAA)},
+  year={2019}
+}
 
 @article{sigtia2016end,
   title={An end-to-end neural network for polyphonic piano music transcription},
@@ -331,6 +352,15 @@
   author={Hawthorne, Curtis and Elsen, Erich and Song, Jialin and Roberts, Adam and Simon, Ian and Raffel, Colin and Engel, Jesse and Oore, Sageev and Eck, Douglas},
   booktitle={ISMIR},
   year={2018}
+}
+
+% Related work - transfer learning
+
+@inproceedings{choi2017transfer,
+  title={Transfer learning for music classification and regression tasks},
+  author={Choi, Keunwoo and Fazekas, Gy{\"o}rgy and Sandler, Mark and Cho, Kyunghyun},
+  booktitle={ISMIR},
+  year={2017}
 }
 
 % Related - chord recognition
@@ -356,50 +386,21 @@
   year={2003}
 }
 
-% Related work - Sheet Sage
+% Related work - vocal transcription
 
-@inproceedings{weil2009automatic,
-  title={Automatic Generation of Lead Sheets from Polyphonic Music Signals},
-  author={Weil, Jan and Sikora, Thomas and Durrieu, Jean-Louis and Richard, Ga{\"e}l},
-  booktitle={ISMIR},
-  year={2009}
-}
-
-@inproceedings{laaksonen2014automatic,
-  title={Automatic Melody Transcription based on Chord Transcription},
-  author={Laaksonen, Antti and others},
-  booktitle={ISMIR},
-  year={2014}
-}
-
-@article{choi2017transfer,
-  title={Transfer learning for music classification and regression tasks},
-  author={Choi, Keunwoo and Fazekas, Gy{\"o}rgy and Sandler, Mark and Cho, Kyunghyun},
-  journal={arXiv:1703.09179},
-  year={2017}
-}
-
-% Related work - Segmentation
-
-@inproceedings{nishikimi2016musical,
-  title={Musical Note Estimation for {F0} Trajectories of Singing Voices Based on a {B}ayesian Semi-Beat-Synchronous {HMM}},
-  author={Nishikimi, Ryo and Nakamura, Eita and Itoyama, Katsutoshi and Yoshii, Kazuyoshi},
-  booktitle={ISMIR},
-  year={2016}
-}
-
-@inproceedings{nishikimi2017scale,
-  title={Scale-and Rhythm-Aware Musical Note Estimation for Vocal {F0} Trajectories Based on a Semi-Tatum-Synchronous Hierarchical Hidden Semi-Markov Model},
+@article{nishikimi2020bayesian,
+  title={Bayesian singing transcription based on a hierarchical generative model of keys, musical notes, and f0 trajectories},
   author={Nishikimi, Ryo and Nakamura, Eita and Goto, Masataka and Itoyama, Katsutoshi and Yoshii, Kazuyoshi},
-  booktitle={ISMIR},
-  year={2017}
+  journal={IEEE/ACM Transactions on Audio, Speech, and Language Processing},
+  year={2020},
 }
 
-% Vocal Transcription
-
-% Two papers from Nishikimi
-% Audio-to-score singing transcription based on a CRNN-HSMM hybrid model
-% Bayesian singing transcription based on a hierarchical generative model of keys, musical notes, and f0 trajectories
+@article{nishikimi2021audio,
+  title={Audio-to-score singing transcription based on a CRNN-HSMM hybrid model},
+  author={Nishikimi, Ryo and Nakamura, Eita and Goto, Masataka and Yoshii, Kazuyoshi},
+  journal={APSIPA Transactions on Signal and Information Processing},
+  year={2021},
+}
 
 % Task definition
 
@@ -424,6 +425,29 @@
   author={Graves, Alex and Fern{\'a}ndez, Santiago and Gomez, Faustino and Schmidhuber, J{\"u}rgen},
   booktitle={ICML},
   year={2006}
+}
+
+% RWC
+
+@inproceedings{goto2002rwc,
+  title={{RWC Music Database}: Popular, Classical and Jazz Music Databases},
+  author={Goto, Masataka and Hashiguchi, Hiroki and Nishimura, Takuichi and Oka, Ryuichi},
+  booktitle={ISMIR},
+  year={2002}
+}
+
+@inproceedings{goto2003rwc,
+  title={{RWC Music Database}: Music genre database and musical instrument sound database},
+  author={Goto, Masataka and Hashiguchi, Hiroki and Nishimura, Takuichi and Oka, Ryuichi},
+  booktitle={ISMIR},
+  year={2003}
+}
+
+@inproceedings{goto2004development,
+  title={Development of the {RWC Music Database}},
+  author={Goto, Masataka},
+  booktitle={International Congress on Acoustics},
+  year={2004}
 }
 
 % Sheet Sage

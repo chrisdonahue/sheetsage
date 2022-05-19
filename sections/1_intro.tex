@@ -54,14 +54,14 @@ up to $27$\% (relative).
 To the best of our knowledge, this is the first evidence that representations learned through generative modeling are useful for time-varying MIR tasks like transcription, as opposed to the song-level tasks (e.g.~tagging, genre detection) examined in~\cite{castellon2021calm}.
 
 To support this and future work on melody transcription, we collect and release a new dataset of crowdsourced melody annotations from the \hooktheory{} platform.\footnote{\url{https://www.hooktheory.com/theorytab}} 
-This dataset contains $50$ hours of annotated melodies and harmonies (as chord names). 
+This dataset contains $50$ hours of annotated melodies and harmonies (as chord names) aligned with audio recordings available on YouTube. 
 %to aid chord recognition research. 
 By training Transformer models on this new dataset using representations from Jukebox, we are able to improve overall performance on melody transcription by 
 % 0.786 vs 0.462 = 70%
 % 0.744 vs 0.420 = 77%
 up to $77$\% 
 relative to the strongest available baseline. 
-We also release all code and models needed to precisely reproduce all of our evaluations, facilitating comparison in future work even as some audio inevitably disappears from YouTube.\footnote{Released upon publication}
+We also release all code and models needed to precisely reproduce all of our evaluations,\footnote{Released upon publication} facilitating comparison in future work even as some audio inevitably disappears from YouTube.
 
 
 \textbf{Contributions.} A summary of our primary contributions is as follows:
