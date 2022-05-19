@@ -12,7 +12,7 @@ All models converge within $15$k steps which takes about a day on a single K40 G
 
 \subsection{Comparing input features}
 
-\begin{table}[]
+\begin{table}[t]
     \centering
     \begin{tabular}{lcc}
 \toprule
@@ -57,7 +57,7 @@ Hence, in the remainder of this paper we focus on models trained on individual i
 
 \subsection{Comparison to melody transcription baselines}
 
-\begin{table}[]
+\begin{table}[t]
     \centering
     \begin{tabular}{lcc}
 \toprule
@@ -79,7 +79,7 @@ Spleeter~\cite{hennequin2020spleeter} + Tony~\cite{mauch2015computer} & $0.462$ 
 \end{table}
 
 We compare holistic performance of our proposed melody transcription approach to several baselines. 
-A handful of earlier works investigate melody transcription~\cite{ryynanen2008automatic,weil2009automatic,laaksonen2014automaticO}, however all of these methods are sophisticated expert systems which would be extraordinarily difficult to reproduce, and none of these papers provide code. 
+A handful of earlier works investigate melody transcription~\cite{ryynanen2008automatic,weil2009automatic,laaksonen2014automatic}, however all of these methods are sophisticated expert systems which would be extraordinarily difficult to reproduce, and none of these papers provide code. 
 Fortunately,~\cite{ryynanen2008automatic} provide melody transcriptions for a small subset of $10$ songs from RWC-MDB~\cite{goto2002rwc,goto2003rwc,goto2004development}, 
 which we adopt as an evaluation set for our holistic comparisons.
 
@@ -93,4 +93,5 @@ Scores for all methods and baselines appear in~\Cref{tab:rwc_ryy}.
 
 Overall, our approach to training Transformers with features from \jukebox{} significantly outperforms the strongest baseline in both the vocals only and unrestricted settings (\todo{p values}). 
 Qualitatively speaking, ... \todo{}.
+% Make sure to discuss both the good and the bad!
 Performance of our approach using different input representations is consistent with evaluation results on the \hooktheory{} test set. 
