@@ -57,34 +57,35 @@ Melody transcription via generative pre-training
 \maketitle
 
 \begin{abstract}
-Melody 
-%is among the most fundamental aspects 
-is a fundamental aspect 
-of 
-%human 
-music perception. 
-%---even those without musical training can often recognize and reproduce melodies by ear. 
-While even those without musical training can often recognize and reproduce melodies by ear, it remains an open challenge in MIR to transcribe an arbitrary recording of Western music into notes which constitute its melody. 
-A key challenge in melody transcription is building methods which can handle broad audio containing any number of instrument ensembles and musical genres. 
-To confront this challenge, we leverage recent advancements in generative modeling of broad music audio, thereby improving performance on melody transcription by up to $27$\% relative to conventional approaches. 
+% Melody is a fundamental aspect of music perception. 
+While even those without musical training can intuitively recognize the melody of a song by ear, 
+it remains an open challenge in MIR to reliably detect the notes of the melody present in an arbitrary music recording. 
+A key challenge in \emph{melody transcription} is building methods which can handle broad audio containing any number of instrument ensembles and musical genres. 
+To confront this challenge, we leverage recent advancements in generative modeling of broad music audio, thereby improving performance on melody transcription by 
+% (RWC All) .744 vs .631 = 17.9%
+% (Hookthr) .615 vs .514 = 19.6%
+% (RWC Vox) .786 vs .621 = 26.6%
+up to $27$\% 
+relative to conventional approaches. 
 Another obstacle in melody transcription is a lack of training data---we collect, align, and release a new dataset consisting of $50$ hours of crowdsourced melody annotations for popular music. 
-\todo{Mention that we trained a chord recognition model in the abstract?}
-By pairing our new melody transcription approach with existing solutions for beat detection, key estimation, and chord recognition, 
-we build the first system capable of transcribing human-readable lead sheets directly from music audio.\footnote{Sound examples: \url{https://dblblnd.github.io/ismir22} \\
+% (RWC Vox) 0.786 vs 0.462 = 70%
+% (RWC All) 0.744 vs 0.420 = 77%
+The combination of generative pre-training and a new dataset for this task results in up to $77\%$ stronger performance on melody transcription relative to the strongest available baseline. 
+By pairing our new melody transcription approach with solutions for beat detection, key estimation, and chord recognition, 
+we build a system capable of transcribing human-readable lead sheets directly from music audio.\footnote{Sound examples: \url{https://dblblnd.github.io/ismir22} \\
 Demo / dataset explorer: \url{https://colab.research.google.com/drive/1yzD3wRCjXkuSfDRUtt_daaGFitj5L88l}\label{sound_examples}}
 \end{abstract}
 
 
 \section{Introduction}\label{sec:introduction}
 
-In the Western music canon (and especially in popular music), 
+In the Western music canon, 
+%(and especially in popular music), 
 \emph{melody} is a defining characteristic of musical composition. 
 Even those without formal musical training can often effortlessly recognize a melody within a complex mixture of sounds, 
 a ubiquitous skill which forms a pillar of our collective musical experience. %experience. 
 Because of the significance of melody to music perception, 
-the ability to automatically \emph{transcribe} an arbitrary recording into 
-%equal-tempered notes which constitute its melody 
-its melody notes \john{awkward wording}
+the ability to automatically \emph{transcribe} the melody notes present in an arbitrary recording 
 could enable numerous applications in 
 % TODO: performance?
 interaction~\cite{ryynanen2008accompaniment}, 
@@ -93,31 +94,30 @@ informatics~\cite{bainbridge1999towards},
 retrieval~\cite{ghias1995query}, 
 source separation~\cite{ewert2014score},
 and even generation~\cite{hawthorne2019enabling}.
-Despite the numerous potential benefits, 
+Despite the potential benefits, 
 reliable melody transcription remains an open challenge in MIR.
-%it remains an open challenge in MIR to transcribe an arbitrary recording into equal-tempered notes which constitute its melody.
 
-% Why is it difficult?
 The relative lack of progress on melody transcription is perhaps counterintuitive when compared to the considerable progress on seemingly more difficult tasks like piano transcription~\cite{sigtia2016end,hawthorne2017onsets}.
 %and chord recognition~\cite{humphrey2012rethinking,boulanger2013audio}. 
 This circumstance stems from two primary factors. 
-First, unlike in piano transcription, melody transcription involves operating on \emph{broad} \john{diverse?} audio mixtures from arbitrary instrument ensembles and genres. 
-% CHRIS: I think the following is indeed a big reason that melody transcription is hard, but it doesn't map cleanly onto any of our contributions
+First, unlike in piano transcription, melody transcription involves operating on \emph{broad}
+% CHRIS: I like broad slightly more I think
+%\john{diverse?} 
+audio mixtures from arbitrary instrument ensembles and genres. 
+% CHRIS: I think the following are indeed reasons that melody transcription is hard, but they don't map as cleanly onto our contributions
 %Second, unlike in chord recognition, melody transcription involves isolating the notes from a single instrument voice (recognized to be the melodic voice) within the mixture. 
 %Second, melody transcription involves not only detecting notes but also identifying which of those notes constitutes the melody, which may require modeling the nuances of human music perception. 
-Second, little training data exists for melody transcription, which particularly impedes the deep learning approaches central to recent improvements in other areas of music transcription. 
-% CHRIS: This maps cleanly onto our contributions (standardized evaluation and new datasets), but may be too snarky for paragraph 2
-%Finally, we argue that a historical focus on the important but disparate task of melody \emph{extraction}---detecting the time-varying fundamental frequency of the melody as opposed to its discrete notes---has led to a lack of work on transcription and systemic issues in evaluation.
+Second, little training data exists for melody transcription, which particularly impedes the deep learning approaches central to recent improvements in other transcription settings. 
 
 \begin{figure}
     \centering
     \includegraphics[width=8.1cm]{figs/fig1.pdf}
     \caption{
-\john{Just aesthetics, but might want longer sequence of sheet music at the top of the figure (maybe need to change the audio to match)?} Our audio-to-score melody transcription approach involves 
-(1)~extracting representations from Jukebox~\cite{dhariwal2020jukebox}, a generative model of music audio, 
-(2)~averaging these representations across time to their nearest sixteenth note using \madmom~\cite{bock2016madmom,bock2016joint} for beat detection,
+Our melody transcription approach involves 
+(1)~extracting audio representations from Jukebox~\cite{dhariwal2020jukebox}, a generative model of music, 
+(2)~averaging these representations across time to their nearest sixteenth note (dashed outline---uses \madmom{}~\cite{bock2016joint,bock2016madmom} for beat detection),
 and
-(3)~training a Transformer~\cite{vaswani2017attention} to detect melody note onsets (or rests) per sixteenth note.
+(3)~training a Transformer~\cite{vaswani2017attention} to detect melody note onsets (or absence thereof) per sixteenth note. 
 }
  \label{fig:fig1}
 \end{figure}
@@ -129,45 +129,27 @@ When used as input features to a Transformer~\cite{vaswani2017attention} model, 
 % (Hookthr) .615 vs .514 = 19.6%
 % (RWC Vox) .786 vs .621 = 26.6%
 up to $27$\% (relative). 
-% CHRIS: This can be cut for space
-To the best of our knowledge, this is the first evidence that representations from generative models of audio are useful for time-varying MIR tasks like transcription, as opposed to the song-level tasks (e.g.~genre detection) examined in~\cite{castellon2021calm}. 
+% CHRIS: This was written conservatively because but could potentially be broadened... this may be the first time transfer learning has ever been used for transcription or any time-varying MIR task (though MT3 may be one instance)
+To the best of our knowledge, this is the first evidence that representations learned through generative modeling are useful for time-varying MIR tasks like transcription, as opposed to the song-level tasks (e.g.~tagging, genre detection) examined in~\cite{castellon2021calm}.
 
-\john{Too many details here for introduction} To support this and future work on melody transcription, we collect and release a new dataset of crowdsourced melody annotations from the \hooktheory{} platform.\footnote{\url{https://www.hooktheory.com/theorytab}} 
-This dataset contains $50$ hours of annotated melodies and harmonies (as chord names).  %and additionally contains chord labels.
+To support this and future work on melody transcription, we collect and release a new dataset of crowdsourced melody annotations from the \hooktheory{} platform.\footnote{\url{https://www.hooktheory.com/theorytab}} 
+This dataset contains $50$ hours of annotated melodies and harmonies (as chord names). 
 %to aid chord recognition research. 
 By training Transformer models on this new dataset using representations from Jukebox, we are able to improve overall performance on melody transcription by 
 % 0.786 vs 0.462 = 70%
 % 0.744 vs 0.420 = 77%
-$77$\% 
+up to $77$\% 
 relative to the strongest available baseline. 
-While data from \hooktheory{} has been used previously for tasks like harmonization~\cite{chen2021surprisenet,yeh2021automatic}, chord recognition~\cite{jiang2019mirex}, and representation learning~\cite{jiang2020transformer}, making use of this platform for MIR is currently cumbersome and involves web scraping, reverse engineering a proprietary score format, and audio-to-score alignment. 
-To ease this burden, we release all of the annotations in a simplified MIDI-like format under a Creative Commons license, with links and alignments to the audio on YouTube. 
-We also release all code, models, and Docker containers needed for precisely reproducing all of our evaluations, facilitating comparison in future work even as some audio inevitably disappears from YouTube.\footnote{Released upon publication}
+We also release all code and models needed to precisely reproduce all of our evaluations, facilitating comparison in future work even as some audio inevitably disappears from YouTube.\footnote{Released upon publication}
 
-\john{Again too much detail} We also propose a new strategy for training transcription models in the presence of imprecise alignments. 
-User annotations from \hooktheory{} have coarse alignments with the audio---users only provide the starting and ending timestamp of a segment. 
-We use beat tracking to refine these alignments, but they are still not as precise as the flawless alignments found in other transcription datasets (e.g.,~piano transcription datasets captured using a Disklavier) which existing methods rely on. 
-To address this, our approach involves aggregating input features (evenly spaced in \emph{time}) into proxy features which represent individual sixteenth notes (evenly spaced in \emph{beats}), 
-which effectively smooths over alignment jitter. 
-This approach has a secondary benefit of trivializing the process of converting output from the transcription model into a human-readable score format. %which is simpler for musicians to interpret compared to MIDI.
 
-\begin{figure*}
-    \centering
-    \includegraphics[width=\linewidth]{figs/sheet_sage.pdf}
-    \caption{
-    % TODO: Clean this up. YouTube as input
-    Inference procedure for Sheet Sage, our proposed system which transcribes any Western music audio into lead sheets (scores which depict melody as notes and harmony as chord names). The blue, green, and yellow boxes respectively take audio, features, and symbolic music data as input. Green boxes are modules that we built as part of this work---both are Transformers~\cite{vaswani2017attention} trained on their respective tasks using audio features from Jukebox~\cite{dhariwal2020jukebox} and data from \hooktheory~\cite{hooktheory}.}
-    \label{fig:sheet_sage}
-\end{figure*}
-
-\john{Again, detail} Finally, enabled by our state-of-the-art melody transcription approach, we present \emph{\sheetsage}, a system capable of automatically transcribing Western music audio into \emph{lead sheets}. 
-A lead sheet is a human-readable musical score depicting a song's melody as notes on a staff and its harmony as chord names. 
-The combination of melody and harmony represents the essence of a piece of Western music, and as such, lead sheets are commonly used by experts to easily perform recognizable renditions of existing pieces. 
-As part of \sheetsage, we additionally train a Transformer-based chord recognition model on \hooktheory{} data using input features from Jukebox. 
-To produce lead sheets, we pair this chord recognition model with our best melody transcription model, beat detections from \madmom~\cite{bock2016madmom,bock2016joint}, key estimations from Melisma~\cite{krumhansl1990cognitive,temperley1999key,sleator2001melisma}, and engraving with LilyPond~\cite{nienhuys2003lilypond}~(\Cref{fig:sheet_sage}). 
-By automatically transcribing music audio into lead sheets, our work helps reduce the gap between human perception and machine understanding of Western music.
-
-\john{Suggestion: condense the last 3 paragraphs of the intro into a bulleted list of contributions. Move all the details later into the paper}
+\textbf{Contributions.} A summary of our primary contributions is as follows:
+\begin{itemize}
+    \item We show that representations from generative models can improve melody transcription (\Cref{sec:experiments}).
+    \item We collect, align, and release a new dataset with $50$ hours of melody and chord annotations (\Cref{sec:dataset}).
+    \item We propose a method for training transcription models on data with imprecise alignment (\Cref{sec:beatpool}).
+    \item As a downstream application of our melody transcription approach, we build a system which can transcribe music audio into lead sheets (\Cref{sec:sheetsage}).
+\end{itemize}
 
 \section{Related work}
 
@@ -181,6 +163,9 @@ Lead-sheet melody transcription has received considerably less attention. Poline
 Polyphonic music transcription has received substantial attention, with its own MIREX task (Multiple Fundamental F0 Estimation) and a growing collection of supervised training data resources \cite{benetos2013automatic,thickstun2017learning,hawthorne2019enabling,manilow2019cutting}. Like melody transcription, polyphonic transcription is typically formalized as a low-level \emph{frame-based} transcription task, which requires us to annotate an audio recording with a time-aligned piano roll. Like melody extraction, this task does not result in a human-readable lead sheet or score. Nevertheless, the similarity of the polyphonic and melody transcription problems, together with recent progress towards polyphonic transcription, motivate us to consider whether representations learned by a polyphonic music transcription system, MT3 \cite{gardner2021mt3}, are useful for melody transcription.
 
 \input{sections/related}
+
+% CHRIS: This maps cleanly onto our contributions (standardized evaluation and new datasets), but may be too snarky for paragraph 2
+%Finally, we argue that a historical focus on the important but disparate task of melody \emph{extraction}---detecting the time-varying fundamental frequency of the melody as opposed to its discrete notes---has led to a lack of work on transcription and systemic issues in evaluation.
 
 \section{Task definition}
 
@@ -252,6 +237,10 @@ The dataset comprises annotations for $22$k segments of $13$k unique recordings-
 The audio content covers a wide range of genres---there is a skew towards pop and rock but many other genres are represented including EDM, jazz, and even classical. 
 We create an artist-stratified $8$:$1$:$1$ split of the dataset for training, validation, and testing.
 
+\todo{Copied from intro. Need to integrate}
+While data from \hooktheory{} has been used previously for tasks like harmonization~\cite{chen2021surprisenet,yeh2021automatic}, chord recognition~\cite{jiang2019mirex}, and representation learning~\cite{jiang2020transformer}, making use of this platform for MIR is currently cumbersome and involves web scraping, reverse engineering a proprietary score format, and audio-to-score alignment. 
+To ease this burden, we release all of the annotations in a simplified MIDI-like format under a Creative Commons license, with links and alignments to the audio on YouTube. 
+
 \hooktheory{} users annotate the audio in a proprietary ``functional'' format, i.e., one which uses scale degrees and roman numerals relative to a key signature instead of absolute notes and chord names. 
 Absolute labels are used by the vast majority of transcription work---hence, we convert this proprietary functional format into a simple absolute one. 
 Note that users annotate melodies with only relative octave information, i.e.,~intervals between melody notes should be accurate, but the absolute octave of the melody may be incorrect relative to the recording.
@@ -289,6 +278,14 @@ For this model, we use the output of the encoder ($f_k = 125$ Hz, $d = 512$) as 
 The two models have different trade-offs with respect to our setting: \jukebox{} was trained on audio similar to that found in our dataset but explores a different task (generative modeling), whereas \mtthree{} is pre-trained on transcription but for different audio domains. 
 
 \subsection{Beat pooling}
+\label{sec:beatpool}
+
+\john{Again too much detail} We also propose a new strategy for training transcription models in the presence of imprecise alignments. 
+User annotations from \hooktheory{} have coarse alignments with the audio---users only provide the starting and ending timestamp of a segment. 
+We use beat tracking to refine these alignments, but they are still not as precise as the flawless alignments found in other transcription datasets (e.g.,~piano transcription datasets captured using a Disklavier) which existing methods rely on. 
+To address this, our approach involves aggregating input features (evenly spaced in \emph{time}) into proxy features which represent individual sixteenth notes (evenly spaced in \emph{beats}), 
+which effectively smooths over alignment jitter. 
+This approach has a secondary benefit of trivializing the process of converting output from the transcription model into a human-readable score format. %which is simpler for musicians to interpret compared to MIDI.
 
 % Alignment
 Despite our best efforts, the refined alignments in \hooktheory{} are still imprecise when compared to those found in datasets used by piano transcription methods. 
@@ -330,6 +327,23 @@ In practice, we found $\alpha = 2$ produced the best results, while $\alpha > 3$
 \input{sections/experiments}
 
 \section{Sheet Sage}
+\label{sec:sheetsage}
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=\linewidth]{figs/sheet_sage.pdf}
+    \caption{
+    % TODO: Clean this up. YouTube as input
+    Inference procedure for Sheet Sage, our proposed system which transcribes any Western music audio into lead sheets (scores which depict melody as notes and harmony as chord names). The blue, green, and yellow boxes respectively take audio, features, and symbolic music data as input. Green boxes are modules that we built as part of this work---both are Transformers~\cite{vaswani2017attention} trained on their respective tasks using audio features from Jukebox~\cite{dhariwal2020jukebox} and data from \hooktheory~\cite{hooktheory}.}
+    \label{fig:sheet_sage}
+\end{figure*}
+
+\john{Again, detail} Finally, enabled by our state-of-the-art melody transcription approach, we present \emph{\sheetsage}, a system capable of automatically transcribing Western music audio into \emph{lead sheets}. 
+A lead sheet is a human-readable musical score depicting a song's melody as notes on a staff and its harmony as chord names. 
+The combination of melody and harmony represents the essence of a piece of Western music, and as such, lead sheets are commonly used by experts to easily perform recognizable renditions of existing pieces. 
+As part of \sheetsage, we additionally train a Transformer-based chord recognition model on \hooktheory{} data using input features from Jukebox. 
+To produce lead sheets, we pair this chord recognition model with our best melody transcription model, beat detections from \madmom~\cite{bock2016madmom,bock2016joint}, key estimations from Melisma~\cite{krumhansl1990cognitive,temperley1999key,sleator2001melisma}, and engraving with LilyPond~\cite{nienhuys2003lilypond}~(\Cref{fig:sheet_sage}). 
+By automatically transcribing music audio into lead sheets, our work helps reduce the gap between human perception and machine understanding of Western music.
 
 Here we describe \sheetsage, a bonus application of our melody transcription efforts which can automatically convert music audio into lead sheets (see~\cref{sound_examples} for a demo). 
 In the Western music canon, a musical composition can often be characterized by its melody and harmony. 
