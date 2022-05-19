@@ -1,0 +1,17 @@
+% Melody is a fundamental aspect of music perception. 
+While even those without musical training can intuitively recognize the melody of a song by ear, 
+it remains an open challenge in MIR to reliably detect the notes of the melody present in an arbitrary music recording. 
+A key challenge in \emph{melody transcription} is building methods which can handle broad audio containing any number of instrument ensembles and musical genres. 
+To confront this challenge, we leverage recent advancements in generative modeling of broad music audio, thereby improving performance on melody transcription by 
+% (RWC All) .744 vs .631 = 17.9%
+% (Hookthr) .615 vs .514 = 19.6%
+% (RWC Vox) .786 vs .621 = 26.6%
+up to $27$\% 
+relative to conventional approaches. 
+Another obstacle in melody transcription is a lack of training data---we collect, align, and release a new dataset consisting of $50$ hours of crowdsourced melody annotations for popular music. 
+% (RWC Vox) 0.786 vs 0.462 = 70%
+% (RWC All) 0.744 vs 0.420 = 77%
+The combination of generative pre-training and a new dataset for this task results in up to $77\%$ stronger performance on melody transcription relative to the strongest available baseline. 
+By pairing our new melody transcription approach with solutions for beat detection, key estimation, and chord recognition, 
+we build a system capable of transcribing human-readable lead sheets directly from music audio.\footnote{Sound examples: \url{https://dblblnd.github.io/ismir22} \\
+Demo / dataset explorer: \url{https://colab.research.google.com/drive/1yzD3wRCjXkuSfDRUtt_daaGFitj5L88l}\label{sound_examples}}
