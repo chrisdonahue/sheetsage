@@ -26,12 +26,14 @@ representation learning~\cite{jiang2020transformer},
 making use of this platform for MIR is currently cumbersome and involves web scraping and reverse engineering a proprietary score format. 
 To ease this burden, we release all of the annotations in a simplified JSON format under a Creative Commons license, with links to the audio on YouTube.
 
+\todo{Condense... reduce redundancy}
 \john{This seems a little redundant with \cref{sec:eval}?}
 Note that the melody annotations originate from a software tool which uses a ``functional'' annotation format, i.e.,~one which uses scale degrees and roman numerals relative to a key signature instead of absolute notes and chord names. 
 The vast majority of transcription work uses absolute labels, hence, we convert these functional labels to absolute ones. 
 However, because the annotation tool uses a relative octave format, there is no way to reliably map the melody annotations to the ground truth absolute octave. 
 The disregard of absolute octave information on this popular annotation platform implies that a crowd definition of melody does not include this information, reinforcing our earlier argument that it should be ignored for evaluation.
 
+\todo{Try paragraph heading instead of subsection}
 \subsection{Alignment}
 
 \john{Weird to have a single subsection: I commented out a couple sentences below to propose a tighter single-paragraph version that might be moved to top-level \cref{sec:dataset}}

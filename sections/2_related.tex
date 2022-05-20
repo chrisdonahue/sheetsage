@@ -20,7 +20,7 @@ into notes~\cite{salamon2015midi,nishikimi2016musical,nishikimi2017scale}---we d
 
 %Lead-sheet melody transcription has received considerably less attention. 
 Compared to melody extraction, melody transcription has received considerably less attention. 
-Earlier efforts use sophisticated DSP-based pipelines~\cite{paiva2004auditory,paiva2005detection,ryynanen2008automatic,weil2009automatic}---unfortunately none of these methods provide code, though~\cite{ryynanen2008automatic} provides examples which we use to facilitate direct comparison. 
+Earlier efforts use sophisticated DSP-based pipelines~\cite{paiva2004auditory,paiva2005detection,ryynanen2008automatic,weil2009automatic}---unfortunately none of these methods provide code, though~\cite{ryynanen2008automatic} provides example transcriptions which we use to facilitate direct comparison. 
 A more recent effort uses ground truth chord labels as extra information to improve melody transcription~\cite{laaksonen2014automatic}---in contrast, our method does not require extra information. 
 % Poliner et. al. observed in 2007 that ``an attempt was made to evaluate the lead voice transcription at the lowest level of abstraction [melody extraction], and as such, the concept of segmenting the fundamental frequency predictions into notes has been largely omitted from consideration'' \cite{poliner2007melody}. 
 % This omission largely remains true today. 
@@ -32,6 +32,8 @@ This task has its own MIREX contest (Multiple Fundamental \fnot{} Estimation) al
 % Like melody transcription, polyphonic transcription is typically formalized as a low-level \emph{frame-based} transcription task, which requires us to annotate an audio recording with a time-aligned piano roll. 
 % Like melody extraction, this task does not result in a human-readable lead sheet or score. 
 % Nevertheless,
-The similarity of the polyphonic and melody transcription problems
+The similarity of the polyphonic and melody transcription problems motivates us to
 %, together with recent progress towards polyphonic transcription, 
-motivate us to consider whether representations learned by a polyphonic music transcription system---specifically, MT3 \cite{gardner2021mt3}---are useful for melody transcription.
+% consider whether representations learned by a polyphonic music transcription system---specifically, MT3 \cite{gardner2021mt3}---are useful for melody transcription.
+% CHRIS: Rewrote this because the above doesn't make it clear that we actually try this
+experiment with using representations learned by a polyphonic music transcription system---specifically, MT3 \cite{gardner2021mt3}---for melody transcription.
