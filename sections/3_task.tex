@@ -1,4 +1,5 @@
 \section{Task definition}
+\label{sec:task}
 
 \begin{figure}
     \centering
@@ -13,6 +14,7 @@ We argue that onset prediction suffices for producing melody transcriptions that
 % \john{You may want to lead here with two definitions: the definition of \emph{melody} (implicitly defined by labels) and the definition of \emph{melody transcription} (in contrast to melody extraction)}
 % CHRIS: Added a footnote. Don't want to say too much more and risk getting lost in the weeds
 
+\john{Consider being more precise up front about what a melody is. Two things two emphasize: what is the type \emph{type signature} of a melody (which you do get at below with the $\bm{y}$ object, and that the \emph{value} of this object is a label given by a human annotator (implicitly defined by data; right now that point is made in \cref{sec:dataset})}
 We examine melody transcription, defined here as the task of converting music audio into a \emph{monophonic} (non-overlapping) sequence of \emph{notes} which constitute its melody.\footnote{Melody is tricky to precisely define---here we adopt an implicit definition based on crowdsourced melody annotations.} 
 A note canonically consists of an onset time, a musical pitch, and an offset time, though in this work  
 %(and as in~\cite{laaksonen2014automatic}) 
@@ -22,6 +24,7 @@ Second, in our dataset (which constitutes a crowdsourced definition of melody), 
 Finally, we argue intuitively that onsets and pitches suffice for both recognizing and reading melodies---see~\Cref{fig:heuristic_offsets} for an example. 
 
 Formally, a music waveform of length~$T$ seconds sampled at rate~$f_s$ is a vector~${\bm{a} \in \mathbb{R}^{Tf_s}}$. 
+\john{I think definition of $\bm{y}$ is not quite right: your goal isn't to emit timestamps, it's lead-sheets right?}
 The task of melody transcription is to convert $\bm{a}$ into a list of its melody notes~$\bm{y}$, 
 where a note~$y_i$ is a pair of onset time~$t_i$ and musical pitch~$n_i$. 
 Hence, 
@@ -30,6 +33,7 @@ Hence,
     \bm{y} = y_1, \ldots, y_N, \\
     \text{where}~y_i = (t_i, n_i), t_i \leq T, \text{and}~n_i \in \{\text{A0}, \ldots, \text{C8}\}.
 \end{gather*}
+\john{Not sure high-dimensionality is the right motivation here}
 To handle the high dimensionality of audio, transcription algorithms typically extract features $\bm{X}$ (a matrix) from audio, which are sampled at ${f_k \ll f_s}$:
 \begin{gather*}
     \text{Extract}(\bm{a}) = \bm{X} = \bm{x}_1, \ldots, \bm{x}_M, \\ 
@@ -46,6 +50,7 @@ ${f : \bm{X} \mapsto \bm{y}}$.
 % \john{Leading with an MIR implementation of F1 is a little confusing, especially since it is not typically applied to this task (you are defining the task, right?)}
 % CHRIS: Reworked to clarify that this is a departure from melody extraction
 
+\john{Maybe lead with why we need to invent our own metrics?}
 To evaluate a melody transcription method $f$, 
 we adopt a standard metric commonly used for evaluation in other music transcription tasks, namely,  ``onset-only notewise F-measure''~\cite{ycart2020investigating}. 
 This metric scores an estimated transcript $f(\bm{X})$ by first matching its note onsets to those in the reference $\bm{y}$ with $50$ms of tolerance, and then computes a standard \fone{} score where an estimated note is treated as correct if it is the same pitch as its matched reference note. 

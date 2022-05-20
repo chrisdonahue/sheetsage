@@ -21,6 +21,7 @@ whereas \mtthree{} is pre-trained on transcription but for different audio domai
 \subsection{Beat pooling}
 \label{sec:beatpool}
 
+\john{Double-checking: is this really the right motivation for pooling? Might be worth a brief chat tomorrow.}
 Here we outline our proposed approach for training models in the presence of imprecise alignments. 
 Existing transcription methods were largely designed for domains where perfect alignments are readily available, e.g.,~a Disklavier yields piano transcription data with perfect alignment. 
 Despite our best efforts, the refined alignments in \hooktheory{} are still imprecise when compared to those used to develop existing methods. 
@@ -32,6 +33,7 @@ For example, if a recording has a tempo of $120$ beats per minute, a sixteenth n
 The intuition is that, while our refined alignments may not be precise enough to identify exactly which of those $43$ frames contains an onset, we can be reasonably confident that it occurs \emph{somewhere} within them, and thus that information will be averaged into the feature vector.
 We refer to this strategy as \emph{beat pooling}.
 
+\john{This feels a little too formal to me :)}
 Formally, given a segment of length $B$ beats or $T$ seconds and an alignment function ${a: [1, B] \mapsto [0, T]}$, beat pooling yields ${\hat{\bm{X}} = \hat{\bm{x}}_1, \ldots, \hat{\bm{x}}_{4B}}$, where ${\hat{\bm{x}}_i \in \mathbb{R}^d}$, and
 \begin{gather*}
 \bm{\hat{x}}_i = \frac{1}{r_i - l_i} \sum_{j = l_i}^{r_i - 1} \bm{x}_j, \text{where} \\
@@ -41,6 +43,7 @@ r_i = \left\lfloor a \left(\frac{2i + 7}{8} \right) \cdot f_k \right\rfloor.
 
 \subsection{Training}
 
+\john{Section is titled training but this is really more of a concrete instantiation of the more abstract task from \cref{sec:task}; even some of the main characters are the same (e.g., OctaveShift). Does this really belong here?}
 The output $\hat{\bm{X}}$ from our beat pooling approach represents a sequence of features where a timestep is a sixteenth note, and constitutes the input to the transcription model we will train. 
 Analogously, we also construct a sequence containing labels for each sixteenth note ${\hat{\bm{y}} \in \mathbb{V}^{4B}}$, where 
 ${\mathbb{V} = \{\varnothing, \text{A0}, \ldots, \text{C8}\}}$.\footnote{This requires quantizing labels to the nearest sixteenth note. In practice, less than $1\%$ of notes are affected by this quantization.
@@ -59,3 +62,4 @@ An additional hyperparameter $\alpha$ determines the number of possible shifts (
 %, and $\alpha = 0$ constitutes the standard cross entropy loss. 
 In practice, we found ${\alpha = 2}$ produced the best performance, 
 while ${\alpha > 3}$ resulted in unstable training.
+\john{I'm confused: is this shift-invariance or data augmentation?}
