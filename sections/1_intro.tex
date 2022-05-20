@@ -28,7 +28,7 @@ audio mixtures from arbitrary instrument ensembles and genres.
 % CHRIS: I think the following are indeed reasons that melody transcription is hard, but they don't map as cleanly onto our contributions
 %Second, unlike in chord recognition, melody transcription involves isolating the notes from a single instrument voice (recognized to be the melodic voice) within the mixture. 
 %Second, melody transcription involves not only detecting notes but also identifying which of those notes constitutes the melody, which may require modeling the nuances of human music perception. 
-Second, little training data exists for melody transcription, which particularly impedes the deep learning approaches central to recent improvements in other transcription settings. 
+Second, there is a deficit of training data for melody transcription, which particularly impedes the deep learning approaches central to recent improvements on other transcription tasks. 
 
 \begin{figure}
     \centering
@@ -38,7 +38,8 @@ Our melody transcription approach involves
 (1)~extracting audio representations from Jukebox~\cite{dhariwal2020jukebox}, a generative model of music, 
 (2)~averaging these representations across time to their nearest sixteenth note (dashed outline---uses \madmom{}~\cite{bock2016joint,bock2016madmom} for beat detection),
 and
-(3)~training a Transformer~\cite{vaswani2017attention} to detect melody note onsets (or absence thereof) per sixteenth note. 
+(3)~training a Transformer~\cite{vaswani2017attention} to detect note onsets (or absence thereof) per sixteenth note. 
+Outputs can be rendered to MIDI (by mapping beats back to time) or a score.
 }
  \label{fig:fig1}
 \end{figure}
@@ -53,24 +54,31 @@ up to $27$\% (relative).
 % CHRIS: This was written conservatively because but could potentially be broadened... this may be the first time transfer learning has ever been used for transcription or any time-varying MIR task (though MT3 may be one instance)
 To the best of our knowledge, this is the first evidence that representations learned through generative modeling are useful for time-varying MIR tasks like transcription, as opposed to the song-level tasks (e.g.~tagging, genre detection) examined in~\cite{castellon2021calm}.
 
-\john{Weak topic sentence. And this paragraph is kind of all over the place}
-To support this and future work on melody transcription, we collect and release a new dataset of crowdsourced melody annotations from the \hooktheory{} platform.\footnote{\url{https://www.hooktheory.com/theorytab}} 
-This dataset contains $50$ hours of annotated melodies and harmonies (as chord names) aligned with audio recordings available on YouTube. 
+%\john{Weak topic sentence. And this paragraph is kind of all over the place}
+%To support this and future work on melody transcription, 
+To address the data deficit for melody transcription, 
+we release a new dataset containing $50$ hours of melody annotations collected from \hooktheory.\footnote{\url{https://www.hooktheory.com/theorytab}} 
+This dataset contains annotations for a broad audio: 
+$13$k unique recordings representing a wide variety of instruments and genres. 
+% This dataset contains $50$ hours of annotated melodies and harmonies (as chord names) aligned with audio recordings available on YouTube. 
 %to aid chord recognition research. 
-By training Transformer models on this new dataset using representations from Jukebox, we are able to improve overall performance on melody transcription by 
+By training Transformer models on this new dataset using representations from Jukebox as input, we are able to improve overall performance on melody transcription by 
 % 0.786 vs 0.462 = 70%
 % 0.744 vs 0.420 = 77%
 up to $77$\% 
 relative to the strongest available baseline. 
-We also release all code and models needed to precisely reproduce all of our evaluations,\footnote{Released upon publication} facilitating comparison in future work even as some audio inevitably disappears from YouTube.
+% We also release all code and models needed to precisely reproduce all of our evaluations,\footnote{Released upon publication} facilitating comparison in future work even as some audio inevitably disappears from YouTube.
 
-\john{Maybe too many details? Content of this and previous paragraph might benefit from reorg/streamlining}
-We also propose a new method for training transcription models in the presence of imprecise audio-to-score alignments. 
+%\john{Maybe too many details? Content of this and previous paragraph might benefit from reorg/streamlining}
+% CHRIS: I agree that this information feels a little verbose for an intoduction, but I think it's necessary to contextualize Figure 1. Another option is to obscure the beat pooling from Figure 1, but I think Figure 1 would then be too vague :/. Tricky situation
+Because this new dataset has imprecise \emph{alignments} between the audio and melody annotations,
+we also propose a new method for training transcription models in the presence of such alignments.
+%imprecise audio-to-score alignments. 
 % Existing transcription methods were largely designed for domains where perfect alignments are readily available, e.g.,~a Disklavier yields piano transcription data with perfect alignment. 
 % The alignments in \hooktheory{} are not precise enough to facilitate effective transcription when adopting these methods off-the-shelf. 
 % To address this, we propose a new method which  
 Our approach 
-involves aggregating input features (evenly spaced in \emph{time}) into proxy features representative of individual sixteenth notes (evenly spaced in \emph{beats}), 
+involves aggregating input features (evenly spaced in time) into proxy features representative of individual sixteenth notes (evenly spaced in beats), 
 thereby smoothing over alignment jitter. 
 We train models on these beat-based features, 
 which has a secondary benefit of enabling simple conversion from raw model outputs to human-readable scores (\Cref{fig:fig1}).

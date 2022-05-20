@@ -57,7 +57,7 @@ Hence, we construct an octave-tolerant loss function by octave shifting the labe
 \begin{equation*}
 \operatorname*{min}_{\sigma \in \{-\alpha, \ldots, \alpha\}} \sum_{i=1}^{4B} \text{CE}(\text{SM}(f_{\theta}(\bm{\hat{X}})_i), \text{OctaveShift}(\hat{\bm{y}}_i, \sigma)), 
 \end{equation*}
-where $\text{SM}$ is soft max and $\text{CE}$ is cross entropy. 
+where $\text{SM}$ is softmax and $\text{CE}$ is cross entropy. 
 An additional hyperparameter $\alpha$ determines the number of possible shifts (${\alpha = 0}$ constitutes standard cross entropy). 
 %, and $\alpha = 0$ constitutes the standard cross entropy loss. 
 In practice, we found ${\alpha = 2}$ produced the best performance, 
