@@ -1,7 +1,7 @@
 \section{Sheet Sage}
 \label{sec:sheetsage}
 
-Here we describe \sheetsage, a system which leverages our \jukebox-based melody transcription model to automatically convert music audio into lead sheets (see~\cref{sound_examples} for a demo).  
+Here we describe \sheetsage, a system we built to automatically convert music audio into lead sheets (see~\cref{sound_examples} for examples), powered by our \jukebox-based melody transcription model. 
 In the Western music canon, a musical composition can often be characterized by its melody and harmony. 
 When engraved as a lead sheet---a musical score containing the melody as notes on a staff and the harmony as chord names---melody and harmony can be readily interpreted by musicians, enabling recognizable performances of existing pieces. 
 Hence, for some music, a lead sheet represents the essence of its underlying composition.
@@ -20,11 +20,11 @@ For the latter, we use \madmom~\cite{bock2016madmom,bock2016joint}.
 Finally, we engrave a lead sheet using Lilypond~\cite{nienhuys2003lilypond}. 
 See~\Cref{fig:sheet_sage} for a full schematic.
 
-\john{How do we support the claims in this paragraph?}
-On pop music, \sheetsage{} often produces near-perfect lead sheets, especially for the chorus and verse segments which have more prominent melodies. 
+Subjectively speaking, \sheetsage{} often produces high-quality lead sheets, especially for the chorus and verse segments of pop music which have more prominent melodies. 
 % It can even successfully track the melody as it changes across instruments. 
-Performance is fairly robust across broad genres and instruments which are less represented in the training data---one user reported particularly strong success on Bollywood music. 
-However, the system occasionally struggles, especially with certain vocal styles, multiple monophonic harmonies, or poor intonation. 
-Additionally, because the transcription models take estimated beats as an input, results can suffer when these estimates are poor. 
-\sheetsage{} is also limited by its current system design: it can only handle $3$/$4$ or $4$/$4$ time signatures and cannot handle key or time signature changes. 
-Overcoming these system limitations would involve either (1)~research into downbeat detection and key estimation which supports time / key signature changes, or (2)~user intervention to provide the correct information.
+Performance is fairly robust across genres and instruments, even those which are less represented in the training data---one user reported particularly strong success on Bollywood music. 
+However, the system occasionally struggles, especially with quieter vocals, layered harmonies, unusual time signatures, or poor intonation. 
+% Additionally, because the transcription models take estimated beats as an input, results can suffer when these estimates are poor. 
+\sheetsage{} is also limited by its current system design: it cannot handle time or key signature changes.
+%only handle $3$/$4$ or $4$/$4$ time signatures and cannot handle key or time signature changes. 
+Overcoming this limitation would involve either (1)~research into downbeat detection and key estimation which supports time / key signature changes, or (2)~user intervention to provide the correct information.

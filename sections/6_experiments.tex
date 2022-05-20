@@ -9,9 +9,8 @@ Second, we compare our trained models holistically to other melody transcription
 All transcription models are encoder-only Transformers with the default hyperparameters from~\cite{vaswani2017attention}, 
 except that we reduce the number of layers from $6$ to $4$ to allow models to be trained on GPUs with $12$GB of memory. 
 During training, we select random slices from the annotated segments of up to $96$ beats or $24$ seconds in length (whichever is shorter). 
-We train using our proposed loss function with ${\alpha = 2}$. 
-We perform early stopping based on max \fone{} score across thresholds on the validation set, using the best validation threshold for testing. 
-All models converge within $15$k steps which takes about a day on a single K40 GPU. 
+We train using our proposed loss function from~\Cref{sec:modeling} and perform early stopping based on max \fone{} score across thresholds on the validation set, using the best validation threshold for testing. 
+All models converge within $15$k steps or about a day on a single K40 GPU. 
 
 \subsection{Comparing input features}
 \label{sec:exp1}
@@ -89,17 +88,15 @@ Using representations from \jukebox{} tends to result in fewer wrong notes than 
 Representations from \jukebox{} also appear aid the detection of more nuanced rhythmic patterns. 
 Moreover, using handcrafted features will often result in several false positive onsets during a longer sustained melody note---in contrast, using representations from \jukebox{} appears to mitigate this failure mode.
 
-Some representations also appear to complement one another to a degree---the strongest performance overall is obtained by combining all three features, though the improvement over \jukebox{} alone is marginal. 
+Different features also appear to complement one another to a degree---the strongest performance overall is obtained by combining all three features, though the improvement over \jukebox{} alone is marginal. 
 %Combining \mtthree{} and \jukebox{} does improve performance over \jukebox{} alone, though only by a marginal amount. 
 Using both pre-trained models is also impractical---it nearly doubles the overall runtime, and the models have incompatible software dependencies. 
 Hence, in the remainder of this paper we focus on models trained on individual input features.
 %Combining handcrafted features w/ either pre-trained approach has little effect on performance. 
 
-\todo{We also release all code and data files needed to precisely reproduce all of our evaluations,\footnote{Released upon publication} facilitating comparison in future work even as some audio inevitably disappears from YouTube.}
-
 \subsection{Comparison to melody transcription baselines}
 
-We compare holistic performance of our proposed melody transcription approach to several baselines. 
+We compare overall performance of our proposed melody transcription approach to several baselines. 
 We evaluate all methods on a small subset of $10$ songs from RWC-MDB~\cite{goto2002rwc,goto2003rwc,goto2004development}, 
 another dataset which includes melody transcription labels. 
 We chose this specific subset in an effort to compare to early DSP-based work on melody transcription---none of the early approaches~\cite{paiva2004auditory,paiva2005detection,ryynanen2008automatic,weil2009automatic} shared code, however~\cite{ryynanen2008automatic} shared melody transcriptions for this $10$-song subset.
@@ -113,6 +110,6 @@ Because this approach will only work for vocals, we also separately report perfo
 Scores for all methods and baselines appear in~\Cref{tab:rwc_ryy}. 
 
 Overall, our approach to training Transformers with features from \jukebox{} significantly outperforms the strongest baseline in both the vocals-only and unrestricted settings (${p < 0.01}$ using a two-sided t-test for paired samples). 
-Qualitatively speaking, the strongest baselines produce transcriptions where a reasonable proportion of the notes are the correct pitches, but they have poor rhythmic consistency with respect to the ground truth. 
+Qualitatively speaking, the stronger baselines produce transcriptions where a reasonable proportion of the notes are the correct pitches, but they have poor rhythmic consistency with respect to the ground truth. 
 In contrast, our best model produces the correct pitches more often and with a higher degree of rhythmic consistency.
 % Performance of our approach using different input representations is consistent with evaluation results on the \hooktheory{} test set. 

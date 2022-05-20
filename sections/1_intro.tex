@@ -68,13 +68,14 @@ thereby smoothing over remaining alignment jitter.
 We train models directly on these beat-wise features, 
 which has a secondary benefit of enabling simple conversion from raw model outputs to human-readable scores (\Cref{fig:fig1}).
 
-By training Transformer models on this new dataset using representations from Jukebox as input, we are able to improve holistic performance on melody transcription by 
+By training Transformer models on this new dataset using representations from Jukebox as input, we are able to improve overall performance on melody transcription by 
 % 0.786 vs 0.462 = 70%
 % 0.744 vs 0.420 = 77%
 up to $77$\% 
 relative to the strongest available baseline. 
-% We also release all code and models needed to precisely reproduce all of our evaluations,\footnote{Released upon publication} facilitating comparison in future work even as some audio inevitably disappears from YouTube.
-%\textbf{Contributions.} 
+For reproducibility, we will release all data, code, and models from this work upon publication.
+
+%\textbf{Contributions.}
 
 A summary of our primary \textbf{contributions} is as follows:
 \begin{itemize}

@@ -41,6 +41,7 @@ We refer to this strategy as \emph{\beatpooling}, and its output for a segment c
 % \end{gather*}
 
 \subsection{Modeling}
+\label{sec:modeling}
 
 % \john{Section is titled training but this is really more of a concrete instantiation of the more abstract task from \cref{sec:task}; even some of the main characters are the same (e.g., OctaveShift). Does this really belong here?}
 The output $\hat{\bm{X}}$ from our \beatpooling{} approach represents a sequence of features where a timestep is a sixteenth note, and constitutes the input to the transcription model we will train. 
@@ -62,7 +63,6 @@ where $\text{SM}$ is the softmax function and $\text{CE}$ is the cross entropy l
 % %, and $\alpha = 0$ constitutes the standard cross entropy loss. 
 % In practice, we found ${\alpha = 2}$ produced the best performance, 
 % while ${\alpha > 3}$ resulted in unstable training.
-Once trained, 
 
 \todo{How do we get back from $f(\hat{X})$ to task?}
 \todo{Reconcile this with new notation from task section}

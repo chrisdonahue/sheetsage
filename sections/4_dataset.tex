@@ -1,13 +1,6 @@
 \section{Dataset overview}
 \label{sec:dataset}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=8.1cm]{figs/alignment.pdf}
-    \caption{We refine the crude user-specified alignments from \hooktheory{} by using beat and downbeat tracking. The first segment beat is mapped to the detected downbeat nearest to the user-specified starting timestamp, and remaining beats are mapped to subsequent detected beats.}
- \label{fig:alignment}
-\end{figure}
-
 We collect, align, and release a dataset of crowdsourced melody and chord annotations from \hooktheory{}.\footnote{\hooktheory{} annotations are published under a \href{https://creativecommons.org/licenses/by-nc-sa/3.0/}{CC BY-NC-SA 3.0} license, which our dataset inherits.}
 \hooktheory{} is a platform where users can easily create and share musical analyses of particular recordings hosted on YouTube, with Wikipedia-style editing. 
 In lieu of a precise technical definition, these melody annotations constitute a working definition of what musicians perceive as melody. 
@@ -32,6 +25,13 @@ Hence, we convert these annotations from their proprietary functional format to 
 One caveat is that the \hooktheory{} annotation interface uses a relative octave system, 
 so there is no way to reliably map the melody annotations to their ground truth octave.
 Thus, melody annotations in our dataset also contain only relative octave information.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=8.1cm]{figs/alignment.pdf}
+    \caption{We refine the crude user-specified alignments from \hooktheory{} by using beat and downbeat tracking. The first segment beat is mapped to the detected downbeat nearest to the user-specified starting timestamp, and remaining beats are mapped to subsequent detected beats.}
+ \label{fig:alignment}
+\end{figure}
 
 An additional obstacle specific to transcription is that the alignments between the audio and the annotations are crude---users provide only an approximate starting and ending timestamp of their annotated segment within the audio. 
 Because transcription methodology generally depends on precise alignments, we make an effort to refine the user-specified ones. 
