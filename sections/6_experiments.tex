@@ -3,15 +3,15 @@
 
 Here we describe our experimental protocol for training melody transcription models on the \hooktheory{} dataset. 
 The purpose of these experiments is two-fold. 
-First, we compare representations from different pre-trained models to handcrafted spectrogram baselines, to determine if these representations are helpful for the task of melody transcription.  
+First, we compare representations from different pre-trained models to handcrafted spectrogram features to determine if pre-training is helpful for the task of melody transcription. 
 Second, we compare our trained models holistically to other melody transcription baselines. 
 
 All transcription models are encoder-only Transformers with the default hyperparameters from~\cite{vaswani2017attention}, 
 except that we reduce the number of layers from $6$ to $4$ to allow models to be trained on GPUs with $12$GB of memory. 
 During training, we select random slices from the annotated segments of up to $96$ beats or $24$ seconds in length (whichever is shorter). 
-We train using our proposed octave-invariant loss function with $\alpha = 2$. 
-We perform early stopping based on max \fone{} score across thresholds on the validation set, using the best validation threshold during testing. 
-All models converge within $15$k steps which takes about a day on a single K40 GPU (features are separately precomputed). 
+We train using our proposed loss function with ${\alpha = 2}$. 
+We perform early stopping based on max \fone{} score across thresholds on the validation set, using the best validation threshold for testing. 
+All models converge within $15$k steps which takes about a day on a single K40 GPU. 
 
 \subsection{Comparing input features}
 \label{sec:exp1}
@@ -24,78 +24,93 @@ Features & $d$ & \fone{} \\
 \midrule
 \mel{} & $229$ & $0.514$ \\
 \mtthree{} & $512$ & $0.550$ \\
-\jukebox{} & $4800$ & $0.615$ \\
+\jukebox{} & $4800$ & $\bm{0.615}$ \\
+\midrule
 \mel{}, \mtthree{} & $741$ & $0.548$ \\
 \mel{}, \jukebox{} & $5029$ & $0.617$ \\
 \mtthree{}, \jukebox{} & $5312$ & $0.622$ \\
-\mel{}, \mtthree{}, \jukebox{} & $5541$ & $\mathbf{0.623}$ \\
+\mel{}, \mtthree{}, \jukebox{} & $5541$ & $\bm{0.623}$ \\
 \bottomrule
     \end{tabular}
-    \caption{\hooktheory{} test set performance of different combinations of representations (when passed as input to train a Transformer). Different representations do contain complimentary information---combining all three yields highest performance---but Jukebox on its own is competitive with all combinations.}
+    \caption{\hooktheory{} test set performance for Transformers trained with different features (top) and combinations (bottom). Features are complementary---combining all three yields highest performance---but marginally so compared to \jukebox{} alone.}
     \label{tab:hooktheory_test}
 \end{table}
-
-We compare representations from \jukebox~\cite{dhariwal2020jukebox} and \mtthree~\cite{gardner2021mt3} (see~\Cref{sec:representations}) to handcrafted spectrogram features which constitute the conventional inputs to existing transcription methods. 
-Specifically, we compare to log-amplitude Mel spectrograms using the formulation from~\cite{hawthorne2017onsets} ($f_k \approx 31$, $d = 229$). 
-Because features may contain complimentary information, we also experiment with all combinations of these three features. 
-Note that our beat pooling strategy makes it trivial to combine these features (by concatenation) despite their differing rates. 
-In~\Cref{tab:hooktheory_test}, we report \fone{} (as described in~\Cref{sec:eval}) on the \hooktheory{} test set for all input features.
-
-Overall, using representations from \jukebox{} as input features results in stronger melody transcription performance than using either representations from \mtthree{} or conventional handcrafted features. 
-Representations from either \mtthree{} or \jukebox{} outperform conventional handcrafted features, 
-implying that either pre-training strategy is helpful for melody transcription. 
-Note that these two pre-training approaches are compared holistically---these models differ on several axes (number of parameters, number of dimensions, pre-training data size and semantics, pre-training task), 
-and thus it is impossible to disentangle the individual contributions of these different factors without retraining the models. 
-%We also note that fine tuning these models would likely be more effective than using their representations as input features\cite{???}
-
-Qualitatively speaking, there is a noticeable difference in performance across the three different input features which correlates with quantitative performance (see~\cref{sound_examples}). 
-Using representations from \jukebox{} tends to result in fewer wrong notes than the other features, and substantially reduces the number of egregiously wrong notes (e.g.,~notes outside of the key signature). 
-These representations also improve accuracy of nuanced rhythmic patterns in comparison to the other two. 
-Moreover, using handcrafted features will often result in several onsets for a longer sustained melody note---in contrast, using representations from \jukebox{} appears to more consistently avoid repeat onsets for sustained notes. 
-
-Some representations also appear to complement one another to a degree---the strongest performance overall is obtained by combining all three features. 
-Combining \mtthree{} and \jukebox{} does improve performance over \jukebox{} alone, though only by a marginal amount. 
-Using both pre-trained models is impractical considering the marginal returns---it almost doubles the overall transcription runtime, and the models also have incompatible software dependencies. 
-Hence, in the remainder of this paper we focus on models trained on individual input features.
-%Combining handcrafted features w/ either pre-trained approach has little effect on performance. 
-
-\subsection{Comparison to melody transcription baselines}
 
 \begin{table}[t]
     \centering
     \begin{tabular}{lcc}
 \toprule
-Approach & \fone{} (Vox) & \fone{} (All) \\
+Approach & \fone{} (All) & \fone{} (Vocal)\\
 %Approach & \emph{Vox Only} & \emph{All} \\
 \midrule
-MT3 Zero-shot~\cite{gardner2021mt3} & $0.085$ & $0.133$ \\
-Melodia~\cite{salamon2014melody} + Segmentation & $0.268$ & $0.201$ \\
-DSP + HMM~\cite{ryynanen2006transcription,ryynanen2008automatic} & $0.381$ & $0.420$ \\
-Spleeter~\cite{hennequin2020spleeter} + Tony~\cite{mauch2015computer} & $0.462$ & $0.341$ \\
+MT3 Zero-shot~\cite{gardner2021mt3} & $0.133$ & $0.085$ \\
+Melodia~\cite{salamon2014melody} + Segmentation & $0.201$ & $0.268$ \\
+Spleeter~\cite{hennequin2020spleeter} + Tony~\cite{mauch2015computer} & $0.341$ & $\bm{0.462}$ \\
+DSP + HMM~\cite{ryynanen2008automatic} & $\bm{0.420}$ & $0.381$ \\
 \midrule
-\mel{} + Transformer & $0.621$ & $0.631$ \\
-\mtthree{} + Transformer & $0.659$ & $0.701$ \\
-\jukebox{} + Transformer & $\mathbf{0.786}$ & $\mathbf{0.744}$ \\
+\mel{} + Transformer & $0.631$ & $0.621$ \\
+\mtthree{} + Transformer & $0.701$ & $0.659$ \\
+\jukebox{} + Transformer & $\mathbf{0.744}$ & $\mathbf{0.786}$ \\
 \bottomrule
     \end{tabular}
-    \caption{Performance of different approaches on a small subset of \rwc~\cite{goto2002rwc,goto2003rwc,goto2004development}. The bottom three approaches were trained on the \hooktheory{} dataset as part of this work. We compute performance on both vocals and all melody instruments for fair comparison to baselines designed for vocal transcription.}
+    \caption{Performance of different approaches on a subset of \rwc~\cite{goto2002rwc,goto2003rwc,goto2004development}. The bottom three approaches were trained on the \hooktheory{} dataset. For fair comparison to vocal transcription baselines, we also separately report performance on the vocal portions of this dataset.}
     \label{tab:rwc_ryy}
 \end{table}
 
+We compare representations from \jukebox~\cite{dhariwal2020jukebox} and \mtthree~\cite{gardner2021mt3} (see~\Cref{sec:representations}) to handcrafted spectrogram features which constitute the conventional inputs to existing transcription methods. 
+Specifically, we compare to log-amplitude Mel spectrograms using the formulation from~\cite{hawthorne2017onsets} (${f_k \approx 31}$,~${d = 229}$). 
+Because features may contain complementary information, we also experiment with all combinations of these three features. 
+Note that our beat pooling strategy allows for trivial combination of these features (by concatenation) despite their differing rates. 
+In~\Cref{tab:hooktheory_test}, we report \fone{} (as described in~\Cref{sec:eval}) on the \hooktheory{} test set for all input features.
+
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=\linewidth]{figs/sheet_sage.pdf}
+    \caption{
+    % TODO: Clean this up. YouTube as input
+    Inference procedure for Sheet Sage, our proposed system which transcribes any Western music audio into lead sheets (scores which depict melody as notes and harmony as chord names). The blue, green, and yellow boxes respectively take audio, features, and symbolic music data as input. Green boxes are modules that we built as part of this work---both are Transformers~\cite{vaswani2017attention} trained on their respective tasks using audio features from Jukebox~\cite{dhariwal2020jukebox} and data from \hooktheory~\cite{hooktheory}.}
+    \label{fig:sheet_sage}
+\end{figure*}
+
+Overall, using representations from \jukebox{} as input features results in stronger melody transcription performance than using either representations from \mtthree{} or conventional handcrafted features. 
+Representations from either \mtthree{} or \jukebox{} outperform conventional handcrafted features, 
+implying that both pre-training strategies are helpful for melody transcription. 
+Note that these two pre-training approaches are compared holistically---these models differ on several axes 
+(number of parameters, 
+%number of dimensions, 
+pre-training data semantics, 
+pre-training task), 
+and thus it is impossible to disentangle the individual contributions of these different factors without retraining the models. 
+%We also note that fine tuning these models would likely be more effective than using their representations as input features\cite{???}
+
+Qualitatively speaking, there is a noticeable difference in performance across the three different input features which correlates with quantitative performance (see~\cref{sound_examples} for sound examples). 
+Using representations from \jukebox{} tends to result in fewer wrong notes than the other features, and substantially reduces the number of egregiously wrong notes (e.g.,~notes outside of the key signature). 
+Representations from \jukebox{} also appear aid the detection of more nuanced rhythmic patterns. 
+Moreover, using handcrafted features will often result in several false positive onsets during a longer sustained melody note---in contrast, using representations from \jukebox{} appears to mitigate this failure mode.
+
+Some representations also appear to complement one another to a degree---the strongest performance overall is obtained by combining all three features, though the improvement over \jukebox{} alone is marginal. 
+%Combining \mtthree{} and \jukebox{} does improve performance over \jukebox{} alone, though only by a marginal amount. 
+Using both pre-trained models is also impractical---it nearly doubles the overall runtime, and the models have incompatible software dependencies. 
+Hence, in the remainder of this paper we focus on models trained on individual input features.
+%Combining handcrafted features w/ either pre-trained approach has little effect on performance. 
+
+\subsection{Comparison to melody transcription baselines}
+
 We compare holistic performance of our proposed melody transcription approach to several baselines. 
-A handful of earlier works investigate melody transcription~\cite{ryynanen2008automatic,weil2009automatic,laaksonen2014automatic}, however all of these methods are sophisticated expert systems which would be extraordinarily difficult to reproduce, and none of these papers provide code. 
-Fortunately,~\cite{ryynanen2008automatic} provide melody transcriptions for a small subset of $10$ songs from RWC-MDB~\cite{goto2002rwc,goto2003rwc,goto2004development}, 
-which we adopt as an evaluation set for our holistic comparisons.
+We evaluate all methods on a small subset of $10$ songs from RWC-MDB~\cite{goto2002rwc,goto2003rwc,goto2004development}, 
+another dataset which includes melody transcription labels. 
+We chose this specific subset in an effort to compare to early DSP-based work on melody transcription---none of the early approaches~\cite{paiva2004auditory,paiva2005detection,ryynanen2008automatic,weil2009automatic} shared code, however~\cite{ryynanen2008automatic} shared melody transcriptions for this $10$-song subset.
 
 In addition to~\cite{ryynanen2008accompaniment}, we also compare to a baseline which applies a note segmentation heuristic~\cite{salamon2015midi} to a melody extraction algorithm~\cite{salamon2014melody}. 
-While \mtthree{} was not trained on melody transcription, it was trained on some tasks which involve vocal transcription---we examine zero-shot performance of this model as a baseline. 
+We also compare to \mtthree{} in a zero-shot fashion---this model was not trained on melody transcription but was trained on some tasks which incorporate vocal transcription. 
 Finally, because the vocals often carry the melody in popular music, we compare to a baseline of running the Tony~\cite{mauch2015computer} monophonic instrument transcription software on source-separated vocals isolated with Spleeter~\cite{hennequin2020spleeter}. 
 Because this approach will only work for vocals, we also separately report performance on a subset of our evaluation set where the vocals represent the melody. 
-It is worth noting that vocal isolation and transcription may be another promising path towards melody transcription, 
-as it is unclear the extent to which transcribing non-vocal melodies is essential for downstream applications.
+% It is worth noting that vocal isolation and transcription may be another promising path towards melody transcription, 
+% as it is unclear the extent to which transcribing non-vocal melodies is essential for downstream applications.
 Scores for all methods and baselines appear in~\Cref{tab:rwc_ryy}. 
 
-Overall, our approach to training Transformers with features from \jukebox{} significantly outperforms the strongest baseline in both the vocals only and unrestricted settings (\todo{p values}). 
-Qualitatively speaking, ... \todo{}.
-% Make sure to discuss both the good and the bad!
-Performance of our approach using different input representations is consistent with evaluation results on the \hooktheory{} test set. 
+Overall, our approach to training Transformers with features from \jukebox{} significantly outperforms the strongest baseline in both the vocals-only and unrestricted settings (${p < 0.01}$ using a two-sided t-test for paired samples). 
+Qualitatively speaking, the strongest baselines produce transcriptions where a reasonable proportion of the notes are the correct pitches, but they have poor rhythmic consistency with respect to the ground truth. 
+In contrast, our best model produces the correct pitches more often and with a higher degree of rhythmic consistency.
+% Performance of our approach using different input representations is consistent with evaluation results on the \hooktheory{} test set. 

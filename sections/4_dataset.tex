@@ -27,12 +27,11 @@ The vast majority of transcription work uses absolute labels, hence, we convert 
 However, because the annotation tool uses a relative octave format, there is no way to reliably map the melody annotations to the ground truth absolute octave. 
 The disregard of absolute octave information on this popular annotation platform implies that a crowd definition of melody does not include this information, reinforcing our earlier argument that it should be ignored for evaluation.
 
-
 \subsection{Alignment}
 
 Included in the release of this dataset is our effort to improve the alignments between the annotations and the audio. 
-By default, users provide only a coarse audio alignment, specifying the starting and ending timestamps of the annotated segment. 
-These alignments are overall poor---the starting/ending timestamps are often sloppy, and any tempo fluctuations within a segment will further jeopardize the alignment.
+By default, \hooktheory{} users provide only a coarse alignment, specifying the starting and ending timestamps of the annotated segment. 
+These alignments are overall crude---the starting and ending timestamps are often haphazard, and any tempo fluctuations within a segment will further jeopardize the alignment.
 
 We use the beat and downbeat detection algorithm from \madmom{}~\cite{bock2016joint,bock2016madmom} to refine these alignments. 
 Our approach aligns the first beat of the segment to the detected downbeat which is nearest to the user-specified starting timestamp. 

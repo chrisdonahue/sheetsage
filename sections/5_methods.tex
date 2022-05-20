@@ -2,7 +2,7 @@
 
 As in state-of-the-art methodology for other areas of transcription~\cite{hawthorne2021sequence}, 
 our approach to melody transcription involves training Transformer~\cite{vaswani2017attention} models to predict notes from audio features. 
-However, our approach differs in two distinct ways to address to the challenges unique to melody transcription.
+However, to address the unique challenges of melody transcription, our approach differs in two distinct ways. 
 First, because melody transcription involves operating on broad audio, we leverage representations from pre-trained models as drop-in replacements for the handcrafted spectrogram features used as inputs to other transcription systems. 
 Secondly, because alignments in our dataset are approximate, we propose a new strategy for training transcription models under such conditions.
 
@@ -10,36 +10,29 @@ Secondly, because alignments in our dataset are approximate, we propose a new st
 \label{sec:representations}
 
 We explore representations from two different pre-trained models for use as input features to transcription models.
-In~\cite{castellon2021calm}, Castellon~et~al.\ demonstrate that representations from \jukebox---a generative model of music audio pre-trained on $1$M songs---constitute general purpose features for MIR tasks, though notably they do not verify this claim for transcription. 
-We adopt their approach to extract features from \jukebox{} ($f_k \approx 345$ Hz, $d = 4800$), however we pull representations from a deeper layer of \jukebox{} ($54$ vs. $36$), which Castellon~et~al.\ found to be more effective for note-aware tasks like key estimation. 
+In~\cite{castellon2021calm}, Castellon~et~al.\ demonstrate that representations from \jukebox---a generative model of music audio pre-trained on $1$M songs---constitute general purpose features for many MIR tasks, though notably they do not experiment with transcription. 
+We adopt their approach to extract features from \jukebox{} (${f_k \approx 345}$~Hz,~${d = 4800}$), however we pull representations from a deeper layer of \jukebox{} ($54$~vs.~$36$), which Castellon~et~al.\ found to be more effective for key estimation (arguably, the most similar to transcription among the tasks they examined).
 
 We also explore features from \mtthree~\cite{gardner2021mt3}, an encoder-decoder transcription model pre-trained on a multitude of different transcription tasks (though not melody transcription). 
-For this model, we use the output of the encoder ($f_k = 125$ Hz, $d = 512$) as our feature representation. 
-The two models have different trade-offs with respect to our setting: \jukebox{} was trained on audio similar to that found in our dataset but explores a different task (generative modeling), whereas \mtthree{} is pre-trained on transcription but for different audio domains. 
+For this model, we use the encoder's outputs as features (${f_k = 125}$~Hz,~${d = 512}$). 
+The two models have different trade-offs with respect to our setting: \jukebox{} was pre-trained on audio similar to that found in our dataset but in a generative fashion, 
+whereas \mtthree{} is pre-trained on transcription but for different audio domains. 
 
 \subsection{Beat pooling}
 \label{sec:beatpool}
 
-\todo{Copied from intro. Need to integrate}
-\john{Again too much detail} We also propose a new strategy for training transcription models in the presence of imprecise alignments. 
-User annotations from \hooktheory{} have coarse alignments with the audio---users only provide the starting and ending timestamp of a segment. 
-We use beat tracking to refine these alignments, but they are still not as precise as the flawless alignments found in other transcription datasets (e.g.,~piano transcription datasets captured using a Disklavier) which existing methods rely on. 
-To address this, our approach involves aggregating input features (evenly spaced in \emph{time}) into proxy features which represent individual sixteenth notes (evenly spaced in \emph{beats}), 
-which effectively smooths over alignment jitter. 
-This approach has a secondary benefit of trivializing the process of converting output from the transcription model into a human-readable score format. %which is simpler for musicians to interpret compared to MIDI.
+Here we outline our proposed approach for training models in the presence of imprecise alignments. 
+Existing transcription methods were largely designed for domains where perfect alignments are readily available, e.g.,~a Disklavier yields piano transcription data with perfect alignment. 
+Despite our best efforts, the refined alignments in \hooktheory{} are still imprecise when compared to those used to develop existing methods. 
+In initial experiments, we found that naively adopting existing methods (specifically, \cite{hawthorne2017onsets,hawthorne2021sequence}) resulted in poor performance on our dataset and task.\footnote{Additionally, initial experiments on training models with an alignment-free approach~\cite{graves2006connectionist} also resulted in poor performance.} 
+Hence, we designed a new approach to sidestep small alignment deviations.
 
-% Alignment
-Despite our best efforts, the refined alignments in \hooktheory{} are still imprecise when compared to those found in datasets used by piano transcription methods. 
-In initial experiments, we found that naively adopting methods designed for piano transcription~\cite{hawthorne2017onsets,hawthorne2021sequence} resulted in poor performance on our dataset and task.\footnote{Additionally, training models with an alignment-free approach~\cite{graves2006connectionist} also resulted in poor performance.} 
-Hence, we designed a new approach for training models in the presence of approximate alignments. 
-
-Our approach works by averaging all of the feature vectors (equally spaced in time) that are nearest to a particular sixteenth note into a single vector which acts as a proxy feature for that sixteenth note. 
+Our approach works by averaging all of the feature vectors that are nearest to a particular sixteenth note into a single vector which acts as a proxy feature for that sixteenth note. 
 For example, if a recording has a tempo of $120$ beats per minute, a sixteenth note represents $125$ ms of time, which would mean averaging across around $43$ feature vectors from \jukebox{} ($f_k \approx 345$ Hz). 
-The intuition is that, while our beat tracked alignments may not be able to identify precisely where the ground truth onset occurs in these $43$ frames, we can be reasonably confident that it occurs \emph{somewhere} within them, and thus that information will be incorporated into the feature vector.
+The intuition is that, while our refined alignments may not be precise enough to identify exactly which of those $43$ frames contains an onset, we can be reasonably confident that it occurs \emph{somewhere} within them, and thus that information will be averaged into the feature vector.
 We refer to this strategy as \emph{beat pooling}.
 
-\todo{John, I could use your eyeballs / refinement on this. One question is whether or not the 1-based indexing for beats makes this super confusing. Feel free to ask for clarification on anything}
-Formally, for a segment of length $T$ seconds and $B$ beats, and an alignment function $a: [0, T] \mapsto [1, B]$, beat pooling yields a matrix $\hat{\bm{X}} = \hat{\bm{x}}_1, \ldots, \hat{\bm{x}}_{4B}$, where $\hat{\bm{x}}_i \in \mathbb{R}^d$, and
+Formally, given a segment of length $B$ beats or $T$ seconds and an alignment function ${a: [1, B] \mapsto [0, T]}$, beat pooling yields ${\hat{\bm{X}} = \hat{\bm{x}}_1, \ldots, \hat{\bm{x}}_{4B}}$, where ${\hat{\bm{x}}_i \in \mathbb{R}^d}$, and
 \begin{gather*}
 \bm{\hat{x}}_i = \frac{1}{r_i - l_i} \sum_{j = l_i}^{r_i - 1} \bm{x}_j, \text{where} \\
 l_i = \left\lfloor a \left(\frac{2i + 5}{8} \right) \cdot f_k \right\rfloor, \text{and}~
@@ -48,16 +41,21 @@ r_i = \left\lfloor a \left(\frac{2i + 7}{8} \right) \cdot f_k \right\rfloor.
 
 \subsection{Training}
 
-The output of our beat pooling approach ($\hat{\bm{X}}$) represents a sequence of features where a timestep is a sixteenth note, and constitutes the input to the transcription model we will train. 
-Analogously, we also construct a sequence containing labels for each sixteenth note $\hat{\bm{y}} \in \mathbb{V}^{4B}$, where 
-$\mathbb{V} = \{\varnothing, \text{A0}, \ldots, \text{C8}\}$.\footnote{This requires quantizing labels to the nearest sixteenth note. In practice, less than $1\%$ of notes are affected by this quantization, and $99\%$ of segments contain no affected notes.} 
-This sequence indicates for each sixteenth note whether or not an onset occurs ($\varnothing$ if not, note name if so). 
-Then, we can formulate melody transcription as an aligned sequence-to-sequence modeling problem and train models of the form $f_{\theta} : \mathbb{R}^{4B \times d} \mapsto \mathbb{R}^{4B \times |\mathbb{V}|}$ using a standard cross entropy loss. 
+The output $\hat{\bm{X}}$ from our beat pooling approach represents a sequence of features where a timestep is a sixteenth note, and constitutes the input to the transcription model we will train. 
+Analogously, we also construct a sequence containing labels for each sixteenth note ${\hat{\bm{y}} \in \mathbb{V}^{4B}}$, where 
+${\mathbb{V} = \{\varnothing, \text{A0}, \ldots, \text{C8}\}}$.\footnote{This requires quantizing labels to the nearest sixteenth note. In practice, less than $1\%$ of notes are affected by this quantization.
+%, and $99\%$ of melodies contain no affected notes.
+} 
+This sequence indicates whether or not an onset occurs at each sixteenth note ($\varnothing$ if not, note name if so). 
+Then, we can formulate melody transcription as an aligned sequence-to-sequence modeling problem and train models of the form ${f_{\theta} : \mathbb{R}^{4B \times d} \mapsto \mathbb{R}^{4B \times |\mathbb{V}|}}$ using a standard cross entropy loss. 
 
-An additional challenge is that octave information is often incorrect in our dataset (see \Cref{sec:dataset}). 
+An additional challenge is that absolute octave information is absent from our dataset (see \Cref{sec:dataset}). 
 Hence, we construct an octave-tolerant loss function by octave shifting the labels and backpropagating on whichever shift minimizes the loss:
 \begin{equation*}
-\operatorname*{min}_{\sigma \in \{-\alpha, \ldots, \alpha\}} \sum_{i=1}^{4B} \text{CrossEntropy}(f_{\theta}(\bm{\hat{X}})_i, \text{OctaveShift}(\hat{\bm{y}}_i, \sigma)). 
+\operatorname*{min}_{\sigma \in \{-\alpha, \ldots, \alpha\}} \sum_{i=1}^{4B} \text{CE}(\text{SM}(f_{\theta}(\bm{\hat{X}})_i), \text{OctaveShift}(\hat{\bm{y}}_i, \sigma)), 
 \end{equation*}
-Here, $\alpha$ is an integer determining the number of possible shifts, and $\alpha = 0$ constitutes the standard cross entropy loss. 
-In practice, we found $\alpha = 2$ produced the best results, while $\alpha > 3$ resulted in unstable training.
+where $\text{SM}$ is soft max and $\text{CE}$ is cross entropy. 
+An additional hyperparameter $\alpha$ determines the number of possible shifts (${\alpha = 0}$ constitutes standard cross entropy). 
+%, and $\alpha = 0$ constitutes the standard cross entropy loss. 
+In practice, we found ${\alpha = 2}$ produced the best performance, 
+while ${\alpha > 3}$ resulted in unstable training.

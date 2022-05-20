@@ -63,6 +63,15 @@ up to $77$\%
 relative to the strongest available baseline. 
 We also release all code and models needed to precisely reproduce all of our evaluations,\footnote{Released upon publication} facilitating comparison in future work even as some audio inevitably disappears from YouTube.
 
+We also propose a new method for training transcription models in the presence of imprecise audio-to-score alignments. 
+% Existing transcription methods were largely designed for domains where perfect alignments are readily available, e.g.,~a Disklavier yields piano transcription data with perfect alignment. 
+% The alignments in \hooktheory{} are not precise enough to facilitate effective transcription when adopting these methods off-the-shelf. 
+% To address this, we propose a new method which  
+Our approach 
+involves aggregating input features (evenly spaced in \emph{time}) into proxy features representative of individual sixteenth notes (evenly spaced in \emph{beats}), 
+thereby smoothing over alignment jitter. 
+We train models on these beat-based features, 
+which has a secondary benefit of enabling simple conversion from raw model outputs to human-readable scores (\Cref{fig:fig1}).
 
 %\textbf{Contributions.} 
 A summary of our primary \textbf{contributions} is as follows:

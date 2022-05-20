@@ -21,20 +21,22 @@ First, accuracy of onsets has been found to be far more important to human perce
 Second, in our dataset (which constitutes a crowdsourced definition of melody), a heuristically-determined offset is identical to the ground truth offset for $89\%$ of notes.\footnote{The heuristic we adopt sets the offset of one note equal to the onset of the next, i.e., it assumes the melody is legato.}
 Finally, we argue intuitively that onsets and pitches suffice for both recognizing and reading melodies---see~\Cref{fig:heuristic_offsets} for an example. 
 
-Formally, a music waveform of length~$T$ seconds sampled at rate~$f_s$ is a vector~$\bm{a} \in \mathbb{R}^{Tf_s}$. The task of melody transcription is to convert $\bm{a}$ into a list of its melody notes~$\bm{y}$, where a note~$y_i$ is a pair of onset time~$t_i$ and musical pitch~$n_i$. Hence, 
+Formally, a music waveform of length~$T$ seconds sampled at rate~$f_s$ is a vector~${\bm{a} \in \mathbb{R}^{Tf_s}}$. 
+The task of melody transcription is to convert $\bm{a}$ into a list of its melody notes~$\bm{y}$, 
+where a note~$y_i$ is a pair of onset time~$t_i$ and musical pitch~$n_i$. 
+Hence, 
 \begin{gather*}
     %\bm{a} &= a_1, \ldots, a_S, \text{where}~S = Tf_s \\
     \bm{y} = y_1, \ldots, y_N, \\
     \text{where}~y_i = (t_i, n_i), t_i \leq T, \text{and}~n_i \in \{\text{A0}, \ldots, \text{C8}\}.
 \end{gather*}
-To handle the high dimensionality of audio, transcription algorithms typically extract features $\bm{X}$ (a matrix) from audio, which are sampled at $f_k \ll f_s$:
+To handle the high dimensionality of audio, transcription algorithms typically extract features $\bm{X}$ (a matrix) from audio, which are sampled at ${f_k \ll f_s}$:
 \begin{gather*}
     \text{Extract}(\bm{a}) = \bm{X} = \bm{x}_1, \ldots, \bm{x}_M, \\ 
     \text{where}~M = Tf_k, \text{and}~\bm{x}_i \in \mathbb{R}^d.
 \end{gather*}
 Hence, in practice, our goal is to build a transcription method 
-% $f$ which maps features $\bm{X}$ to notes $\bm{y}$. 
-$f : \bm{X} \mapsto \bm{y}$.
+${f : \bm{X} \mapsto \bm{y}}$.
 
 \subsection{Evaluation}
 \label{sec:eval}
