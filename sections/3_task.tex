@@ -14,33 +14,49 @@ We argue that onset prediction suffices for producing melody transcriptions that
 % \john{You may want to lead here with two definitions: the definition of \emph{melody} (implicitly defined by labels) and the definition of \emph{melody transcription} (in contrast to melody extraction)}
 % CHRIS: Added a footnote. Don't want to say too much more and risk getting lost in the weeds
 
-\john{Consider being more precise up front about what a melody is. Two things two emphasize: what is the type \emph{type signature} of a melody (which you do get at below with the $\bm{y}$ object, and that the \emph{value} of this object is a label given by a human annotator (implicitly defined by data; right now that point is made in \cref{sec:dataset})}
-We examine melody transcription, defined here as the task of converting music audio into a \emph{monophonic} (non-overlapping) sequence of \emph{notes} which constitute its melody.\footnote{Melody is tricky to precisely define---here we adopt an implicit definition based on crowdsourced melody annotations.} 
-A note canonically consists of an onset time, a musical pitch, and an offset time, though in this work  
-%(and as in~\cite{laaksonen2014automatic}) 
-we disregard offsets for several reasons. 
-First, accuracy of onsets has been found to be far more important to human perception of transcription quality than accuracy of offsets~\cite{ycart2020investigating}. 
-Second, in our dataset (which constitutes a crowdsourced definition of melody), a heuristically-determined offset is identical to the ground truth offset for $89\%$ of notes.\footnote{The heuristic we adopt sets the offset of one note equal to the onset of the next, i.e., it assumes the melody is legato.}
-Finally, we argue intuitively that onsets and pitches suffice for both recognizing and reading melodies---see~\Cref{fig:heuristic_offsets} for an example. 
+We define melody transcription as the task of converting a musical audio recording into a \emph{monophonic} (non-overlapping) sequence of \emph{notes} which constitute its melody.\footnote{Melody is difficult to precisely define---here we adopt an implicit definition based on crowdsourced melody annotations.} Given a musical audio recording $\bm{a}$ of length $T$, our task is to 
+%generate 
+uncover 
+the sequence of $N$ notes~${\bm{y} = y_1,\dots,y_N}$ that constitute the melody of $\bm{a}$.  For many MIR tasks, including transcription, it can be convenient to work with \emph{features} of audio ${\bm{X} = \texttt{Featurize}(\bm{a})}$, rather than the raw waveform $\bm{a}$. 
+Hence, a melody transcription algorithm is a procedure that maps featurized audio to notes ${\bm{y} = \texttt{Transcribe}(\bm{X})}$. 
 
-Formally, a music waveform of length~$T$ seconds sampled at rate~$f_s$ is a vector~${\bm{a} \in \mathbb{R}^{Tf_s}}$. 
-\john{I think definition of $\bm{y}$ is not quite right: your goal isn't to emit timestamps, it's lead-sheets right?}
-The task of melody transcription is to convert $\bm{a}$ into a list of its melody notes~$\bm{y}$, 
-where a note~$y_i$ is a pair of onset time~$t_i$ and musical pitch~$n_i$. 
-Hence, 
-\begin{gather*}
-    %\bm{a} &= a_1, \ldots, a_S, \text{where}~S = Tf_s \\
-    \bm{y} = y_1, \ldots, y_N, \\
-    \text{where}~y_i = (t_i, n_i), t_i \leq T, \text{and}~n_i \in \{\text{A0}, \ldots, \text{C8}\}.
-\end{gather*}
-\john{Not sure high-dimensionality is the right motivation here}
-To handle the high dimensionality of audio, transcription algorithms typically extract features $\bm{X}$ (a matrix) from audio, which are sampled at ${f_k \ll f_s}$:
-\begin{gather*}
-    \text{Extract}(\bm{a}) = \bm{X} = \bm{x}_1, \ldots, \bm{x}_M, \\ 
-    \text{where}~M = Tf_k, \text{and}~\bm{x}_i \in \mathbb{R}^d.
-\end{gather*}
-Hence, in practice, our goal is to build a transcription method 
-${f : \bm{X} \mapsto \bm{y}}$.
+Canonically, a musical note consists of an onset time, a musical pitch, and an offset time. 
+However, in this work  
+%(and as in~\cite{laaksonen2014automatic}) 
+we disregard offsets and define a note to be a pair ${y_i = (t_i,n_i)}$ consisting of an onset time~${t_i \in [0,T)}$ and (discrete) musical pitch~${n_i \in \{\text{A0},\dots,\text{C8}\}}$.
+We ignore offsets for three reasons. 
+First, accuracy of onsets has been found to be far more important to human perception of transcription quality than accuracy of offsets~\cite{ycart2020investigating}. 
+Second, in our dataset,
+%(which constitutes a crowdsourced definition of melody) \john{already said this in footnote; let's not belabor the point}
+a heuristically-determined offset is identical to the ground truth offset for $89\%$ of notes.\footnote{The heuristic we adopt sets the offset of one note equal to the onset of the next, i.e., it assumes the melody is legato.}
+Finally, we argue intuitively that onsets and pitches suffice for both recognizing and reading melodies---see~\Cref{fig:heuristic_offsets} for an example.
+
+Formally, a musical audio recording of length~$T$ seconds sampled at rate~$f_s$ is a vector~${\bm{a} \in \mathbb{R}^{Tf_s}}$.
+A featurization of audio ${\bm{X} \in \mathbb{R}^{Tf_k \times d}}$ is a matrix of $d$-dimensional features of audio, sampled uniformly at some rate ${f_k \ll f_s}$ (for example, $\bm{X}$ could be a spectrogram).
+Intuitively, the function $\texttt{Featurize} : \mathbb{R}^{Tf_s} \to \mathbb{R}^{Tf_k \times d}$ defined by $\bm{a} \mapsto \bm{X}$ maps 
+%scalar audio samples 
+raw audio 
+to a more useful feature representation.
+A melody of length $N$ is an (ordered) sequence of notes 
+% CHRIS: Should this be raised to the N? JOHN: nope, \bm{y} \in \mathcal{N}^N but y_1,\dots,y_N \in \mathcal{N}
+$\bm{y} = y_1,\dots,y_N \in \mathbb{Y}$, 
+consisting of onset-pitch pairs $y_i = (t_i,n_i)$ where $t_i < t_j$ if $i < j$. Given a featurization $\bm{X}$, the melody transcription task is to construct a transcription algorithm $\texttt{Transcribe} : \mathbb{R}^{Tf_k \times d} \to \mathbb{Y}^N$ such that ${\bm{X} \mapsto \bm{y}}$.
+
+
+%Hence, 
+%\begin{gather*}
+%    %\bm{a} &= a_1, \ldots, a_S, \text{where}~S %= Tf_s \\
+%    \bm{y} = y_1, \ldots, y_N, \\
+%    \text{where}~y_i = (t_i, n_i), t_i \leq T, %\text{and}~n_i \in \{\text{A0}, \ldots, %\text{C8}\}.
+%\end{gather*}
+%\todo{Remove high-dimensionality quip, replace with specifics (spectrograms)... for MIR tasks, often better to work with features rather than raw audio...}
+%\john{Not sure high-dimensionality is the right motivation here}
+
+%To handle the high dimensionality of audio, transcription algorithms typically extract features $\bm{X}$ (a matrix) from audio, which are sampled at ${f_k \ll f_s}$:
+%\begin{gather*}
+%    \text{Extract}(\bm{a}) = \bm{X} = \bm{x}_1, %\ldots, \bm{x}_M, \\ 
+%    \text{where}~M = Tf_k, \text{and}~\bm{x}_i %\in \mathbb{R}^d.
+%\end{gather*}
 
 \subsection{Evaluation}
 \label{sec:eval}
@@ -50,21 +66,22 @@ ${f : \bm{X} \mapsto \bm{y}}$.
 % \john{Leading with an MIR implementation of F1 is a little confusing, especially since it is not typically applied to this task (you are defining the task, right?)}
 % CHRIS: Reworked to clarify that this is a departure from melody extraction
 
-\john{Maybe lead with why we need to invent our own metrics?}
-To evaluate a melody transcription method $f$, 
-we adopt a standard metric commonly used for evaluation in other music transcription tasks, namely,  ``onset-only notewise F-measure''~\cite{ycart2020investigating}. 
-This metric scores an estimated transcript $f(\bm{X})$ by first matching its note onsets to those in the reference $\bm{y}$ with $50$ms of tolerance, and then computes a standard \fone{} score where an estimated note is treated as correct if it is the same pitch as its matched reference note. 
+%\john{Maybe lead with why we need to invent our own metrics?}
+To evaluate a melody transcription method $\texttt{Transcribe}$, 
+we adopt a standard metric commonly used for evaluation in polyphonic music transcription tasks, namely,  ``onset-only notewise F-measure''~\cite{ycart2020investigating}. 
+This metric scores an estimated transcript $\texttt{Transcribe}(\bm{X})$ by first matching its note onsets to those in the reference $\bm{y}$ with $50$ms of tolerance, and then computes a standard \fone{} score where an estimated note is treated as correct if it is the same pitch as its matched reference note. 
 % \begin{equation*}
 %      \text{\fone} : f(\bm{X}), y \mapsto [0, 1].
 % \end{equation*}
 This ``notewise'' metric represents a departure from the ``frame-based'' metrics typically used to evaluate melody extraction algorithms---Ycart~et~al.\ demonstrate in~\cite{ycart2020investigating} that this particular notewise metric correlates more strongly with human perception of transcription quality than any other common metric, including frame-based ones.
 
-We make a small modification to this notewise metric to make it more appropriate for the melody transcription setting: an estimate $f(\bm{X})$ may receive full credit if it is off by a fixed octave shift but otherwise identical to the reference. 
+\todo{Condense this...} 
+We make a small modification to this notewise metric to make it more appropriate for the melody transcription setting: an estimate $\texttt{Transcribe}(\bm{X})$ may receive full credit if it is off by a fixed octave shift but otherwise identical to the reference. 
 In downstream settings, melody transcriptions are likely to be used in an octave-invariant fashion, e.g.,~they may be shifted to read more comfortably in treble clef, or performed by singers with different vocal ranges. 
 Previous evaluations for melody extraction gave full credit for estimates with the right pitch class, ignoring octaves entirely (see~\cite{poliner2007melody} for a summary). 
 However we argue that this is overly permissive, as \emph{relative} octave information preserves intervals between notes, and thus may be critical to the identity of a melody. 
 Hence, we modify the evaluation criteria by simply taking the highest score over octave shifted versions of the estimate:
 \begin{equation*}
-    \max_{i \in \mathbb{Z}} \text{\fone}(\text{OctaveShift}(f(\bm{X}), i), \mathbf{y}).
+    \max_{i \in \mathbb{Z}} \texttt{\fone}(\texttt{OctaveShift}(\texttt{Transcribe}(\bm{X}), i), \mathbf{y}).
 \end{equation*}
 Henceforth, we refer to this octave-invariant metric as \fone. 

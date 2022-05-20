@@ -60,7 +60,7 @@ DSP + HMM~\cite{ryynanen2008automatic} & $\bm{0.420}$ & $0.381$ \\
 We compare representations from \jukebox~\cite{dhariwal2020jukebox} and \mtthree~\cite{gardner2021mt3} (see~\Cref{sec:representations}) to handcrafted spectrogram features which constitute the conventional inputs to existing transcription methods. 
 Specifically, we compare to log-amplitude Mel spectrograms using the formulation from~\cite{hawthorne2017onsets} (${f_k \approx 31}$,~${d = 229}$). 
 Because features may contain complementary information, we also experiment with all combinations of these three features. 
-Note that our beat pooling strategy allows for trivial combination of these features (by concatenation) despite their differing rates. 
+Note that our \beatpooling{} strategy allows for trivial combination of these features (by concatenation) despite their differing rates. 
 In~\Cref{tab:hooktheory_test}, we report \fone{} (as described in~\Cref{sec:eval}) on the \hooktheory{} test set for all input features.
 
 
@@ -94,6 +94,8 @@ Some representations also appear to complement one another to a degree---the str
 Using both pre-trained models is also impractical---it nearly doubles the overall runtime, and the models have incompatible software dependencies. 
 Hence, in the remainder of this paper we focus on models trained on individual input features.
 %Combining handcrafted features w/ either pre-trained approach has little effect on performance. 
+
+\todo{We also release all code and data files needed to precisely reproduce all of our evaluations,\footnote{Released upon publication} facilitating comparison in future work even as some audio inevitably disappears from YouTube.}
 
 \subsection{Comparison to melody transcription baselines}
 

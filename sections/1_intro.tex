@@ -54,41 +54,28 @@ up to $27$\% (relative).
 % CHRIS: This was written conservatively because but could potentially be broadened... this may be the first time transfer learning has ever been used for transcription or any time-varying MIR task (though MT3 may be one instance)
 To the best of our knowledge, this is the first evidence that representations learned through generative modeling are useful for time-varying MIR tasks like transcription, as opposed to the song-level tasks (e.g.~tagging, genre detection) examined in~\cite{castellon2021calm}.
 
-\todo{First paragraph all about data and overcoming alignment challenges, second paragraph all about modeling wins}
-
-%\john{Weak topic sentence. And this paragraph is kind of all over the place}
-%To support this and future work on melody transcription, 
 To address the data deficit for melody transcription, 
 we release a new dataset containing $50$ hours of melody annotations 
 %collected 
 derived 
 from \hooktheory.\footnote{\url{https://www.hooktheory.com/theorytab}} 
-This dataset contains annotations for a broad audio: 
+This dataset contains crowdsourced annotations for broad audio: 
 $13$k unique recordings representing a wide variety of instruments and genres. 
-% This dataset contains $50$ hours of annotated melodies and harmonies (as chord names) aligned with audio recordings available on YouTube. 
-%to aid chord recognition research. 
-By training Transformer models on this new dataset using representations from Jukebox as input, we are able to improve overall performance on melody transcription by 
+However, the user-specified \emph{alignments} between the audio and melody annotations in this dataset are crude, imposing an obstacle to transcription. 
+To overcome this, we refine the user-specified alignments using beat detection, so they are approximately accurate at the beat level. 
+Additionally, we propose an approach which \emph{resamples} audio features (evenly spaced in time) to be representative of individual sixteenth notes (evenly spaced in beats), 
+thereby smoothing over remaining alignment jitter. 
+We train models directly on these beat-wise features, 
+which has a secondary benefit of enabling simple conversion from raw model outputs to human-readable scores (\Cref{fig:fig1}).
+
+By training Transformer models on this new dataset using representations from Jukebox as input, we are able to improve holistic performance on melody transcription by 
 % 0.786 vs 0.462 = 70%
 % 0.744 vs 0.420 = 77%
 up to $77$\% 
 relative to the strongest available baseline. 
 % We also release all code and models needed to precisely reproduce all of our evaluations,\footnote{Released upon publication} facilitating comparison in future work even as some audio inevitably disappears from YouTube.
-
-%\john{Maybe too many details? Content of this and previous paragraph might benefit from reorg/streamlining}
-% CHRIS: I agree that this information feels a little verbose for an intoduction, but I think it's necessary to contextualize Figure 1. Another option is to obscure the beat pooling from Figure 1, but I think Figure 1 would then be too vague :/. Tricky situation
-Because this new dataset has imprecise \emph{alignments} between the audio and melody annotations,
-we also propose a new method for training transcription models in the presence of such alignments.
-%imprecise audio-to-score alignments. 
-% Existing transcription methods were largely designed for domains where perfect alignments are readily available, e.g.,~a Disklavier yields piano transcription data with perfect alignment. 
-% The alignments in \hooktheory{} are not precise enough to facilitate effective transcription when adopting these methods off-the-shelf. 
-% To address this, we propose a new method which  
-Our approach 
-involves aggregating input features (evenly spaced in time) into proxy features representative of individual sixteenth notes (evenly spaced in beats), 
-thereby smoothing over alignment jitter. 
-We train models on these beat-based features, 
-which has a secondary benefit of enabling simple conversion from raw model outputs to human-readable scores (\Cref{fig:fig1}).
-
 %\textbf{Contributions.} 
+
 A summary of our primary \textbf{contributions} is as follows:
 \begin{itemize}
     \item We show that representations from generative models can improve melody transcription (\Cref{sec:experiments}).
