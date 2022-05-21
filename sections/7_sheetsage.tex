@@ -25,6 +25,6 @@ Subjectively speaking, \sheetsage{} often produces high-quality lead sheets, esp
 Performance is fairly robust across genres and instruments, even those which are less represented in the training data---one user reported particularly strong success on Bollywood music. 
 However, the system occasionally struggles, especially with quieter vocals, layered harmonies, unusual time signatures, or poor intonation. 
 % Additionally, because the transcription models take estimated beats as an input, results can suffer when these estimates are poor. 
-\sheetsage{} is also limited by its current system design: it cannot handle time or key signature changes.
-%only handle $3$/$4$ or $4$/$4$ time signatures and cannot handle key or time signature changes. 
-Overcoming this limitation would involve either (1)~research into downbeat detection and key estimation which supports time / key signature changes, or (2)~user intervention to provide the correct information.
+\sheetsage{} is also limited to fixed time and key signatures due to limitations of its downbeat detection and key estimation modules.
+% %only handle $3$/$4$ or $4$/$4$ time signatures and cannot handle key or time signature changes. 
+% Overcoming this limitation would involve either (1)~research into downbeat detection and key estimation which supports time / key signature changes, or (2)~user intervention to provide the correct information.

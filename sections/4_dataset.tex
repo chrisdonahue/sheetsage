@@ -1,12 +1,16 @@
 \section{Dataset overview}
 \label{sec:dataset}
 
-We collect, align, and release a dataset of crowdsourced melody and chord annotations from \hooktheory{}.\footnote{\hooktheory{} annotations are published under a \href{https://creativecommons.org/licenses/by-nc-sa/3.0/}{CC BY-NC-SA 3.0} license, which our dataset inherits.}
+We 
+%collect, align, and release 
+derive 
+a suitable dataset for melody transcription using crowdsourced annotations from \hooktheory{}.\footnote{\hooktheory{} annotations are published under a \href{https://creativecommons.org/licenses/by-nc-sa/3.0/}{CC BY-NC-SA 3.0} license, which our dataset inherits.}
 \hooktheory{} is a platform where users can easily create and share musical analyses of particular recordings hosted on YouTube, with Wikipedia-style editing. 
 In lieu of a precise technical definition, these melody annotations constitute a working definition of what musicians perceive as melody. 
 The dataset contains annotations for $22$k segments of $13$k unique recordings totaling $50$ hours of labeled audio. 
 The audio content covers a wide range of genres---there is a skew towards pop and rock but many other genres are represented including EDM, jazz, and even classical. 
-We create an artist-stratified $8$:$1$:$1$ split of the dataset for training, validation, and testing.
+We create an artist-stratified $8$:$1$:$1$ split of the dataset for training, validation, and testing. 
+The dataset also includes chord annotations which may facilitate chord recognition research.
 
 % Note that the melody annotations originate from a software tool which uses a ``functional'' annotation format, i.e.,~one which uses scale degrees and roman numerals relative to a key signature instead of absolute notes and chord names. 
 % The vast majority of transcription work uses absolute labels, hence, we convert these functional labels to absolute ones. 
@@ -19,12 +23,12 @@ harmonization~\cite{chen2021surprisenet,yeh2021automatic},
 chord recognition~\cite{jiang2019mirex}, and 
 representation learning~\cite{jiang2020transformer}, 
 making use of this platform for MIR is currently cumbersome. 
-One obstacle is that annotations are created via a ``functional'' interface, i.e.,~one which uses scale degrees and roman numerals relative to a key signature instead of absolute notes and chord names. 
+One obstacle is that the raw annotations are created via a ``functional'' interface, i.e.,~one which uses scale degrees and roman numerals relative to a key signature instead of absolute notes and chord names. 
 In contrast, most MIR research favors absolute labels.
-Hence, we convert these annotations from their proprietary functional format to simple (JSON-based) absolute format. 
+Hence, we convert these annotations from their proprietary functional format to a simple (JSON-based) absolute format. 
 One caveat is that the \hooktheory{} annotation interface uses a relative octave system, 
-so there is no way to reliably map the melody annotations to their ground truth octave.
-Thus, melody annotations in our dataset also contain only relative octave information.
+so there is no way to reliably map the annotations to their ground truth octave.
+Thus, melodies in our dataset also contain only relative octave information.
 
 \begin{figure}
     \centering
@@ -38,7 +42,8 @@ Because transcription methodology generally depends on precise alignments, we ma
 To this end, we make use of the beat and downbeat detection algorithm from \madmom{}~\cite{bock2016joint,bock2016madmom}. 
 Specifically, our approach aligns the first beat of the segment to the detected downbeat which is nearest to the user-specified starting timestamp. 
 Then, we align the remaining beats to the subsequent detected beats (see~\Cref{fig:alignment} for an example). 
-This provides a beat-level alignment for the entire segment, and we use linear interpolation for fractional beat subdivisions. 
+This provides a beat-level alignment for the entire segment, which we linear interpolate to fractional subdivisions of the beat. 
+%Formally, we construct an alignment function $\texttt{Align} : [0,S) \to [0,T)$ that assigns each of $S$ beats in the metrical structure to a time $t \in [0,T)$ in the audio.
 In an informal listening test, this produces an improved alignment in around $95\%$ of cases, where the primary failure mode in the remaining $5\%$ occurs when \madmom{} detects the wrong beat as the downbeat. 
 We use these refined alignments for training and evaluation and release them alongside the dataset.
 %, accepting the occasional glitched alignments as noise in the dataset.

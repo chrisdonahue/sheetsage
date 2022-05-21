@@ -1,6 +1,6 @@
 \section{Methods}
 
-As in state-of-the-art methodology for other areas of transcription~\cite{hawthorne2021sequence}, 
+Similar to state-of-the-art methodology in other areas of transcription~\cite{hawthorne2021sequence}, 
 our approach to melody transcription involves training Transformer~\cite{vaswani2017attention} models to predict notes from audio features. 
 However, to address the unique challenges of melody transcription, our approach differs in two distinct ways. 
 First, because melody transcription involves operating on broad audio, we leverage representations from pre-trained models as drop-in replacements for the handcrafted spectrogram features used as inputs to other transcription systems. 
@@ -10,8 +10,8 @@ Secondly, because alignments in our dataset are approximate, we propose a new st
 \label{sec:representations}
 
 We explore representations from two different pre-trained models for use as input features to transcription models.
-In~\cite{castellon2021calm}, Castellon~et~al.\ demonstrate that representations from \jukebox---a generative model of music audio pre-trained on $1$M songs---constitute general purpose features for many MIR tasks, though notably they do not experiment with transcription. 
-We adopt their approach to extract features from \jukebox{} (${f_k \approx 345}$~Hz,~${d = 4800}$), however we pull representations from a deeper layer of \jukebox{} ($53$~vs.~$36$), which Castellon~et~al.\ found to be more effective for key estimation (arguably, the most similar to transcription among the tasks they examined).
+In~\cite{castellon2021calm}, Castellon~et~al.\ demonstrate that representations from \jukebox---a generative model of music audio pre-trained on $1$M songs---constitute effective features for many MIR tasks, though notably they do not experiment with transcription. 
+We adopt their approach to extract features from \jukebox{} (${f_k \approx 345}$~Hz,~${d = 4800}$), however we extract representations from a deeper layer of \jukebox{} ($53$~vs.~$36$), which Castellon~et~al.\ found to be more effective for key estimation (arguably, the most similar to transcription among the tasks they examined).
 
 We also explore features from \mtthree~\cite{gardner2021mt3}, an encoder-decoder transcription model pre-trained on a multitude of different transcription tasks (though not melody transcription). 
 For this model, we use the encoder's outputs as features (${f_k = 125}$~Hz,~${d = 512}$). 
@@ -27,8 +27,8 @@ Despite our best efforts, the refined alignments in \hooktheory{} are still impr
 In initial experiments, we found that naively adopting existing methods (specifically, \cite{hawthorne2017onsets,hawthorne2021sequence}) resulted in poor performance on our dataset and task.\footnote{Additionally, initial experiments on training models with an alignment-free approach~\cite{graves2006connectionist} also resulted in poor performance.} 
 Hence, we designed a new approach to sidestep small alignment deviations.
 
-Our approach effectively resamples audio features \bm{X} from being evenly spaced in time to being evenly spaced in beats. 
-Specifically, we average all of the feature vectors that are nearest to a particular sixteenth note into a single vector which acts as a proxy feature for that sixteenth note. 
+We propose to resample audio features $\bm{X} \in \mathbb{R}^{Tf_k \times d}$ using uniform sampling of beats (as defined by the alignments constructed in \cref{sec:dataset}) rather than uniform sampling of time. 
+Specifically, for audio recording containing $S$ beats, we sample features $\hat{\bm{X}} \in \mathbb{R}^{4S \times d}$ at sixteenth-note intervals by averaging all feature vectors that are nearest to a particular sixteenth note into a single vector which acts as a proxy feature for that sixteenth note. 
 For example, if a recording has a tempo of $120$~beats per minute, a sixteenth note represents $125$~ms of time, which would mean averaging across around $43$ feature vectors from \jukebox{} (${f_k \approx 345}$ Hz). 
 The intuition is that, while our refined alignments may not be precise enough to identify exactly which of those $43$ frames contains an onset, we can be reasonably confident that it occurs \emph{somewhere} within them, and thus that information will be averaged into the feature vector.
 We refer to this strategy as \emph{\beatpooling}, and its output for a segment containing $B$ beats is a matrix ${\hat{\bm{X}} = \hat{\bm{x}}_1, \ldots, \hat{\bm{x}}_{4B}}$, where ${\hat{\bm{x}}_i \in \mathbb{R}^d}$. 

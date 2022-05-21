@@ -5,7 +5,7 @@ We define melody transcription as the task of converting a musical audio recordi
 %generate 
 uncover 
 the sequence of $N$ notes~${\bm{y} = y_1,\dots,y_N}$ that constitute the melody of $\bm{a}$.  For many MIR tasks, including transcription, it can be convenient to work with \emph{features} of audio ${\bm{X} = \texttt{Featurize}(\bm{a})}$, rather than the raw waveform $\bm{a}$. 
-Hence, a melody transcription algorithm is a procedure that maps featurized audio to notes ${\bm{y} = \texttt{Transcribe}(\bm{X})}$. 
+Hence, a melody transcription algorithm is a procedure that maps featurized audio to notes, i.e.~${\bm{y} = \texttt{Transcribe}(\bm{X})}$. 
 
 \begin{figure}
     \centering
@@ -20,9 +20,9 @@ We argue that onset prediction suffices for producing melody transcriptions that
 Canonically, a musical note consists of an onset time, a musical pitch, and an offset time. 
 However, in this work  
 %(and as in~\cite{laaksonen2014automatic}) 
-we disregard offsets and define a note to be a pair ${y_i = (t_i,n_i)}$ consisting of an onset time~${t_i \in [0,T)}$ and (discrete) musical pitch~${n_i \in \{\text{A0},\dots,\text{C8}\}}$.
+we disregard offsets and define a note to be a pair ${y_i = (t_i,n_i)}$ consisting of an onset time~${t_i \in [0,T)}$ and discrete musical pitch~${n_i \in \{\text{A0},\dots,\text{C8}\}}$.
 We ignore offsets for three reasons. 
-First, accuracy of onsets has been found to be far more important to human perception of transcription quality than accuracy of offsets~\cite{ycart2020investigating}. 
+First, accurate offsets have been found to be considerably less important for human perception of transcription quality compared to accurate onsets~\cite{ycart2020investigating}. 
 Second, in our dataset,
 a heuristically-determined offset is identical to the ground truth offset for $89\%$ of notes.\footnote{The heuristic we adopt sets the offset of one note equal to the onset of the next, i.e., it assumes the melody is legato.}
 Finally, we argue intuitively that onsets and pitches suffice for both recognizing and reading melodies---see~\Cref{fig:heuristic_offsets} for an example.
@@ -80,6 +80,6 @@ In downstream settings, melody transcriptions are likely to be used in an octave
 % However we argue that this is overly permissive, as \emph{relative} octave information preserves intervals between notes, and thus may be critical to the identity of a melody. 
 Hence, we modify the evaluation criteria by simply taking the highest score over octave shifted versions of the estimate:
 \begin{equation*}
-    \max_{i \in \mathbb{Z}} \texttt{\fone}(\texttt{OctaveShift}(\texttt{Transcribe}(\bm{X}), i), \mathbf{y}).
+    \max_{\sigma \in \mathbb{Z}} \texttt{\fone}(\texttt{OctaveShift}(\texttt{Transcribe}(\bm{X}), \sigma), \mathbf{y}).
 \end{equation*}
 Henceforth, we refer to this octave-invariant metric as \fone. 
