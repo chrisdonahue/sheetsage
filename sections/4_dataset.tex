@@ -43,7 +43,7 @@ To this end, we make use of the beat and downbeat detection algorithm from \madm
 Specifically, our approach aligns the first beat of the segment to the detected downbeat which is nearest to the user-specified starting timestamp. 
 Then, we align the remaining beats to the subsequent detected beats (see~\Cref{fig:alignment} for an example). 
 This provides a beat-level alignment for the entire segment, which we linear interpolate to fractional subdivisions of the beat. 
-%Formally, we construct an alignment function $\texttt{Align} : [0,S) \to [0,T)$ that assigns each of $S$ beats in the metrical structure to a time $t \in [0,T)$ in the audio.
+Formally, we construct an alignment function $\texttt{Align} : [0,B) \to [0,T)$ that assigns each of $B$ beats in the metrical structure to a time $t \in [0,T)$ in the audio.
 In an informal listening test, this produces an improved alignment in around $95\%$ of cases, where the primary failure mode in the remaining $5\%$ occurs when \madmom{} detects the wrong beat as the downbeat. 
 We use these refined alignments for training and evaluation and release them alongside the dataset.
 %, accepting the occasional glitched alignments as noise in the dataset.

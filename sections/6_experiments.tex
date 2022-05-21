@@ -1,3 +1,23 @@
+\begin{table}[t]
+    \centering
+    \begin{tabular}{lcc}
+\toprule
+Features & $d$ & \fone{} \\
+\midrule
+\mel{} & $229$ & $0.514$ \\
+\mtthree{} & $512$ & $0.550$ \\
+\jukebox{} & $4800$ & $\bm{0.615}$ \\
+\midrule
+\mel{}, \mtthree{} & $741$ & $0.548$ \\
+\mel{}, \jukebox{} & $5029$ & $0.617$ \\
+\mtthree{}, \jukebox{} & $5312$ & $0.622$ \\
+\mel{}, \mtthree{}, \jukebox{} & $5541$ & $\bm{0.623}$ \\
+\bottomrule
+    \end{tabular}
+    \caption{\hooktheory{} test set performance for Transformers trained with different features (top) and combinations (bottom). Features are complementary---combining all three yields highest performance---but marginally so compared to \jukebox{} alone.}
+    \label{tab:hooktheory_test}
+\end{table}
+
 \section{Experiments}
 \label{sec:experiments}
 
@@ -19,20 +39,21 @@ All models converge within $15$k steps or about a day on a single K40 GPU.
     \centering
     \begin{tabular}{lcc}
 \toprule
-Features & $d$ & \fone{} \\
+Approach & \fone{} (All) & \fone{} (Vocal)\\
+%Approach & \emph{Vox Only} & \emph{All} \\
 \midrule
-\mel{} & $229$ & $0.514$ \\
-\mtthree{} & $512$ & $0.550$ \\
-\jukebox{} & $4800$ & $\bm{0.615}$ \\
+MT3 Zero-shot~\cite{gardner2021mt3} & $0.133$ & $0.085$ \\
+Melodia~\cite{salamon2014melody} + Segmentation & $0.201$ & $0.268$ \\
+Spleeter~\cite{hennequin2020spleeter} + Tony~\cite{mauch2015computer} & $0.341$ & $\bm{0.462}$ \\
+DSP + HMM~\cite{ryynanen2008automatic} & $\bm{0.420}$ & $0.381$ \\
 \midrule
-\mel{}, \mtthree{} & $741$ & $0.548$ \\
-\mel{}, \jukebox{} & $5029$ & $0.617$ \\
-\mtthree{}, \jukebox{} & $5312$ & $0.622$ \\
-\mel{}, \mtthree{}, \jukebox{} & $5541$ & $\bm{0.623}$ \\
+\mel{} + Transformer & $0.631$ & $0.621$ \\
+\mtthree{} + Transformer & $0.701$ & $0.659$ \\
+\jukebox{} + Transformer & $\mathbf{0.744}$ & $\mathbf{0.786}$ \\
 \bottomrule
     \end{tabular}
-    \caption{\hooktheory{} test set performance for Transformers trained with different features (top) and combinations (bottom). Features are complementary---combining all three yields highest performance---but marginally so compared to \jukebox{} alone.}
-    \label{tab:hooktheory_test}
+    \caption{Performance of different approaches on a subset of \rwc~\cite{goto2002rwc,goto2003rwc,goto2004development}. The bottom three approaches were trained on the \hooktheory{} dataset. For fair comparison to vocal transcription baselines, we also separately report performance on the vocal portions of this dataset.}
+    \label{tab:rwc_ryy}
 \end{table}
 
 We compare representations from \jukebox~\cite{dhariwal2020jukebox} and \mtthree~\cite{gardner2021mt3} (see~\Cref{sec:representations}) to handcrafted spectrogram features, 
@@ -78,27 +99,6 @@ Hence, in the remainder of this paper we focus on models trained on individual f
 
 \subsection{Comparison to melody transcription baselines}
 
-
-\begin{table}[t]
-    \centering
-    \begin{tabular}{lcc}
-\toprule
-Approach & \fone{} (All) & \fone{} (Vocal)\\
-%Approach & \emph{Vox Only} & \emph{All} \\
-\midrule
-MT3 Zero-shot~\cite{gardner2021mt3} & $0.133$ & $0.085$ \\
-Melodia~\cite{salamon2014melody} + Segmentation & $0.201$ & $0.268$ \\
-Spleeter~\cite{hennequin2020spleeter} + Tony~\cite{mauch2015computer} & $0.341$ & $\bm{0.462}$ \\
-DSP + HMM~\cite{ryynanen2008automatic} & $\bm{0.420}$ & $0.381$ \\
-\midrule
-\mel{} + Transformer & $0.631$ & $0.621$ \\
-\mtthree{} + Transformer & $0.701$ & $0.659$ \\
-\jukebox{} + Transformer & $\mathbf{0.744}$ & $\mathbf{0.786}$ \\
-\bottomrule
-    \end{tabular}
-    \caption{Performance of different approaches on a subset of \rwc~\cite{goto2002rwc,goto2003rwc,goto2004development}. The bottom three approaches were trained on the \hooktheory{} dataset. For fair comparison to vocal transcription baselines, we also separately report performance on the vocal portions of this dataset.}
-    \label{tab:rwc_ryy}
-\end{table}
 
 We compare overall performance of our proposed melody transcription approach to several baselines. 
 We evaluate all methods on a small subset of $10$ songs from RWC-MDB~\cite{goto2002rwc,goto2003rwc,goto2004development}, 

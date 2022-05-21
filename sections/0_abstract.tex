@@ -1,22 +1,29 @@
 % Melody is a fundamental aspect of music perception. 
-\john{abstract could be sharpened (how much can we change without complaints?)}
-While even those without musical training can intuitively recognize the melody of a song by ear, \pl{I feel like this is not needed and can hurt/distract - humans can't transcribe very well ('intuitively recognize' is not well defined / seems a lot easier)}
+% \john{abstract could be sharpened (how much can we change without complaints?)}
+% While even those without musical training can intuitively recognize the melody of a song by ear, \pl{I feel like this is not needed and can hurt/distract - humans can't transcribe very well ('intuitively recognize' is not well defined / seems a lot easier)}
+%Melody plays a central role in music perception. 
+Despite the central role that melody plays in music perception, 
 it remains an open challenge in MIR to reliably detect the notes of the melody present in an arbitrary music recording. 
-A key challenge in \emph{melody transcription} is building methods which can handle broad audio containing any number of instrument ensembles and musical genres. 
-\pl{seems like should have a sentence saying why previous methods fall short}
-To confront this challenge, we leverage recent advancements in generative modeling of broad music audio, thereby improving performance on melody transcription by 
+A key challenge in \emph{melody transcription} is building methods which can handle broad audio containing any number of instrument ensembles and musical styles---existing strategies work well for \emph{some} melody instruments or styles but not all. 
+%\pl{seems like should have a sentence saying why previous methods fall short}
+To confront this challenge, we leverage representations from \jukebox{}~\cite{dhariwal2020jukebox}, 
+a generative model of broad music audio, 
+thereby improving performance on melody transcription by 
 % (RWC All) .744 vs .631 = 17.9%
 % (Hookthr) .615 vs .514 = 19.6%
 % (RWC Vox) .786 vs .621 = 26.6%
 up to $27$\% 
-relative to conventional approaches. 
-Another obstacle in melody transcription is a lack of training data---we collect, align, and release a new dataset consisting of $50$ hours of crowdsourced melody annotations for broad music. 
+relative to conventional spectrogram features. 
+Another obstacle in melody transcription is a lack of training data---we derive a new dataset containing $50$ hours of melody transcriptions from crowdsourced annotations of broad music. 
+%collect, align, and release a new dataset consisting of $50$ hours of crowdsourced melody annotations for broad music. 
 % (RWC Vox) 0.786 vs 0.462 = 70%
 % (RWC All) 0.744 vs 0.420 = 77%
-The combination of generative pre-training and a new dataset for this task results in up to $77\%$ stronger performance on melody transcription relative to the strongest available baseline. 
-\pl{Is it better to streamline and just say first we collect a new dataset, leverage pre-training, and get <final number/improvement>, rather than stage it?}
-By pairing our new melody transcription approach with solutions for beat detection, key estimation, and chord recognition, 
-we build a system capable of transcribing human-readable lead sheets directly from music audio.\footnote{Sound examples: \url{https://dblblnd.github.io/ismir22} %\\
-\pl{should we advertise this in abstract? I thought this was more of a bonus}
+The combination of generative pre-training and a new dataset for this task results in up to $77\%$ stronger performance on melody transcription relative to the strongest available baseline.\footnote{Sound examples: \url{https://dblblnd.github.io/ismir22} %\\
+%\pl{should we advertise this in abstract? I thought this was more of a bonus}
+% CHRIS: The sound examples will contain primary melody transcription results in addition to sheet sage stuff, so we should highlight it in abstract. I agree the footnote was attached to the wrong sentence; moved it here
 %Demo / dataset explorer: \url{https://colab.research.google.com/drive/1yzD3wRCjXkuSfDRUtt_daaGFitj5L88l}
-\label{sound_examples}}
+\label{sound_examples}} 
+%\pl{Is it better to streamline and just say first we collect a new dataset, leverage pre-training, and get <final number/improvement>, rather than stage it?}
+% CHRIS: I agree it's a little out of order but I think we want to lead with "handling broad audio" as the primary challenge we confront rather than "collecting data"
+By pairing our new melody transcription approach with solutions for beat detection, key estimation, and chord recognition, 
+we build a system capable of transcribing human-readable lead sheets directly from music audio.

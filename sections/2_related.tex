@@ -5,7 +5,8 @@ Melody transcription is closely related to but distinct from the task of \emph{m
 The goal of melody extraction is to estimate the time-varying, continuous \fnot{} trajectory of the melody in an audio mixture. 
 % CHRIS: I think we shouldn't talk about lead sheets as our goal here. We're pitching lead sheets purely as a bonus (since I failed to evaluate them in time)
 % In contrast, our work is concerned with transcription to human-readable \emph{lead sheets}: this task requires us to indicate the positions of notes within a metrical structure, belonging to discrete pitch classes.
-In contrast, the goal of melody transcription is to output the \emph{notes} of the melody, where a note is defined by an onset time, a discrete pitch, and an offset time. 
+In contrast, the goal of melody transcription is to output the \emph{notes} of the melody, where a note is defined by an onset time, a discrete \pl{seems like the key thing is the discreteness, so should emphasize that more?} pitch, and an offset time. 
+\pl{also, don't you have to figure out the musical time (measures + beat within measure), not just the number of seconds?}
 % Melody extraction has been popularized by annual results of the MIREX Audio Melody Extraction tasks \cite{downie2014ten}, 
 % garnering significant interest from the MIR community over the last two decades \cite{salamon2014melody,rao2022melody}. 
 Melody extraction has received significant interest from the MIR community over the last two decades (see~\cite{salamon2014melody,rao2022melody} for comprehensive reviews), 

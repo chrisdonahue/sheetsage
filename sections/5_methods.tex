@@ -27,11 +27,14 @@ Despite our best efforts, the refined alignments in \hooktheory{} are still impr
 In initial experiments, we found that naively adopting existing methods (specifically, \cite{hawthorne2017onsets,hawthorne2021sequence}) resulted in poor performance on our dataset and task.\footnote{Additionally, initial experiments on training models with an alignment-free approach~\cite{graves2006connectionist} also resulted in poor performance.} 
 Hence, we designed a new approach to sidestep small alignment deviations.
 
-We propose to resample audio features $\bm{X} \in \mathbb{R}^{Tf_k \times d}$ using uniform sampling of beats (as defined by the alignments constructed in \cref{sec:dataset}) rather than uniform sampling of time. 
-Specifically, for audio recording containing $S$ beats, we sample features $\hat{\bm{X}} \in \mathbb{R}^{4S \times d}$ at sixteenth-note intervals by averaging all feature vectors that are nearest to a particular sixteenth note into a single vector which acts as a proxy feature for that sixteenth note. 
-For example, if a recording has a tempo of $120$~beats per minute, a sixteenth note represents $125$~ms of time, which would mean averaging across around $43$ feature vectors from \jukebox{} (${f_k \approx 345}$ Hz). 
-The intuition is that, while our refined alignments may not be precise enough to identify exactly which of those $43$ frames contains an onset, we can be reasonably confident that it occurs \emph{somewhere} within them, and thus that information will be averaged into the feature vector.
-We refer to this strategy as \emph{\beatpooling}, and its output for a segment containing $B$ beats is a matrix ${\hat{\bm{X}} = \hat{\bm{x}}_1, \ldots, \hat{\bm{x}}_{4B}}$, where ${\hat{\bm{x}}_i \in \mathbb{R}^d}$. 
+%We propose to resample audio features $\bm{X} \in \mathbb{R}^{Tf_k \times d}$ using uniform sampling of beats (as defined by the alignments constructed in \cref{sec:dataset}) rather than uniform sampling of time. 
+We propose a \emph{\beatpooling} of audio features $\bm{X} \in \mathbb{R}^{Tf_k \times d}$ to yield features that are uniformly sampled in beats (as defined by the alignments constructed in \cref{sec:dataset}) rather than time. 
+Specifically, for an audio recording with $B$ beats, we sample features $\tilde{\bm{X}} \in \mathbb{R}^{4B \times d}$ at sixteenth-note intervals. The value $\tilde{\bm{X}}_i$ is constructed by averaging all feature vectors in $\bm{X}$ that are nearest to the $i$'th sixteenth note into a single vector which acts as a proxy feature for that sixteenth note. 
+For example, if a recording has a tempo of $120$~beats per minute, a sixteenth note represents $125$~ms of time, which would mean averaging across 
+%around 
+$43$ feature vectors from \jukebox{} (${f_k \approx 345}$ Hz). 
+The intuition is that, while our refined alignments may not be precise enough to identify exactly which of those $43$ frames contains an onset, we can be reasonably confident that it occurs \emph{somewhere} within them, and thus that information will be averaged into the proxy feature.
+%We refer to this strategy as \emph{\beatpooling}.
 
 %Formally, given a segment of length $B$ beats or $T$ seconds and an alignment function ${a: [1, B] \mapsto [0, T]}$, \beatpooling{} yields ${\hat{\bm{X}} = \hat{\bm{x}}_1, \ldots, \hat{\bm{x}}_{4B}}$, where ${\hat{\bm{x}}_i \in \mathbb{R}^d}$, and
 % \begin{gather*}
@@ -44,25 +47,42 @@ We refer to this strategy as \emph{\beatpooling}, and its output for a segment c
 \label{sec:modeling}
 
 % \john{Section is titled training but this is really more of a concrete instantiation of the more abstract task from \cref{sec:task}; even some of the main characters are the same (e.g., OctaveShift). Does this really belong here?}
-The output $\hat{\bm{X}}$ from our \beatpooling{} approach represents a sequence of features where a timestep is a sixteenth note, and constitutes the input to the transcription model we will train. 
-Analogously, we also construct a sequence containing labels for each sixteenth note ${\hat{\bm{y}} \in \{\{\varnothing\}\cup\mathbb{V}\}^{4B}}$, where 
-${\mathbb{V} = \{\text{A0}, \ldots, \text{C8}\}}$.\footnote{This requires quantizing labels to the nearest sixteenth note. In practice, less than $1\%$ of notes are affected by this quantization.
-%, and $99\%$ of melodies contain no affected notes.
-} 
-This sequence indicates whether or not an onset occurs at each sixteenth note ($\varnothing$ if not, note name if so). 
-Then, we can formulate melody transcription as an aligned ``sequence-to-sequence'' modeling problem and train models of the form ${f_{\theta} : \mathbb{R}^{4B \times d} \mapsto \mathbb{R}^{4B \times (|\mathbb{V}|+1)}}$.
-%using a standard cross entropy loss. 
-
-An additional challenge is that absolute octave information is absent from our dataset (see \Cref{sec:dataset}). 
-Hence, we construct an octave-tolerant loss function by octave shifting the labels and backpropagating on whichever shift minimizes the loss:
+Together with the \beatpooling{} ${\tilde{\bm{X}} \in \mathbb{R}^{4B\times d}}$, we convert 
+%a sparse melody sequence
+the sparse task labels ${\bm{y} \in (\mathbb{R}^+ \times \mathbb{V})^N}$ into 
+a dense sequence  
+${\tilde{\bm{y}} \in \{\{\varnothing\}\cup\mathbb{V}\}^{4B}}$,
+% CHRIS: I think we need an intuitive explanation here, and it gives us a cleaner place to sneak in the footnote
+which indicates whether or not an onset occurs at each sixteenth note.\footnote{This requires quantizing labels to the nearest sixteenth note. In practice, less than $1\%$ of notes are affected by this quantization.} Formally, 
+\[
+\tilde{\bm{y}}_i =
+\begin{cases}
+n_j & \text{ if $\texttt{Align}(\frac{i}{4}) = t_j$ for some note $\bm{y}_j$}, \\
+\varnothing & \text{ otherwise}.
+\end{cases}
+\]
+We can now formulate melody transcription as an aligned ``sequence-to-sequence'' modeling problem and attempt to estimate $p(\tilde{\bm{y}}|\tilde{\bm{X}})$. Specifically, we seek to minimize the cross-entropy loss between a parameterized family of models $p_\theta(\tilde{\bm{y}}|\tilde{\bm{X}})$ and the label distribution $p(\tilde{\bm{y}}|\tilde{\bm{X}})$.
+%using a standard cross entropy loss.
+We make a common conditional independence modeling assumption: ${p(\tilde {\bm{y}}|\tilde{\bm{X}}) = \prod_{i=0}^{4B-1} p(\tilde{\bm{y}}_i|\tilde{\bm{X}})}$.
+One unique aspect of our dataset is that absolute octave information is absent (see \Cref{sec:dataset}). 
+Hence, we construct an octave-tolerant cross-entropy loss by 
+%calculating the standard cross-entropy loss (denoted \texttt{CE}) for the octave-shifted labels that minimize this loss:
+identifying the octave shift amount that minimizes the standard cross-entropy loss (denoted \texttt{CE}) when applied to the labels:
 \begin{equation*}
-\operatorname*{min}_{\sigma \in \mathbb{Z}} \sum_{i=1}^{4B} \texttt{CE}(\texttt{SM}(f_{\theta}(\bm{\hat{X}})_i), \texttt{OctaveShift}(\hat{\bm{y}}_i, \sigma)),
+\operatorname*{min}_{\sigma \in \mathbb{Z}} \sum_{i=0}^{4B-1} \texttt{CE}(p_\theta(\tilde{\bm{y}}_i|\bm{\tilde{X}}), \texttt{OctaveShift}(\tilde{\bm{y}}_i, \sigma)).
 \end{equation*}
-where $\text{SM}$ is the softmax function and $\text{CE}$ is the cross entropy loss.
 % An additional hyperparameter $\alpha$ determines the number of possible shifts (${\alpha = 0}$ constitutes standard cross entropy). 
 % %, and $\alpha = 0$ constitutes the standard cross entropy loss. 
 % In practice, we found ${\alpha = 2}$ produced the best performance, 
 % while ${\alpha > 3}$ resulted in unstable training.
 
-\todo{How do we get back from $f(\hat{X})$ to task?}
-\todo{Reconcile this with new notation from task section}
+We require a thresholding scheme to convert the dense sequence of soft probability estimates $p_\theta(\tilde{\bm{y}}|\tilde{\bm{X}})$ into a sparse sequence of notes required by our task (see \Cref{sec:task}). Given a threshold $\tau\in\mathbb{R}$, we define a sorted \emph{onset list}
+\[
+\mathcal{I} = \texttt{Sort}(\{i \in \{0,\dots,4B-1\} : p_\theta(\tilde{\bm{y}}_i = \varnothing|\tilde{\bm{X}}) < \tau\}).
+\]
+This should be interpreted as a list of $N$ metrical positions where an onset likely occurs. The timings of these onsets are given by the alignment, and we will predict the note-value with the highest probability. The sparse melody transcription is thus defined for $j=1,\dots,N$ by
+\begin{align*}
+&\texttt{Transcribe}(\tilde{\bm{X}})_j = (t_j,n_j),\text{ where }\\
+&\quad t_j = \texttt{Align}\left(\frac{\mathcal{I}_j-1}{4}\right),\\
+&\quad n_j = \argmax_{v\in\mathbb{V}} p_\theta(\tilde{\bm{y}}_{\mathcal{I}_j} = v|\tilde{\bm{X}}).
+\end{align*}

@@ -1,10 +1,10 @@
 \section{Task definition}
 \label{sec:task}
 
-We define melody transcription as the task of converting a musical audio recording into a \emph{monophonic} (non-overlapping) sequence of \emph{notes} which constitute its melody.\footnote{Melody is difficult to precisely define---here we adopt an implicit definition based on a dataset of crowdsourced melody annotations.} Given a musical audio recording $\bm{a}$ of length $T$, our task is to 
+We define melody transcription as the task of converting a music recording into a \emph{monophonic} (non-overlapping) sequence of \emph{notes} which constitute its melody.\footnote{Melody is difficult to precisely define---here we adopt an implicit definition based on a dataset of crowdsourced melody annotations.} Given a musical audio recording $\bm{a}$ of length $T$, our task is to 
 %generate 
 uncover 
-the sequence of $N$ notes~${\bm{y} = y_1,\dots,y_N}$ that constitute the melody of $\bm{a}$.  For many MIR tasks, including transcription, it can be convenient to work with \emph{features} of audio ${\bm{X} = \texttt{Featurize}(\bm{a})}$, rather than the raw waveform $\bm{a}$. 
+the sequence of $N$ notes~${\bm{y} = \bm{y}_1,\dots,\bm{y}_N}$ \pl{add []} that constitute the melody of $\bm{a}$.  For many MIR tasks, including transcription, it can be convenient to work with \emph{features} of audio ${\bm{X} = \texttt{Featurize}(\bm{a})}$, rather than the raw waveform $\bm{a}$. 
 Hence, a melody transcription algorithm is a procedure that maps featurized audio to notes, i.e.~${\bm{y} = \texttt{Transcribe}(\bm{X})}$. 
 
 \begin{figure}
@@ -20,7 +20,7 @@ We argue that onset prediction suffices for producing melody transcriptions that
 Canonically, a musical note consists of an onset time, a musical pitch, and an offset time. 
 However, in this work  
 %(and as in~\cite{laaksonen2014automatic}) 
-we disregard offsets and define a note to be a pair ${y_i = (t_i,n_i)}$ consisting of an onset time~${t_i \in [0,T)}$ and discrete musical pitch~${n_i \in \{\text{A0},\dots,\text{C8}\}}$.
+we disregard offsets and define a note to be a pair $\bm{y}_i = (t_i,n_i)$ consisting of an onset time~${t_i \in [0,T)}$ and discrete musical pitch~${n_i \in \mathbb{V} = \{\text{A0}, \ldots, \text{C8}\}}$.
 We ignore offsets for three reasons. 
 First, accurate offsets have been found to be considerably less important for human perception of transcription quality compared to accurate onsets~\cite{ycart2020investigating}. 
 Second, in our dataset,
@@ -33,10 +33,10 @@ Intuitively, the function ${\texttt{Featurize} : \mathbb{R}^{Tf_s} \to \mathbb{R
 %scalar audio samples 
 raw audio 
 to a feature representation more conducive to learning. 
-A melody of length $N$ is an (ordered) sequence of notes 
+A melody of length $N$ is a sequence of notes 
 % CHRIS: Should this be raised to the N? JOHN: nope, \bm{y} \in \mathcal{N}^N but y_1,\dots,y_N \in \mathcal{N}
-${\bm{y} = y_1,\dots,y_N \in \mathbb{Y}}$, 
-consisting of onset-pitch pairs ${y_i = (t_i,n_i)}$ where ${t_i < t_j}$ if ${i < j}$. Given a featurization $\bm{X}$, the melody transcription task is to construct a transcription algorithm ${\texttt{Transcribe} : \mathbb{R}^{Tf_k \times d} \to \mathbb{Y}^N}$ such that ${\bm{X} \mapsto \bm{y}}$.
+$\bm{y} = \bm{y}_1,\dots,\bm{y}_N \in \mathbb{Y} = \mathbb{R}^+ \times \mathbb{V}$, \pl{add []} \pl{a bit confu
+consisting of onset-pitch pairs ${\bm{y}_i = (t_i,n_i)}$ where ${t_i < t_j}$ if ${i < j}$. Given a featurization $\bm{X}$, the melody transcription task is to construct a transcription algorithm ${\texttt{Transcribe} : \mathbb{R}^{Tf_k \times d} \to \mathbb{Y}^N}$ such that ${\bm{X} \mapsto \bm{y}}$.
 
 
 %Hence, 
