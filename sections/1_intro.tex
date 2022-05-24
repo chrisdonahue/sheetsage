@@ -19,20 +19,9 @@ and generation~\cite{hawthorne2019enabling}.
 Despite the potential benefits, 
 reliable melody transcription remains an open challenge.% in MIR.
 
-The relative lack of progress on melody transcription is perhaps counterintuitive when compared to the considerable progress on seemingly more difficult tasks like piano transcription~\cite{sigtia2016end,hawthorne2017onsets}.
-%and chord recognition~\cite{humphrey2012rethinking,boulanger2013audio}. 
-This circumstance stems from two primary factors.
-First, unlike in piano transcription, melody transcription involves operating on \emph{broad}
-% CHRIS: I like broad slightly more I think
-%\john{diverse?} 
-audio mixtures from arbitrary instrument ensembles and musical styles. 
-% CHRIS: I think the following are indeed reasons that melody transcription is hard, but they don't map as cleanly onto our contributions
-%Second, unlike in chord recognition, melody transcription involves isolating the notes from a single instrument voice (recognized to be the melodic voice) within the mixture. 
-%Second, melody transcription involves not only detecting notes but also identifying which of those notes constitutes the melody, which may require modeling the nuances of human music perception. 
-Second, there is a deficit of training data for melody transcription, which particularly impedes the deep learning approaches central to recent improvements on other transcription tasks. 
-Moreover, collecting data for melody transcription is difficult compared to collecting data for tasks like piano transcription, where a Disklavier can be used to create aligned training data in real time. 
-%collecting aligned data for this task is much more difficult compared to tasks like piano transcription, where a Disklavier can be used to create training data in real time.
-%\pl{should mention Disklavier and how it's not just data but aligned data?}
+A closely-related problem that has received considerable attention from the MIR community is \emph{melody extraction}~\cite{goto1999real,goto2004real,salamon2014melody,rao2022melody}, where the goal is to estimate the time-varying, continuous \fnot{} trajectory of the melody in an audio mixture. 
+In contrast, the goal of melody transcription is to output the \emph{notes} of the melody, where a note is defined by an onset time, a pitch, and an offset time. 
+While \fnot{} trajectories are useful for several downstream tasks (e.g.,~query by humming) and more inclusive of music which does not use equal-tempered pitches, unlike notes, trajectories cannot be readily converted into formats like MIDI or scores which are more convenient for musicians.
 
 \begin{figure}
     \centering
@@ -46,7 +35,21 @@ and
 Outputs can be rendered to MIDI (by mapping beats back to time) or a score.
 }
  \label{fig:fig1}
+ \vspace{-5mm}
 \end{figure}
+
+The relative lack of progress on melody transcription is perhaps counterintuitive when compared to the considerable progress on seemingly more difficult tasks like piano transcription~\cite{sigtia2016end,hawthorne2017onsets}.
+%and chord recognition~\cite{humphrey2012rethinking,boulanger2013audio}. 
+This circumstance stems from two primary factors.
+First, unlike in piano transcription, melody transcription involves operating on \emph{broad}
+% CHRIS: I like broad slightly more I think
+%\john{diverse?} 
+audio mixtures from arbitrary instrument ensembles and musical styles. 
+% CHRIS: I think the following are indeed reasons that melody transcription is hard, but they don't map as cleanly onto our contributions
+%Second, unlike in chord recognition, melody transcription involves isolating the notes from a single instrument voice (recognized to be the melodic voice) within the mixture. 
+%Second, melody transcription involves not only detecting notes but also identifying which of those notes constitutes the melody, which may require modeling the nuances of human music perception. 
+Second, there is a deficit of training data for melody transcription, which particularly impedes the deep learning approaches central to recent improvements on other transcription tasks. 
+Moreover, collecting data for melody transcription is difficult compared to collecting data for tasks like piano transcription, where a Disklavier can be used to create aligned training data in real time. 
 
 To overcome the challenge of transcribing broad audio, in this work we leverage representations from Jukebox~\cite{dhariwal2020jukebox}, a large-scale generative model of music audio pre-trained on $1$M songs~(\Cref{fig:fig1}). 
 In~\cite{castellon2021calm}, Castellon~et~al.\ demonstrate that internal representations from Jukebox are useful for improving performance on a wide variety of MIR tasks. 
@@ -59,32 +62,35 @@ up to $27$\% (relative).
 To the best of our knowledge, this is the first evidence that representations learned through generative modeling are useful for time-varying MIR tasks like transcription, as opposed to the song-level tasks (e.g.~tagging, genre detection) examined in~\cite{castellon2021calm}.
 
 To address the data deficit for melody transcription, 
-we release a new dataset containing $50$ hours of melody annotations 
+we release a new dataset containing $50$ hours of melody annotations for broad audio 
 %collected 
-derived 
+which we derive 
 from \hooktheory.\footnote{\url{https://www.hooktheory.com/theorytab}} 
-This dataset contains crowdsourced annotations for broad audio: 
-$13$k unique recordings representing a wide variety of instruments and genres. 
-However, the user-specified \emph{alignments} between the audio and melody annotations in this dataset are crude, imposing an obstacle to transcription. 
-To overcome this, we refine the alignments using beat detection, such that they are approximately accurate at the beat level. 
-Additionally, we propose an approach which \emph{resamples} audio features (uniformly spaced in time) to be representative of individual sixteenth notes (uniformly spaced in beats), 
-thereby smoothing over remaining alignment jitter. 
-We train models directly on these resampled features, 
-which has a secondary benefit of enabling simple conversion from raw model outputs to human-readable scores (\Cref{fig:fig1}).
+% This dataset contains crowdsourced annotations for broad audio: 
+% $13$k unique recordings representing a wide variety of instruments and genres. 
+% However, the user-specified \emph{alignments} between the audio and melody annotations in this dataset are crude, imposing an obstacle to transcription. 
+% To overcome this, we refine the alignments using beat detection, such that they are approximately accurate at the beat level. 
+% Additionally, we propose an approach which \emph{resamples} audio features (uniformly spaced in time) to be representative of individual sixteenth notes (uniformly spaced in beats), 
+% thereby smoothing over remaining alignment jitter. 
+The user-specified alignments between the audio and melody annotations in \hooktheory{} are crude: we refine these alignments using beat detection, 
+and overcome remaining alignment jitter by training melody transcription models with beat-aligned representations from Jukebox as input. 
+Our use of beat-aligned inputs 
+%We also train our models with beat-aligned labels which 
+%We train models directly on these resampled features, which 
+has a secondary benefit of enabling simple conversion from raw model outputs to human-readable scores (\Cref{fig:fig1}).
 
 By training Transformer models on this new dataset using representations from Jukebox as input, we are able to improve overall performance on melody transcription by 
 % 0.786 vs 0.462 = 70%
 % 0.744 vs 0.420 = 77%
-up to $77$\% 
-relative \pl{hard to understand relative - should maybe provide absolute numbers?} to the strongest available baseline. 
+$70$\% relative 
+%\pl{hard to understand relative - should maybe provide absolute numbers?} 
+%CHRIS: Readers less knowledgeable about transcription may not have enough context to understand absolute numbers at this point
+to the strongest available baseline. 
 For reproducibility, we will release all data, code, and models from this work upon publication.
-
-%\textbf{Contributions.}
-
 A summary of our primary \textbf{contributions} is as follows:
 \begin{itemize}
     \item We show that representations from generative models can improve melody transcription (\Cref{sec:experiments}).
     \item We collect, align, and release a new dataset with $50$ hours of melody and chord annotations (\Cref{sec:dataset}).
     \item We propose a method for training transcription models on data with imprecise alignment (\Cref{sec:beatpool}).
-    \item As a downstream application of our melody transcription approach, we build a system which can transcribe music audio into lead sheets (\Cref{sec:sheetsage}).
+    \item As a bonus application of our melody transcription approach, we build a system which can transcribe music audio into lead sheets (\Cref{sec:sheetsage}).
 \end{itemize}

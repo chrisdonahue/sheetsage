@@ -1,8 +1,11 @@
+\vspace{-2mm}
 \section{Sheet Sage}
 \label{sec:sheetsage}
 
-Here we describe \sheetsage, a system we built to automatically convert music audio into lead sheets (see~\cref{sound_examples} for examples), powered by our \jukebox-based melody transcription model. 
-In the Western music canon, a musical composition can often be characterized by its melody and harmony. 
+%\pl{make it clear that this is just a demo (bonus) we built and aren't going to evaluate it rigorously just to set expectations?}
+As a bonus demo, 
+here we describe \sheetsage, a system we built to automatically convert music audio into lead sheets (see~\cref{sound_examples} for examples), powered by our \jukebox-based melody transcription model. 
+In Western music, a piece can often be characterized by its melody and harmony. 
 When engraved as a lead sheet---a musical score containing the melody as notes on a staff and the harmony as chord names---melody and harmony can be readily interpreted by musicians, enabling recognizable performances of existing pieces. 
 Hence, for some music, a lead sheet represents the essence of its underlying composition.
 Existing services like Chordify~\cite{de2014chordify} can already detect a subset of the information needed to produce lead sheets (specifically, chords, beats, and keys) for broad music audio. 
@@ -10,7 +13,9 @@ Existing services like Chordify~\cite{de2014chordify} can already detect a subse
 However, despite past research efforts~\cite{ryynanen2008automatic,weil2009automatic}, no user-facing service yet exists which can convert broad music audio into lead sheets, presumably due to the poor performance of existing melody transcription systems.
 % By automatically transcribing music audio into lead sheets, our work helps reduce the gap between human perception and machine understanding of Western music.
 
-To build \sheetsage, we also train a \jukebox-based chord recognition model on the \hooktheory{} data, using the same methodology that we propose for melody transcription (we simply replace the target vocabulary of onset pitches with one containing chord labels). 
+To build \sheetsage, we also train a \jukebox-based chord recognition model on the \hooktheory{} data, using the same methodology that we propose for melody transcription (we simply replace the target vocabulary of onset pitches with one containing chord labels).
+%\pl{is this jointly trained with the melody transcription? actually I don't remember if we're doing probing with an MLP?}
+% CHRIS: Not jointly trained, though it certainly could be.
 %We use an extended chord vocabulary consisting of $96$ chord labels (major, minor, 7, maj7, m7, sus, dim, aug for each of the 12 pitch classes).
 Passing audio through our \jukebox{}-based melody transcription and chord recognition models results in a score like format containing raw note names and chord labels per sixteenth note. 
 Engraving this information as a lead sheet requires additional information: the key signature and the time signature. 

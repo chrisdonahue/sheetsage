@@ -16,6 +16,7 @@ Features & $d$ & \fone{} \\
     \end{tabular}
     \caption{\hooktheory{} test set performance for Transformers trained with different features (top) and combinations (bottom). Features are complementary---combining all three yields highest performance---but marginally so compared to \jukebox{} alone.}
     \label{tab:hooktheory_test}
+    \vspace{-3mm}
 \end{table}
 
 \section{Experiments}
@@ -23,17 +24,25 @@ Features & $d$ & \fone{} \\
 
 Here we describe our experimental protocol for training melody transcription models on the \hooktheory{} dataset. 
 The purpose of these experiments is two-fold. 
-First, we compare representations from different pre-trained models to handcrafted spectrogram features to determine if pre-training is helpful for the task of melody transcription. 
-Second, we compare our trained models holistically to other melody transcription baselines. 
+First, we compare representations from different pre-trained models to handcrafted spectrogram features to determine if pre-training is helpful for the task of melody transcription (\Cref{sec:exp1}). 
+Second, we compare our trained models holistically to other melody transcription baselines (\Cref{sec:exp2}).
 
 All transcription models are encoder-only Transformers with the default hyperparameters from~\cite{vaswani2017attention}, 
 except that we reduce the number of layers from $6$ to $4$ to allow models to be trained on GPUs with $12$GB of memory. 
 During training, we select random slices from the annotated segments of up to $96$ beats or $24$ seconds in length (whichever is shorter). 
-We train using our proposed loss function from~\Cref{sec:modeling} and perform early stopping based on max \fone{} score across thresholds on the validation set, using the best validation threshold for testing. 
+We train using our proposed loss function from~\Cref{sec:modeling} and perform early stopping based on max \fone{} score across thresholds $\tau$ on the validation set, using the best validation $\tau$ for testing. 
 All models converge within $15$k steps or about a day on a single K40 GPU. 
 
 \subsection{Comparing input features}
 \label{sec:exp1}
+
+We compare representations from \jukebox~\cite{dhariwal2020jukebox} and \mtthree~\cite{gardner2021mt3} (see~\Cref{sec:representations}) to handcrafted spectrogram features, 
+which are commonly used by existing transcription methods.
+%which constitute the conventional inputs to existing transcription methods. 
+Specifically, we compare to log-amplitude Mel spectrograms using the formulation from~\cite{hawthorne2017onsets} (${f_k \approx 31}$,~${d = 229}$). 
+Because features may contain complementary information, we also experiment with all combinations of these three features. 
+Note that our \beatpooling{} strategy allows for trivial combination of these features (by concatenation) despite their differing rates. 
+In~\Cref{tab:hooktheory_test}, we report \fone{} (as described in~\Cref{sec:eval}) on the \hooktheory{} test set for all input features.
 
 \begin{table}[t]
     \centering
@@ -54,15 +63,8 @@ DSP + HMM~\cite{ryynanen2008automatic} & $\bm{0.420}$ & $0.381$ \\
     \end{tabular}
     \caption{Performance of different approaches on a subset of \rwc~\cite{goto2002rwc,goto2003rwc,goto2004development}. The bottom three approaches were trained on the \hooktheory{} dataset. For fair comparison to vocal transcription baselines, we also separately report performance on the vocal portions of this dataset.}
     \label{tab:rwc_ryy}
+    \vspace{-4mm}
 \end{table}
-
-We compare representations from \jukebox~\cite{dhariwal2020jukebox} and \mtthree~\cite{gardner2021mt3} (see~\Cref{sec:representations}) to handcrafted spectrogram features, 
-which are commonly used by existing transcription methods.
-%which constitute the conventional inputs to existing transcription methods. 
-Specifically, we compare to log-amplitude Mel spectrograms using the formulation from~\cite{hawthorne2017onsets} (${f_k \approx 31}$,~${d = 229}$). 
-Because features may contain complementary information, we also experiment with all combinations of these three features. 
-Note that our \beatpooling{} strategy allows for trivial combination of these features (by concatenation) despite their differing rates. 
-In~\Cref{tab:hooktheory_test}, we report \fone{} (as described in~\Cref{sec:eval}) on the \hooktheory{} test set for all input features.
 
 
 \begin{figure*}
@@ -70,8 +72,12 @@ In~\Cref{tab:hooktheory_test}, we report \fone{} (as described in~\Cref{sec:eval
     \includegraphics[width=\linewidth]{figs/sheetsage.pdf}
     \caption{
     % TODO: Clean this up. YouTube as input
-    Inference procedure for Sheet Sage, our proposed system which transcribes any Western music audio into lead sheets (scores which depict melody as notes and harmony as chord names). The green, blue, and yellow boxes respectively take audio, features, and symbolic music data as input. Green boxes are modules that we built as part of this work---both are Transformers~\cite{vaswani2017attention} trained on their respective tasks using audio features from Jukebox~\cite{dhariwal2020jukebox} and data from \hooktheory~\cite{hooktheory}.}
+    Inference procedure for Sheet Sage, our proposed system which transcribes any Western music audio into lead sheets (scores which depict melody as notes and harmony as chord names). The green, blue, and yellow boxes respectively take audio, features, and symbolic music data as input. Green boxes are modules that we built as part of this work---both are Transformers~\cite{vaswani2017attention} trained on their respective tasks using audio features from Jukebox~\cite{dhariwal2020jukebox} and data from \hooktheory~\cite{hooktheory}.
+    %\pl{would it be possible to show a snippet of a lead sheet that we produce? might be pretty compelling}
+    % CHRIS: There will be plenty in the sound examples!
+    }
     \label{fig:sheet_sage}
+    \vspace{-3mm}
 \end{figure*}
 
 Overall, using representations from \jukebox{} as input features results in stronger melody transcription performance than using either representations from \mtthree{} or conventional handcrafted features. 
@@ -96,9 +102,12 @@ The strongest performance overall is obtained by combining all three features, t
 The practical downsides of combining all features outweigh the marginal benefits---running both pre-trained models effectively doubles the overall runtime, and the models have incompatible software dependencies. 
 Hence, in the remainder of this paper we focus on models trained on individual features.
 %Combining handcrafted features w/ either pre-trained approach has little effect on performance. 
+% \pl{now that you mention computation, what are the different computation requirements, which matter for a practical system?}
+% CHRIS: Good question, punting for later
 
+\vspace{-1mm}
 \subsection{Comparison to melody transcription baselines}
-
+\label{sec:exp2}
 
 We compare overall performance of our proposed melody transcription approach to several baselines. 
 We evaluate all methods on a small subset of $10$ songs from RWC-MDB~\cite{goto2002rwc,goto2003rwc,goto2004development}, 
