@@ -1,1 +1,121 @@
-COMING SOON!!!
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="static/favicon_16.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="static/favicon_32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="48x48"
+      href="static/favicon_48.png"
+    />
+
+    <title>ISMIR22 Melody Transcription Examples</title>
+
+    <link rel="stylesheet" href="style.css" />
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/tone@14.7.77/build/Tone.min.js"
+      defer
+    ></script>
+
+    <script src="xfade_player.js" defer></script>
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <div id="main">
+      <div id="header">
+        <h2>
+          Sound Examples for
+          <i>Melody Transcription via Generative Pre-training</i>
+        </h2>
+        <h3 style="color: red">
+          Anonymous submission under review at ISMIR 22, please do not share.
+        </h3>
+        <p id="mobile-warning" style="color: red; display: none">
+          Note, this page is not optimized for viewing on mobile displays.
+        </p>
+      </div>
+
+      <div id="body-loading" class="spinner"></div>
+      <div id="body" style="display: none">
+        <div id="preview-loading" class="spinner" style="display: none"></div>
+        <div id="preview" style="display: none">
+          <hr />
+          <div id="transcription-source-ui">
+            <label>Transcription</label>
+            <span>Estimated</span>
+            <input type="radio" name="transcription-source" value="1" checked />
+            <span>Reference</span>
+            <input type="radio" name="transcription-source" value="0" />
+          </div>
+          <div id="audio-ui">
+            <label>Audio Preview</label>
+            <div class="audio-transport" id="audio-play">▶️</div>
+            <div class="audio-transport" id="audio-stop">⏹</div>
+            <label>Volume</label>
+            <input
+              type="range"
+              id="audio-volume"
+              min="0"
+              max="1000"
+              value="750"
+            />
+            <label>Crossfade </label>
+            <span>Input</span>
+            <input
+              type="range"
+              id="audio-crossfade"
+              min="0"
+              max="1000"
+              value="500"
+            />
+            <span>Transcription</span>
+          </div>
+          <div id="score-ui">
+            <div>
+              <img class="score" id="score-est" />
+            </div>
+            <div>
+              <img class="score" id="score-ref" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="playback">
+        <div id="playback-transport-container">
+          <div>
+            <button id="toggle" disabled>Play</button>
+            <button id="stop" disabled>Stop</button>
+          </div>
+          <div>
+            <input id="transport" type="range" min="0" max="1000" value="0" />
+          </div>
+        </div>
+        <div id="playback-controls-container">
+          <div>
+            <label>Volume</label>
+            <input id="volume" type="range" min="0" max="1000" value="750" />
+          </div>
+          <div>
+            <label>Crossfade</label>
+            <input id="xfade" type="range" min="0" max="1000" value="666" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
