@@ -1,12 +1,15 @@
 #footer {
   display: table;
   position: fixed;
-  padding: 16px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 12px;
+  padding-right: 12px;
   bottom: 0;
   left: 0;
   right: 0;
   width: 100%;
-  border-top: 3px solid;
+  border-top: 2px solid;
 }
 
 .footer-row {
@@ -15,7 +18,7 @@
 
 .footer-cell-label {
   display: table-cell;
-  width: 100px;
+  width: 120px;
   font-size: 1.5em;
 }
 
@@ -24,7 +27,7 @@
 }
 
 input[type="range"] {
-  width: 90%;
+  width: 85%;
   margin: 12px;
   max-width: 800px;
 }
