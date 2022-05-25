@@ -1,4 +1,10 @@
+#body {
+  max-width: 800px;
+  margin-bottom: 200px;
+}
+
 #footer {
+  background-color: white;
   display: table;
   position: fixed;
   padding-top: 8px;
@@ -42,4 +48,12 @@ button {
 
 #xfade {
   max-width: 200px;
+}
+
+.section-header {
+  font-size: 1.25em;
+}
+
+.section-number {
+  font-weight: bold;
 }

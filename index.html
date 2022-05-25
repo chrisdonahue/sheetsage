@@ -36,91 +36,106 @@
     <script src="script.js" defer></script>
   </head>
   <body>
-    <div id="main">
-      <div id="header">
-        <h2>
-          Sound Examples for
-          <i>Melody Transcription via Generative Pre-training</i>
-        </h2>
-        <h3 style="color: red">
-          Anonymous submission under review at ISMIR 22, please do not share.
-        </h3>
-        <p id="mobile-warning" style="color: red; display: none">
-          Note, this page is not optimized for viewing on mobile displays.
+    <div id="header">
+      <h2>
+        Sound Examples for
+        <i>Melody Transcription via Generative Pre-training</i>
+      </h2>
+      <h3 style="color: red">
+        Anonymous submission under review at ISMIR 22, please do not share.
+      </h3>
+      <p id="mobile-warning" style="color: red; display: none">
+        Note, this page is not optimized for viewing on mobile displays.
+      </p>
+    </div>
+
+    <div id="body">
+      <div class="section">
+        <p class="section-header">
+          <span class="section-number">Section I.</span>
+          Melody transcription results and baselines on RWC-MDB
         </p>
+        <p>
+          We compare results from our systems to four baselines on ten segments
+          from
+          <a href="https://staff.aist.go.jp/m.goto/RWC-MDB/">RWC-MDB</a> (Goto
+          et al. 2002). These particular segments were chosen to enable
+          comparison to Ryyn&auml;nen and Klapuri 2008, i.e., the segments for
+          which
+          <a
+            href="https://web.archive.org/web/20081115212058/http://www.cs.tut.fi/sgn/arg/matti/demos/mbctrans/"
+            >sound examples</a
+          >
+          were available.
+        </p>
+
+        <template id="ryy08-method">
+          <tr></tr>
+        </template>
+        <template id="ryy08-example">
+          <td><input type="radio" name="ryy08-radio" /></td>
+        </template>
+        <table id="ryy08-table">
+          <thead>
+            <tr>
+              <td></td>
+              <td>1</td>
+              <td>2</td>
+              <td>3</td>
+              <td>4</td>
+              <td>5</td>
+              <td>6</td>
+              <td>7</td>
+              <td>8</td>
+              <td>9</td>
+              <td>10</td>
+            </tr>
+          </thead>
+          <tbody id="ryy08-table-body"></tbody>
+        </table>
       </div>
 
-      <div id="body-loading" class="spinner"></div>
-      <div id="body" style="display: none">
-        <div id="preview-loading" class="spinner" style="display: none"></div>
-        <div id="preview" style="display: none">
-          <hr />
-          <div id="transcription-source-ui">
-            <label>Transcription</label>
-            <span>Estimated</span>
-            <input type="radio" name="transcription-source" value="1" checked />
-            <span>Reference</span>
-            <input type="radio" name="transcription-source" value="0" />
-          </div>
-          <div id="audio-ui">
-            <label>Audio Preview</label>
-            <div class="audio-transport" id="audio-play">▶️</div>
-            <div class="audio-transport" id="audio-stop">⏹</div>
-            <label>Volume</label>
-            <input
-              type="range"
-              id="audio-volume"
-              min="0"
-              max="1000"
-              value="750"
-            />
-            <label>Crossfade </label>
-            <span>Input</span>
-            <input
-              type="range"
-              id="audio-crossfade"
-              min="0"
-              max="1000"
-              value="500"
-            />
-            <span>Transcription</span>
-          </div>
-          <div id="score-ui">
-            <div>
-              <img class="score" id="score-est" />
-            </div>
-            <div>
-              <img class="score" id="score-ref" />
-            </div>
-          </div>
-        </div>
+      <div class="section">
+        <p class="section-header">
+          <span class="section-number">Section II.</span>
+          Comparing different pre-trained representations on HookTheory
+        </p>
+        <p></p>
       </div>
 
-      <div id="footer">
-        <div class="footer-row">
-          <div class="footer-cell-label">
-            <button id="toggle" disabled>⏯️</button>
-            <button id="stop" disabled>⏹</button>
-          </div>
-          <div class="footer-cell-range">
-            <input id="transport" type="range" min="0" max="1000" value="0" />
-          </div>
+      <div class="section">
+        <p class="section-header">
+          <span class="section-number">Section III.</span>
+          Lead sheet transcription results on HookTheory
+        </p>
+        <p></p>
+      </div>
+    </div>
+
+    <div id="footer">
+      <div class="footer-row">
+        <div class="footer-cell-label">
+          <button id="toggle" disabled>⏯️</button>
+          <button id="stop" disabled>⏹</button>
         </div>
-        <div class="footer-row">
-          <div class="footer-cell-label">
-            <label>Crossfade</label>
-          </div>
-          <div class="footer-cell-range">
-            <input id="xfade" type="range" min="0" max="1000" value="666" />
-          </div>
+        <div class="footer-cell-range">
+          <input id="transport" type="range" min="0" max="1000" value="0" />
         </div>
-        <div class="footer-row">
-          <div class="footer-cell-label">
-            <label>Volume</label>
-          </div>
-          <div class="footer-cell-range">
-            <input id="volume" type="range" min="0" max="1000" value="750" />
-          </div>
+      </div>
+      <div class="footer-row">
+        <div class="footer-cell-label">
+          <label>Crossfade</label>
+        </div>
+        <div class="footer-cell-range">
+          <input id="xfade" type="range" min="0" max="1000" value="666" />
+        </div>
+      </div>
+      <div class="footer-row">
+        <div class="footer-cell-label">
+          <label>Volume</label>
+        </div>
+        <div class="footer-cell-range">
+          <input id="volume" type="range" min="0" max="1000" value="750" />
         </div>
       </div>
     </div>
