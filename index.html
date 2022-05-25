@@ -95,24 +95,30 @@
         </div>
       </div>
 
-      <div id="playback">
-        <div id="playback-transport-container">
-          <div>
-            <button id="toggle" disabled>Play</button>
-            <button id="stop" disabled>Stop</button>
+      <div id="footer">
+        <div class="footer-row">
+          <div class="footer-cell-label">
+            <button id="toggle" disabled>⏯️</button>
+            <button id="stop" disabled>⏹</button>
           </div>
-          <div>
+          <div class="footer-cell-range">
             <input id="transport" type="range" min="0" max="1000" value="0" />
           </div>
         </div>
-        <div id="playback-controls-container">
-          <div>
-            <label>Volume</label>
-            <input id="volume" type="range" min="0" max="1000" value="750" />
-          </div>
-          <div>
+        <div class="footer-row">
+          <div class="footer-cell-label">
             <label>Crossfade</label>
+          </div>
+          <div class="footer-cell-range">
             <input id="xfade" type="range" min="0" max="1000" value="666" />
+          </div>
+        </div>
+        <div class="footer-row">
+          <div class="footer-cell-label">
+            <label>Volume</label>
+          </div>
+          <div class="footer-cell-range">
+            <input id="volume" type="range" min="0" max="1000" value="750" />
           </div>
         </div>
       </div>

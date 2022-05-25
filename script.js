@@ -13,12 +13,6 @@ window.ismir = window.ismir || {};
       "https://chrisdonahue.com/ismir2022/static/input.mp3",
       "https://chrisdonahue.com/ismir2022/static/transcription.mp3"
     );
-    if (loaded) player.play();
-    /*
-    const player = new Tone.Player().toDestination();
-    await player.load("https://chrisdonahue.com/ismir2022/static/input.mp3");
-    player.start();
-    */
   }
 
   async function init() {}
