@@ -57,3 +57,11 @@ button {
 .section-number {
   font-weight: bold;
 }
+
+td.method-name {
+  text-align: right;
+}
+
+td:not(.method-name) {
+  text-align: center;
+}
