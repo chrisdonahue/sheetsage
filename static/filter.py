@@ -15,5 +15,19 @@ print(sample)
 for p in sorted(list(d.rglob('*.mid')) + list(d.rglob('*.mp3'))):
     if p.stem in sample:
         op = pathlib.Path(o, p.relative_to(d))
-        op.parent.mkdir(exist_ok=True, parents=True)
-        shutil.copy(str(p), str(op))
+        #op.parent.mkdir(exist_ok=True, parents=True)
+        #shutil.copy(str(p), str(op))
+
+import gzip
+import json
+
+with gzip.open('0503_theorytab_simple.json.gz', 'r') as f:
+    hooktheory = json.load(f)
+
+output = []
+for uid in sorted(list(sample)):
+    youtube_id = hooktheory[uid]['youtube']['id']
+    output.append((uid, youtube_id))
+
+with open('web.json', 'w') as f:
+    f.write(json.dumps(output, indent=2))
