@@ -50,6 +50,29 @@
     </div>
 
     <div id="body">
+      <template id="radio-table-method">
+        <tr></tr>
+      </template>
+      <template id="radio-table-hr">
+        <tr>
+          <td></td>
+          <td></td>
+          <td class="bordered"></td>
+          <td class="bordered"></td>
+          <td class="bordered"></td>
+          <td class="bordered"></td>
+          <td class="bordered"></td>
+          <td class="bordered"></td>
+          <td class="bordered"></td>
+          <td class="bordered"></td>
+          <td class="bordered"></td>
+          <td class="bordered"></td>
+        </tr>
+      </template>
+      <template id="radio-table-example">
+        <td><input type="radio" name="radio-table-radio" /></td>
+      </template>
+
       <div class="section">
         <p class="section-header">
           <span class="section-number">Section I.</span>
@@ -69,16 +92,11 @@
           were available.
         </p>
 
-        <template id="rwc-ryy-method">
-          <tr></tr>
-        </template>
-        <template id="rwc-ryy-example">
-          <td><input type="radio" name="rwc-ryy-radio" /></td>
-        </template>
         <table id="rwc-ryy-table">
           <thead>
             <tr>
               <td></td>
+              <td>F1</td>
               <td>1</td>
               <td>2</td>
               <td>3</td>
@@ -101,6 +119,26 @@
           Comparing different pre-trained representations on HookTheory
         </p>
         <p></p>
+
+        <table id="hooktheory-test-table">
+          <thead>
+            <tr>
+              <td></td>
+              <td>F1</td>
+              <td>1</td>
+              <td>2</td>
+              <td>3</td>
+              <td>4</td>
+              <td>5</td>
+              <td>6</td>
+              <td>7</td>
+              <td>8</td>
+              <td>9</td>
+              <td>10</td>
+            </tr>
+          </thead>
+          <tbody id="hooktheory-test-table-body"></tbody>
+        </table>
       </div>
 
       <div class="section">
@@ -110,9 +148,17 @@
         </p>
         <p></p>
       </div>
+
+      <div class="section">
+        <p class="section-header">
+          <span class="section-number">Section IV.</span>
+          Refining alignments from HookTheory
+        </p>
+        <p></p>
+      </div>
     </div>
 
-    <div id="footer">
+    <div id="footer" style="display: none">
       <div class="footer-row">
         <div class="footer-cell-label">
           <button id="toggle" disabled>⏯️</button>
@@ -127,7 +173,7 @@
           <label>Crossfade</label>
         </div>
         <div class="footer-cell-range">
-          <input id="xfade" type="range" min="0" max="1000" value="666" />
+          <input id="xfade" type="range" min="0" max="1000" value="500" />
         </div>
       </div>
       <div class="footer-row">

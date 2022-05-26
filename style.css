@@ -58,10 +58,18 @@ button {
   font-weight: bold;
 }
 
+table {
+  border-collapse: collapse;
+}
+
 td.method-name {
   text-align: right;
 }
 
 td:not(.method-name) {
   text-align: center;
+}
+
+td.bordered {
+  border-bottom: 2px solid black;
 }
