@@ -6,7 +6,7 @@ d = pathlib.Path('hooktheory_test_all')
 o = pathlib.Path('hooktheory_test')
 
 random.seed(0)
-uids = sorted(list(set([p.stem for p in d.rglob('*.mid')])))
+uids = sorted(list(set([p.stem for p in d.rglob('*.mid') if p.parent.stem != 'user'])))
 print(len(uids))
 
 sample = set(random.sample(uids, 100))
