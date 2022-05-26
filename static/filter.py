@@ -15,8 +15,8 @@ print(sample)
 for p in sorted(list(d.rglob('*.mid')) + list(d.rglob('*.mp3'))):
     if p.stem in sample:
         op = pathlib.Path(o, p.relative_to(d))
-        #op.parent.mkdir(exist_ok=True, parents=True)
-        #shutil.copy(str(p), str(op))
+        op.parent.mkdir(exist_ok=True, parents=True)
+        shutil.copy(str(p), str(op))
 
 import gzip
 import json
