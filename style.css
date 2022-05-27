@@ -5,7 +5,7 @@
 }
 
 #body {
-  max-width: 800px;
+  max-width: 1000px;
   margin-bottom: 200px;
 }
 
@@ -39,6 +39,7 @@ input[type="radio"] {
 
 select {
   font-size: 1.25em;
+  max-width: 300px;
 }
 
 button {
@@ -82,7 +83,7 @@ th {
 
 td.leftmost {
   text-align: right;
-  width: 180px;
+  width: 250px;
   padding: 4px;
   padding-right: 16px;
 }

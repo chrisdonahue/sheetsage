@@ -3,17 +3,47 @@ window.ismir = window.ismir || {};
 (function (JSZip, Tone, ns) {
   const ROOT = "https://dblblnd.github.io/ismir22/static";
 
+  const REPLAY_AMOUNT = 4;
+
   const RWC_RYY_METHODS_F1 = [
     ["ground_truth", "Human", "1.000"],
     [null, null, null],
-    ["mt3", "<a href=\"https://magenta.tensorflow.org/transcription-with-transformers\">MT3</a> Zero-shot", "0.133"],
-    ["melodia", "<a href=\"https://www.justinsalamon.com/melody-extraction.html\">Melodia</a> + <a href=\"\">Segmentation</a>", "0.201"],
-    ["spleeter_tony", "<a href=\"\">Spleeter</a> + <a href=\"https://github.com/justinsalamon/audio_to_midi_melodia\">Tony</a>", "0.341"],
-    ["ryynanen", "<a href=\"https://web.archive.org/web/20081115212058/http://www.cs.tut.fi/sgn/arg/matti/demos/mbctrans/\"><b>DSP + HMM</b></a>", "<b>0.420</b>"],
+    [
+      "mt3",
+      '<a href="https://magenta.tensorflow.org/transcription-with-transformers">MT3</a> Zero-shot',
+      "0.133",
+    ],
+    [
+      "melodia",
+      '<a href="https://www.justinsalamon.com/melody-extraction.html">Melodia</a> + <a href="https://github.com/justinsalamon/audio_to_midi_melodia">Segmentation</a>',
+      "0.201",
+    ],
+    [
+      "spleeter_tony",
+      '<a href="https://github.com/deezer/spleeter">Spleeter</a> + <a href="https://www.sonicvisualiser.org/tony/">Tony</a>',
+      "0.341",
+    ],
+    [
+      "ryynanen",
+      '<a href="https://web.archive.org/web/20081115212058/http://www.cs.tut.fi/sgn/arg/matti/demos/mbctrans/"><b>DSP + HMM</b></a>',
+      "<b>0.420</b>",
+    ],
     [null, null, null],
-    ["our_mel", "<a href=\"https://github.com/magenta/magenta/blob/9885adef56d134763a89de5584f7aa18ca7d53b6/magenta/models/onsets_frames_transcription/data.py#L89\">Mel</a> + Transformer", "0.631"],
-    ["our_mt3", "<a href=\"https://magenta.tensorflow.org/transcription-with-transformers\">MT3</a> + Transformer", "0.701"],
-    ["our_jkb", "<b><a href=\"https://openai.com/blog/jukebox/\">Jukebox</a> + Transformer</b>", "<b>0.744</b>"],
+    [
+      "our_mel",
+      '<a href="https://github.com/magenta/magenta/blob/9885adef56d134763a89de5584f7aa18ca7d53b6/magenta/models/onsets_frames_transcription/data.py#L89">Mel</a> + Transformer',
+      "0.631",
+    ],
+    [
+      "our_mt3",
+      '<a href="https://magenta.tensorflow.org/transcription-with-transformers">MT3</a> + Transformer',
+      "0.701",
+    ],
+    [
+      "our_jkb",
+      '<b><a href="https://openai.com/blog/jukebox/">Jukebox</a> + Transformer</b>',
+      "<b>0.744</b>",
+    ],
   ];
 
   const RWC_RYY_UIDS = [
@@ -208,6 +238,7 @@ window.ismir = window.ismir || {};
     let offset = null;
     if (urlToUid(ACTIVE_EXAMPLE) === urlToUid(a)) {
       offset = PLAYER.getTransportOffset();
+      offset = Math.max(offset - REPLAY_AMOUNT, 0);
     }
 
     const loaded = await PLAYER.setSources(a, b);
@@ -419,9 +450,9 @@ window.ismir = window.ismir || {};
         );
       }
     };
-    
+
     // Make all <a> open in new tab
-    const linkEls = document.getElementsByTagName('a');
+    const linkEls = document.getElementsByTagName("a");
     for (let l = 0; l < linkEls.length; ++l) {
       linkEls[l].target = "_blank";
     }

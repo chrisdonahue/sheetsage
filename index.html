@@ -145,7 +145,7 @@
               ><b>MT3</b></a
             >
             (Gardner et al. 21) which was not trained on melody transcription,
-            i.e., <b>zero-shot</b>.
+            i.e., it is <b>zero-shot</b>
           </li>
           <li>
             Combining
@@ -171,7 +171,7 @@
               href="https://web.archive.org/web/20081115212058/http://www.cs.tut.fi/sgn/arg/matti/demos/mbctrans/"
               >Ryyn&auml;nen and Klapuri 08</a
             >
-            which combines <b>DSP</b> with an <b>HMM</b>.
+            which combines <b>DSP</b> with an <b>HMM</b>
           </li>
         </ol>
 
@@ -179,16 +179,16 @@
           <thead>
             <tr>
               <th></th>
-              <th>1</th>
-              <th>2</th>
-              <th>3</th>
-              <th>4</th>
-              <th>5</th>
-              <th>6</th>
-              <th>7</th>
-              <th>8</th>
-              <th>9</th>
-              <th>10</th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
               <th class="method-f1">F1</th>
             </tr>
           </thead>
@@ -227,16 +227,16 @@
           <thead>
             <tr>
               <th></th>
-              <th>1</th>
-              <th>2</th>
-              <th>3</th>
-              <th>4</th>
-              <th>5</th>
-              <th>6</th>
-              <th>7</th>
-              <th>8</th>
-              <th>9</th>
-              <th>10</th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
               <th class="method-f1">F1</th>
             </tr>
           </thead>
@@ -270,21 +270,23 @@
         </p>
 
         <table id="alignment-table">
+          <!--
           <thead>
             <tr>
               <th></th>
-              <th>1</th>
-              <th>2</th>
-              <th>3</th>
-              <th>4</th>
-              <th>5</th>
-              <th>6</th>
-              <th>7</th>
-              <th>8</th>
-              <th>9</th>
-              <th>10</th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
             </tr>
           </thead>
+          -->
           <tbody id="alignment-table-body"></tbody>
         </table>
 
@@ -297,14 +299,14 @@
             id="alignment-bad-downbeat"
             name="radio-example"
           />. Additionally, on occasion the starting timestamp from the user
-          will be so far off that the transcription is off by precisely a
+          will be so imprecise that the transcription gets aligned to the wrong
           measure:
           <input
             type="radio"
             id="alignment-wrong-measure"
             name="radio-example"
           />. In practice, it appears to be possible to train effective
-          transcription models on this dataset despite these occasionally
+          transcription models using our refined alignments despite occasional
           hiccups.
         </p>
       </div>
@@ -328,9 +330,14 @@
           <a href="https://www.link.cs.cmu.edu/melisma/key"
             >Krumhansl-Schmuckler</a
           >
-          (Krumhansl 90). See our paper for full details. Below we make a
-          qualitative comparison between lead sheets from Sheet Sage and
-          human-transcribed lead sheets from HookTheory.
+          (Krumhansl 90). See our paper for full details.
+        </p>
+
+        <p>
+          Below we make a qualitative comparison between lead sheets from Sheet
+          Sage and human-transcribed lead sheets from HookTheory. We highlight
+          songs for which our method does well (🍒) as well as songs
+          representative of different failure modes of our approach (🍋).
         </p>
 
         <table id="sheetsage-table">
