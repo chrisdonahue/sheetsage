@@ -178,36 +178,55 @@ window.ismir = window.ismir || {};
   let PLAYER;
   let ACTIVE_EXAMPLE;
 
-  function _urlToUid(url) {
-    url = url || "";
-    const urlSplit = url.split("/");
-    let result = null;
-    if (urlSplit.length > 0) {
-      result = urlSplit[urlSplit.length - 1];
+  function uncheckRadios() {
+    const radioEls = document.getElementsByName("radio-example");
+    for (let i = 0; i < radioEls.length; ++i) {
+      radioEls[i].checked = false;
     }
-    return result;
+  }
+
+  function unselectSelects() {
+    const selectEls = document.getElementsByTagName("select");
+    for (let i = 0; i < selectEls.length; ++i) {
+      selectEls[i].selectedIndex = 0;
+    }
+    document.getElementById("sheetsage-score").src = "";
   }
 
   async function setActiveExample(a, b) {
     document.getElementById("footer").style.display = "table";
+
+    function urlToUid(url) {
+      url = url || "";
+      const urlSplit = url.split("/");
+      let result = null;
+      if (urlSplit.length > 0) {
+        result = urlSplit[urlSplit.length - 1];
+      }
+      return result;
+    }
     let offset = null;
-    if (_urlToUid(ACTIVE_EXAMPLE) === _urlToUid(a)) {
+    if (urlToUid(ACTIVE_EXAMPLE) === urlToUid(a)) {
       offset = PLAYER.getTransportOffset();
     }
+
     const loaded = await PLAYER.setSources(a, b);
     if (loaded) {
       if (offset !== null) PLAYER.setTransportOffset(offset);
       PLAYER.play();
       ACTIVE_EXAMPLE = a;
     } else {
+      uncheckRadios();
+      unselectSelects();
       alert(
         "Failed to load sound example... please let the authors know and try again later!"
       );
     }
   }
 
-  function loadSheetSageExample(zipUri, useRef) {
-    return fetch(zipUri)
+  async function setActiveSheetSageExample(zipUri) {
+    const useRef = document.getElementById("sheetsage-ref").checked;
+    const [a, b, score] = await fetch(zipUri)
       .then((response) => {
         if (!response.ok) {
           throw "Failed to fetch";
@@ -225,13 +244,6 @@ window.ismir = window.ismir || {};
           zip.file(`${stem}.png`).async("base64"),
         ]);
       });
-  }
-
-  async function setActiveSheetSageExample(zipUri) {
-    const [a, b, score] = await loadSheetSageExample(
-      zipUri,
-      document.getElementById("sheetsage-ref").checked
-    );
     await setActiveExample(
       `data:audio/mpeg;base64,${a}`,
       `data:audio/mpeg;base64,${b}`
@@ -242,6 +254,7 @@ window.ismir = window.ismir || {};
   }
 
   async function onDomReady() {
+    // Initialize player
     PLAYER = new ns.XfadePlayer(
       document.getElementById("toggle"),
       document.getElementById("stop"),
@@ -250,6 +263,7 @@ window.ismir = window.ismir || {};
       document.getElementById("volume")
     );
 
+    // RWC-RYY / HookTheory Test / Alignment tables
     const radioTableMethodTemplate =
       document.getElementById("radio-table-method").content;
     const radioTableHrTemplate =
@@ -257,7 +271,6 @@ window.ismir = window.ismir || {};
     const radioTableExampleTemplate = document.getElementById(
       "radio-table-example"
     ).content;
-
     const tables = [
       [
         document.getElementById("rwc-ryy-table-body"),
@@ -278,7 +291,6 @@ window.ismir = window.ismir || {};
         `${ROOT}/hooktheory_test`,
       ],
     ];
-
     for (let t = 0; t < tables.length; ++t) {
       const [tableBodyEl, methods, uids, root] = tables[t];
 
@@ -306,6 +318,7 @@ window.ismir = window.ismir || {};
             const inputEl = exampleEl.querySelector("input");
             inputEl.onchange = () => {
               if (inputEl.checked) {
+                unselectSelects();
                 setActiveExample(
                   `${root}/input/${uid}.mp3`,
                   `${root}/output/${method}/${uid}.mp3`
@@ -320,13 +333,13 @@ window.ismir = window.ismir || {};
       }
     }
 
+    // Sheet Sage example selectors
     const selects = [
       ["cherries", CHERRY_UIDS],
       ["lemons", LEMON_UIDS],
     ];
     const selectExampleTemplate =
       document.getElementById("sheetsage-example").content;
-
     for (let s = 0; s < selects.length; ++s) {
       const [selectName, uids] = selects[s];
       const selectEl = document.getElementById(`sheetsage-${selectName}`);
@@ -342,25 +355,46 @@ window.ismir = window.ismir || {};
       selectEl.oninput = () => {
         const selectedIndex = selectEl.selectedIndex;
         if (selectedIndex > 0) {
-          const uid = selectEl.options[selectedIndex].value;
           const otherSelectEl = document.getElementById(
             `sheetsage-${selectName === "cherries" ? "lemons" : "cherries"}`
           );
           otherSelectEl.selectedIndex = 0;
-          const radioEls = document.getElementsByName("radio-example");
-          for (let b = 0; b < radioEls.length; ++b) {
-            radioEls[b].checked = false;
-          }
+          uncheckRadios();
+          const uid = selectEl.options[selectedIndex].value;
           setActiveSheetSageExample(`${ROOT}/sheetsage/${uid}.zip`);
         }
       };
     }
 
+    // Sheet Sage ref vs est buttons
+    const sheetsageMethodEls = document.getElementsByName("sheetsage-method");
+    for (let m = 0; m < sheetsageMethodEls.length; ++m) {
+      const methodEl = sheetsageMethodEls[m];
+      methodEl.onchange = () => {
+        if (methodEl.checked) {
+          let uid = null;
+          const selectCherryEl = document.getElementById("sheetsage-cherries");
+          const selectLemonEl = document.getElementById("sheetsage-lemons");
+          if (selectCherryEl.selectedIndex > 0) {
+            uid = selectCherryEl.options[selectCherryEl.selectedIndex].value;
+          } else if (selectLemonEl.selectedIndex > 0) {
+            uid = selectLemonEl.options[selectLemonEl.selectedIndex].value;
+          }
+          if (uid !== null) {
+            uncheckRadios();
+            setActiveSheetSageExample(`${ROOT}/sheetsage/${uid}.zip`);
+          }
+        }
+      };
+    }
+
+    // Bad downbeat radio
     const alignmentBadDownbeatEl = document.getElementById(
       "alignment-bad-downbeat"
     );
     alignmentBadDownbeatEl.onchange = () => {
       if (alignmentBadDownbeatEl.checked) {
+        unselectSelects();
         const uid = ALIGNMENT_BAD_DOWNBEAT_UIDS[0][0];
         setActiveExample(
           `${ROOT}/hooktheory_test/input/${uid}.mp3`,
@@ -369,11 +403,13 @@ window.ismir = window.ismir || {};
       }
     };
 
+    // Wrong measure radio
     const alignmentWrongMeasureEl = document.getElementById(
       "alignment-wrong-measure"
     );
     alignmentWrongMeasureEl.onchange = () => {
       if (alignmentWrongMeasureEl.checked) {
+        unselectSelects();
         const uid = ALIGNMENT_WRONG_MEASURE_UIDS[0][0];
         setActiveExample(
           `${ROOT}/hooktheory_test/input/${uid}.mp3`,
@@ -383,8 +419,5 @@ window.ismir = window.ismir || {};
     };
   }
 
-  async function init() {}
-
   document.addEventListener("DOMContentLoaded", onDomReady, false);
-  init();
 })(window.JSZip, window.Tone, window.ismir);
