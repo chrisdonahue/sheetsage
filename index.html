@@ -28,6 +28,10 @@
     <link rel="stylesheet" href="style.css" />
 
     <script
+      src="https://cdn.jsdelivr.net/npm/jszip@3.7.1/dist/jszip.min.js"
+      defer
+    ></script>
+    <script
       src="https://cdn.jsdelivr.net/npm/tone@14.7.77/build/Tone.min.js"
       defer
     ></script>
@@ -53,6 +57,7 @@
       <template id="radio-table-method">
         <tr></tr>
       </template>
+
       <template id="radio-table-hr">
         <tr>
           <td></td>
@@ -69,8 +74,13 @@
           <td class="bordered"></td>
         </tr>
       </template>
+
       <template id="radio-table-example">
-        <td><input type="radio" name="radio-table-radio" /></td>
+        <td><input type="radio" name="radio-example" /></td>
+      </template>
+
+      <template id="sheetsage-example">
+        <option></option>
       </template>
 
       <div class="section">
@@ -147,6 +157,38 @@
           Lead sheet transcription results on HookTheory
         </p>
         <p></p>
+
+        <div>
+          <select id="sheetsage-cherries">
+            <option>Select an example...</option>
+          </select>
+        </div>
+
+        <div>
+          <select id="sheetsage-lemons">
+            <option>Select an example...</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="sheetsage-ref">Ground Truth</label
+          ><input
+            type="radio"
+            id="sheetsage-ref"
+            name="sheetsage-method"
+          />
+          <label for="sheetsage-est">Sheet Sage</label
+          ><input
+            type="radio"
+            id="sheetsage-est"
+            name="sheetsage-method"
+            checked
+          />
+        </div>
+
+        <div>
+          <img id="sheetsage-score" />
+        </div>
       </div>
 
       <div class="section">
@@ -154,7 +196,38 @@
           <span class="section-number">Section IV.</span>
           Refining alignments from HookTheory
         </p>
-        <p></p>
+        <p>
+          <input
+            type="radio"
+            id="alignment-bad-downbeat"
+            name="radio-example"
+          />
+          <input
+            type="radio"
+            id="alignment-wrong-measure"
+            name="radio-example"
+          />
+        </p>
+
+        <table id="alignment-table">
+          <thead>
+            <tr>
+              <td></td>
+              <td>F1</td>
+              <td>1</td>
+              <td>2</td>
+              <td>3</td>
+              <td>4</td>
+              <td>5</td>
+              <td>6</td>
+              <td>7</td>
+              <td>8</td>
+              <td>9</td>
+              <td>10</td>
+            </tr>
+          </thead>
+          <tbody id="alignment-table-body"></tbody>
+        </table>
       </div>
     </div>
 

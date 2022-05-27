@@ -30,4 +30,4 @@ for uid in sorted(list(sample)):
     output.append((uid, youtube_id))
 
 with open('web.json', 'w') as f:
-    f.write(json.dumps(output, indent=2))
+    f.write(json.dumps(output[::-1], indent=2))
