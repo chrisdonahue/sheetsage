@@ -6,14 +6,14 @@ window.ismir = window.ismir || {};
   const RWC_RYY_METHODS_F1 = [
     ["ground_truth", "Human", "1.000"],
     [null, null, null],
-    ["mt3", "MT3", "0.133"],
-    ["melodia", "Melodia", "0.201"],
-    ["spleeter_tony", "Spleeter + Tony", "0.341"],
-    ["ryynanen", "Ryynanen", "<b>0.420</b>"],
+    ["mt3", "<a href=\"https://magenta.tensorflow.org/transcription-with-transformers\">MT3</a> Zero-shot", "0.133"],
+    ["melodia", "<a href=\"https://www.justinsalamon.com/melody-extraction.html\">Melodia</a> + <a href=\"\">Segmentation</a>", "0.201"],
+    ["spleeter_tony", "<a href=\"\">Spleeter</a> + <a href=\"https://github.com/justinsalamon/audio_to_midi_melodia\">Tony</a>", "0.341"],
+    ["ryynanen", "<a href=\"https://web.archive.org/web/20081115212058/http://www.cs.tut.fi/sgn/arg/matti/demos/mbctrans/\"><b>DSP + HMM</b></a>", "<b>0.420</b>"],
     [null, null, null],
-    ["our_mel", "Our Mel", "0.631"],
-    ["our_mt3", "Our MT3", "0.701"],
-    ["our_jkb", "Our Jukebox", "<b>0.744</b>"],
+    ["our_mel", "<a href=\"https://github.com/magenta/magenta/blob/9885adef56d134763a89de5584f7aa18ca7d53b6/magenta/models/onsets_frames_transcription/data.py#L89\">Mel</a> + Transformer", "0.631"],
+    ["our_mt3", "<a href=\"https://magenta.tensorflow.org/transcription-with-transformers\">MT3</a> + Transformer", "0.701"],
+    ["our_jkb", "<b><a href=\"https://openai.com/blog/jukebox/\">Jukebox</a> + Transformer</b>", "<b>0.744</b>"],
   ];
 
   const RWC_RYY_UIDS = [
@@ -34,12 +34,12 @@ window.ismir = window.ismir || {};
     [null, null, null],
     ["our_mel", "Mel", "0.514"],
     ["our_mt3", "MT3", "0.550"],
-    ["our_jkb", "Jukebox", "<b>0.615</b>"],
+    ["our_jkb", "<b>Jukebox</b>", "<b>0.615</b>"],
     [null, null, null],
-    ["our_melmt3", "Mel + MT3", "0.548"],
-    ["our_meljkb", "Mel + Jukebox", "0.617"],
-    ["our_jkbmt3", "MT3 + Jukebox", "0.622"],
-    ["our_melmt3jkb", "Mel + MT3 + Jukebox", "<b>0.623</b>"],
+    ["our_melmt3", "Mel, MT3", "0.548"],
+    ["our_meljkb", "Mel, Jukebox", "0.617"],
+    ["our_jkbmt3", "MT3, Jukebox", "0.622"],
+    ["our_melmt3jkb", "<b>Mel, MT3, Jukebox</b>", "<b>0.623</b>"],
   ];
 
   const HOOKTHEORY_TEST_UIDS = [
@@ -306,12 +306,8 @@ window.ismir = window.ismir || {};
             .querySelector("tr");
           const methodNameEl = document.createElement("td");
           methodNameEl.innerHTML = methodHtml;
-          methodNameEl.className = "method-name";
+          methodNameEl.className = "leftmost";
           methodEl.appendChild(methodNameEl);
-          const methodF1El = document.createElement("td");
-          methodF1El.innerHTML = methodF1;
-          methodF1El.className = "method-f1";
-          methodEl.appendChild(methodF1El);
           for (let j = 0; j < 10; ++j) {
             const [uid, uidLabel] = uids[j];
             const exampleEl = radioTableExampleTemplate.cloneNode(true);
@@ -326,6 +322,12 @@ window.ismir = window.ismir || {};
               }
             };
             methodEl.appendChild(exampleEl);
+          }
+          if (methodF1.length > 0) {
+            const methodF1El = document.createElement("td");
+            methodF1El.innerHTML = methodF1;
+            methodF1El.className = "method-f1";
+            methodEl.appendChild(methodF1El);
           }
         }
 
@@ -417,6 +419,12 @@ window.ismir = window.ismir || {};
         );
       }
     };
+    
+    // Make all <a> open in new tab
+    const linkEls = document.getElementsByTagName('a');
+    for (let l = 0; l < linkEls.length; ++l) {
+      linkEls[l].target = "_blank";
+    }
   }
 
   document.addEventListener("DOMContentLoaded", onDomReady, false);

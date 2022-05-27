@@ -41,13 +41,13 @@
   </head>
   <body>
     <div id="header">
-      <h2>
+      <h1>
         Sound Examples for
         <i>Melody Transcription via Generative Pre-training</i>
-      </h2>
-      <h3 style="color: red">
+      </h1>
+      <h2 style="color: red">
         Anonymous submission under review at ISMIR 22, please do not share.
-      </h3>
+      </h2>
       <p id="mobile-warning" style="color: red; display: none">
         Note, this page is not optimized for viewing on mobile displays.
       </p>
@@ -61,17 +61,17 @@
       <template id="radio-table-hr">
         <tr>
           <td></td>
+          <td class="bordered"></td>
+          <td class="bordered"></td>
+          <td class="bordered"></td>
+          <td class="bordered"></td>
+          <td class="bordered"></td>
+          <td class="bordered"></td>
+          <td class="bordered"></td>
+          <td class="bordered"></td>
+          <td class="bordered"></td>
+          <td class="bordered"></td>
           <td></td>
-          <td class="bordered"></td>
-          <td class="bordered"></td>
-          <td class="bordered"></td>
-          <td class="bordered"></td>
-          <td class="bordered"></td>
-          <td class="bordered"></td>
-          <td class="bordered"></td>
-          <td class="bordered"></td>
-          <td class="bordered"></td>
-          <td class="bordered"></td>
         </tr>
       </template>
 
@@ -86,41 +86,124 @@
       <div class="section">
         <p class="section-header">
           <span class="section-number">Section I.</span>
-          Melody transcription results and baselines on RWC-MDB
+          Performance of our melody transcription methods and baselines on
+          RWC-MDB
         </p>
+
         <p>
-          We compare results from our systems to four baselines on ten segments
-          from
+          This section serves as the primary holistic comparison of our approach
+          to melody transcription against existing baselines. Our method
+          involves training Transformers (Vaswani et al. 17) on a dataset of
+          crowdsourced melody annotations derived from
+          <a href="https://www.hooktheory.com/theorytab">HookTheory</a>. We
+          compare the efficacy of using different music audio feature
+          representations as inputs to these models. Specifically, we examine:
+        </p>
+
+        <ol>
+          <li>
+            <b>Mel</b> spectrograms (specifically,
+            <a
+              href="https://github.com/magenta/magenta/blob/9885adef56d134763a89de5584f7aa18ca7d53b6/magenta/models/onsets_frames_transcription/data.py#L89"
+              >this formulation</a
+            >), representative of conventional approaches to transcription
+          </li>
+          <li>
+            Representations extracted from
+            <a
+              href="https://magenta.tensorflow.org/transcription-with-transformers"
+              ><b>MT3</b></a
+            >
+            (Gardner et al. 21), a model pre-trained on many transcription tasks
+          </li>
+          <li>
+            Representations extracted from
+            <a href="https://openai.com/blog/jukebox/"><b>Jukebox</b></a>
+            (Dhariwal et al. 20), a large model pre-trained to generate music
+            audio
+          </li>
+        </ol>
+
+        <p>
+          Below we compare performance of our three models (bottom) to results
+          from four other melody transcription baselines (middle) on ten
+          segments from
           <a href="https://staff.aist.go.jp/m.goto/RWC-MDB/">RWC-MDB</a> (Goto
-          et al. 2002). These particular segments were chosen to enable
-          comparison to Ryyn&auml;nen and Klapuri 2008, i.e., the segments for
-          which
+          et al. 02). These particular segments were chosen to enable comparison
+          to Ryyn&auml;nen and Klapuri 08, which released
           <a
             href="https://web.archive.org/web/20081115212058/http://www.cs.tut.fi/sgn/arg/matti/demos/mbctrans/"
-            >sound examples</a
+            >transcriptions</a
           >
-          were available.
+          for these specific segments. The four baselines are:
         </p>
+
+        <ol>
+          <li>
+            <a
+              href="https://magenta.tensorflow.org/transcription-with-transformers"
+              ><b>MT3</b></a
+            >
+            (Gardner et al. 21) which was not trained on melody transcription,
+            i.e., <b>zero-shot</b>.
+          </li>
+          <li>
+            Combining
+            <a href="https://www.justinsalamon.com/melody-extraction.html"
+              ><b>Melodia</b></a
+            >
+            (Salamon et al. 12), a melody extraction algorithm, with heuristic
+            note
+            <a href="https://github.com/justinsalamon/audio_to_midi_melodia"
+              ><b>segmentation</b></a
+            >
+          </li>
+          <li>
+            <a href="https://www.sonicvisualiser.org/tony/"><b>Tony</b></a>
+            (Mauch et al. 15), a monophonic transcription algorithm, on vocals
+            isolated with
+            <a href="https://github.com/deezer/spleeter"><b>Spleeter</b></a>
+            (Hennequin 19)
+          </li>
+          <li>
+            The melody transcription algorithm from
+            <a
+              href="https://web.archive.org/web/20081115212058/http://www.cs.tut.fi/sgn/arg/matti/demos/mbctrans/"
+              >Ryyn&auml;nen and Klapuri 08</a
+            >
+            which combines <b>DSP</b> with an <b>HMM</b>.
+          </li>
+        </ol>
 
         <table id="rwc-ryy-table">
           <thead>
             <tr>
-              <td></td>
-              <td>F1</td>
-              <td>1</td>
-              <td>2</td>
-              <td>3</td>
-              <td>4</td>
-              <td>5</td>
-              <td>6</td>
-              <td>7</td>
-              <td>8</td>
-              <td>9</td>
-              <td>10</td>
+              <th></th>
+              <th>1</th>
+              <th>2</th>
+              <th>3</th>
+              <th>4</th>
+              <th>5</th>
+              <th>6</th>
+              <th>7</th>
+              <th>8</th>
+              <th>9</th>
+              <th>10</th>
+              <th class="method-f1">F1</th>
             </tr>
           </thead>
           <tbody id="rwc-ryy-table-body"></tbody>
         </table>
+
+        <p>
+          Note that our method benefits from our new melody transcription
+          dataset, which is substantially larger than that of past efforts.
+          Hence, the stronger performance of "Mel + Transformer" compared to the
+          baselines may be interpreted as the benefit of collecting a large
+          dataset for this task, and the yet stronger performance of "MT3 +
+          Transformer" and "Jukebox + Transformer" as the additional benefit of
+          leveraging pre-trained models.
+        </p>
       </div>
 
       <div class="section">
@@ -128,23 +211,33 @@
           <span class="section-number">Section II.</span>
           Comparing different pre-trained representations on HookTheory
         </p>
-        <p></p>
+
+        <p>
+          In addition to evaluating our methods on a small set of ten segments,
+          we also compute performance on the entire HookTheory test set, which
+          contains over a thousand human-labeled segments. We also compare the
+          benefit of <i>combining</i> different input features (bottom). Our
+          results show that features are complementary to a degree&#8212;the
+          strongest performance is obtained by combining all three
+          features&#8212;but the benefits are marginal compared to using Jukebox
+          alone.
+        </p>
 
         <table id="hooktheory-test-table">
           <thead>
             <tr>
-              <td></td>
-              <td>F1</td>
-              <td>1</td>
-              <td>2</td>
-              <td>3</td>
-              <td>4</td>
-              <td>5</td>
-              <td>6</td>
-              <td>7</td>
-              <td>8</td>
-              <td>9</td>
-              <td>10</td>
+              <th></th>
+              <th>1</th>
+              <th>2</th>
+              <th>3</th>
+              <th>4</th>
+              <th>5</th>
+              <th>6</th>
+              <th>7</th>
+              <th>8</th>
+              <th>9</th>
+              <th>10</th>
+              <th class="method-f1">F1</th>
             </tr>
           </thead>
           <tbody id="hooktheory-test-table-body"></tbody>
@@ -154,80 +247,135 @@
       <div class="section">
         <p class="section-header">
           <span class="section-number">Section III.</span>
-          Lead sheet transcription results on HookTheory
-        </p>
-        <p></p>
-
-        <div>
-          <select id="sheetsage-cherries">
-            <option>Select an example...</option>
-          </select>
-        </div>
-
-        <div>
-          <select id="sheetsage-lemons">
-            <option>Select an example...</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="sheetsage-ref">Human</label
-          ><input
-            type="radio"
-            id="sheetsage-ref"
-            name="sheetsage-method"
-          />
-          <label for="sheetsage-est">Sheet Sage</label
-          ><input
-            type="radio"
-            id="sheetsage-est"
-            name="sheetsage-method"
-            checked
-          />
-        </div>
-
-        <div>
-          <img id="sheetsage-score" />
-        </div>
-      </div>
-
-      <div class="section">
-        <p class="section-header">
-          <span class="section-number">Section IV.</span>
           Refining alignments from HookTheory
         </p>
+
         <p>
-          <input
-            type="radio"
-            id="alignment-bad-downbeat"
-            name="radio-example"
-          />
-          <input
-            type="radio"
-            id="alignment-wrong-measure"
-            name="radio-example"
-          />
+          One challenge of using HookTheory for melody transcription is that the
+          user-specified alignments between the score and the audio are crude.
+          Users only provide a timestamp of the start and end of their annotated
+          segment within the audio track&#8212;these timestamps are often
+          approximate, and any tempo deviations within the segment will further
+          distort the alignment.
+        </p>
+
+        <p>
+          To refine these alignments, we propose a strategy which relies on beat
+          and downbeat detections from
+          <a href="https://github.com/CPJKU/madmom">madmom</a> (B&ouml;ck et al.
+          16). Our approach first aligns the first segment downbeat to the
+          <i>detected</i> which is closest to the user-specified starting
+          timestamp. Then, remaining segment beats are aligned to the subsequent
+          detected beats. Some examples follow:
         </p>
 
         <table id="alignment-table">
           <thead>
             <tr>
-              <td></td>
-              <td>F1</td>
-              <td>1</td>
-              <td>2</td>
-              <td>3</td>
-              <td>4</td>
-              <td>5</td>
-              <td>6</td>
-              <td>7</td>
-              <td>8</td>
-              <td>9</td>
-              <td>10</td>
+              <th></th>
+              <th>1</th>
+              <th>2</th>
+              <th>3</th>
+              <th>4</th>
+              <th>5</th>
+              <th>6</th>
+              <th>7</th>
+              <th>8</th>
+              <th>9</th>
+              <th>10</th>
             </tr>
           </thead>
           <tbody id="alignment-table-body"></tbody>
         </table>
+
+        <p>
+          In an informal listening test, we find that our refinement strategy
+          improved the alignment for 95 out of 100 segments. The primary failure
+          mode occurs when madmom detects the wrong beat as the downbeat
+          <input
+            type="radio"
+            id="alignment-bad-downbeat"
+            name="radio-example"
+          />. Additionally, on occasion the starting timestamp from the user
+          will be so far off that the transcription is off by precisely a
+          measure:
+          <input
+            type="radio"
+            id="alignment-wrong-measure"
+            name="radio-example"
+          />. In practice, it appears to be possible to train effective
+          transcription models on this dataset despite these occasionally
+          hiccups.
+        </p>
+      </div>
+
+      <div class="section">
+        <p class="section-header">
+          <span class="section-number">(Bonus!) Section IV.</span>
+          Lead sheet transcription results on HookTheory
+        </p>
+
+        <p>
+          As a bonus, we present results from Sheet Sage, a system we built to
+          automatically convert music audio into lead sheets, powered by our
+          Jukebox-based melody transcription model. To build Sheet Sage, we
+          trained a Jukebox-based chord recognition model on the chord
+          annotations from HookTheory. To render lead sheets, we combined our
+          melody transcription and chord recognition models with beat detections
+          from
+          <a href="https://github.com/CPJKU/madmom">madmom</a> (B&ouml;ck et al.
+          16) and symbolic key estimation using
+          <a href="https://www.link.cs.cmu.edu/melisma/key"
+            >Krumhansl-Schmuckler</a
+          >
+          (Krumhansl 90). See our paper for full details. Below we make a
+          qualitative comparison between lead sheets from Sheet Sage and
+          human-transcribed lead sheets from HookTheory.
+        </p>
+
+        <table id="sheetsage-table">
+          <tbody>
+            <tr>
+              <td class="leftmost sheetsage-label">🍒 Good</td>
+              <td>
+                <select id="sheetsage-cherries">
+                  <option>Select an example...</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td class="leftmost sheetsage-label">🍋 Bad</td>
+              <td>
+                <select id="sheetsage-lemons">
+                  <option>Select an example...</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>
+                <label class="sheetsage-label" for="sheetsage-ref">Human</label
+                ><input
+                  type="radio"
+                  id="sheetsage-ref"
+                  name="sheetsage-method"
+                />
+                <label class="sheetsage-label" for="sheetsage-est"
+                  >Sheet Sage</label
+                ><input
+                  type="radio"
+                  id="sheetsage-est"
+                  name="sheetsage-method"
+                  checked
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div>
+          <img id="sheetsage-score" />
+        </div>
       </div>
     </div>
 

@@ -1,3 +1,9 @@
+/* Layout */
+
+#header {
+  max-width: 1000px;
+}
+
 #body {
   max-width: 800px;
   margin-bottom: 200px;
@@ -18,6 +24,38 @@
   border-top: 2px solid;
 }
 
+/* Element styles */
+
+input[type="range"] {
+  width: 85%;
+  margin: 12px;
+  max-width: 800px;
+}
+
+input[type="radio"] {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+select {
+  font-size: 1.25em;
+}
+
+button {
+  font-size: 24px;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+th {
+  padding: 10px;
+  text-align: center;
+}
+
+/* Footer styling */
+
 .footer-row {
   display: table-row;
 }
@@ -32,22 +70,46 @@
   display: table-cell;
 }
 
-input[type="range"] {
-  width: 85%;
-  margin: 12px;
-  max-width: 800px;
-}
-
-button {
-  font-size: 24px;
-}
-
 #volume {
   max-width: 200px;
 }
 
 #xfade {
   max-width: 200px;
+}
+
+/* Tweaks */
+
+td.leftmost {
+  text-align: right;
+  width: 180px;
+  padding: 4px;
+  padding-right: 16px;
+}
+
+td.sheetsage-label {
+  font-size: 1.2em;
+}
+
+td.method-f1 {
+  padding-left: 16px;
+}
+
+th.method-f1 {
+  padding-left: 24px;
+}
+
+td:not(.leftmost) {
+  text-align: center;
+}
+
+td.bordered {
+  border-bottom: 2px solid black;
+}
+
+.sheetsage-label {
+  font-size: 1.25em;
+  width: 400px;
 }
 
 .section-header {
@@ -58,18 +120,6 @@ button {
   font-weight: bold;
 }
 
-table {
-  border-collapse: collapse;
-}
-
-td.method-name {
-  text-align: right;
-}
-
-td:not(.method-name) {
-  text-align: center;
-}
-
-td.bordered {
-  border-bottom: 2px solid black;
+#sheetsage-score {
+  margin: 32px;
 }
