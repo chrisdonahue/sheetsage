@@ -1,10 +1,10 @@
 window.ismir = window.ismir || {};
 
 (function (JSZip, Tone, ns) {
-  const ROOT = "https://chrisdonahue.com/ismir2022/static";
+  const ROOT = "https://dblblnd.github.io/ismir22/static";
 
   const RWC_RYY_METHODS_F1 = [
-    ["ground_truth", "Ground Truth", "1.000"],
+    ["ground_truth", "Human", "1.000"],
     [null, null, null],
     ["mt3", "MT3", "0.133"],
     ["melodia", "Melodia", "0.201"],
@@ -30,7 +30,7 @@ window.ismir = window.ismir || {};
   ];
 
   const HOOKTHEORY_TEST_METHODS_F1 = [
-    ["ground_truth", "Ground Truth", "1.000"],
+    ["ground_truth", "Human", "1.000"],
     [null, null, null],
     ["our_mel", "Mel", "0.514"],
     ["our_mt3", "MT3", "0.550"],
@@ -68,7 +68,7 @@ window.ismir = window.ismir || {};
   ];
 
   const ALIGNMENT_METHODS_F1 = [
-    ["user", "User", ""],
+    ["user", "Crude", ""],
     ["ground_truth", "Refined", ""],
   ];
 
@@ -92,8 +92,6 @@ window.ismir = window.ismir || {};
     ["ZOxVEzNygdq", "xuZA6qiJVfU"],
     ["kwxAXGnDgKG", "2R6S5CJWlco"],
   ];
-
-  const CHERRY_ROOT = `https://chrisdonahue.com/sheetsage-lbd/cherries/hooktheory_test`;
 
   const CHERRY_UIDS = [
     ["ZbgOKGNQgnY", "Jamiroquai - Space Cowboy"],
@@ -154,7 +152,6 @@ window.ismir = window.ismir || {};
     ["ZwxKJLMDged", "Kyu Sakamoto - Sukiyaki"],
   ];
 
-  const LEMON_ROOT = `https://chrisdonahue.com/sheetsage-lbd/cherries/hooktheory_test`;
   const LEMON_UIDS = [
     ["d_gw-dDKoGV", "Poor recall for some vocal styles"],
     ["kwxAaGaDxKG", "Poor recall for some vocal styles"],
@@ -324,14 +321,15 @@ window.ismir = window.ismir || {};
     }
 
     const selects = [
-      [document.getElementById("sheetsage-cherries"), CHERRY_UIDS, CHERRY_ROOT],
-      [document.getElementById("sheetsage-lemons"), LEMON_UIDS, LEMON_ROOT],
+      ["cherries", CHERRY_UIDS],
+      ["lemons", LEMON_UIDS],
     ];
     const selectExampleTemplate =
       document.getElementById("sheetsage-example").content;
 
     for (let s = 0; s < selects.length; ++s) {
-      const [selectEl, uids, root] = selects[s];
+      const [selectName, uids] = selects[s];
+      const selectEl = document.getElementById(`sheetsage-${selectName}`);
       for (let i = 0; i < uids.length; ++i) {
         const [uid, title] = uids[i];
         const exampleEl = selectExampleTemplate
@@ -346,14 +344,14 @@ window.ismir = window.ismir || {};
         if (selectedIndex > 0) {
           const uid = selectEl.options[selectedIndex].value;
           const otherSelectEl = document.getElementById(
-            `sheetsage-${root === CHERRY_ROOT ? "lemons" : "cherries"}`
+            `sheetsage-${selectName === "cherries" ? "lemons" : "cherries"}`
           );
           otherSelectEl.selectedIndex = 0;
           const radioEls = document.getElementsByName("radio-example");
           for (let b = 0; b < radioEls.length; ++b) {
             radioEls[b].checked = false;
           }
-          setActiveSheetSageExample(`${root}/${uid}.zip`);
+          setActiveSheetSageExample(`${ROOT}/sheetsage/${uid}.zip`);
         }
       };
     }

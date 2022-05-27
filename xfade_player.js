@@ -144,7 +144,7 @@ window.ismir = window.ismir || {};
       let result = true;
       try {
         await Promise.all([this.playerA.load(a), this.playerB.load(b)]);
-      } catch {
+      } catch (err) {
         result = false;
       }
       this.setLoaded(result);
