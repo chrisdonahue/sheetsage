@@ -1,0 +1,3 @@
+.*.swp
+cache
+docker/build_deps
