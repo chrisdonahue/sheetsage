@@ -9,6 +9,7 @@ from .utils import compute_checksum
 _DEFAULT_CHUNK_SIZE = 4096
 _ASSETS = None
 
+
 def _init_assets():
     global _ASSETS
     if _ASSETS is not None:
@@ -144,7 +145,7 @@ if __name__ == "__main__":
 
     logging.basicConfig(level=logging.INFO)
 
-    tags = get_asset_tags()
+    tags = sorted(list(get_asset_tags()))
     if args.startswith is not None:
         tags = [t for t in tags if t.startswith(args.startswith.strip().upper())]
 

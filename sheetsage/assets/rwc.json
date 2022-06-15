@@ -1,0 +1,810 @@
+{
+  "RWC_AUDIO_P001": {
+    "path": "rwc/audio/popular/Disc01-Track01.wav",
+    "checksum": "d4612fcf7255158121bbc5d4a69bc988ad4e88f7b6bb9676aaa9991783d70708"
+  },
+  "RWC_AUDIO_P002": {
+    "path": "rwc/audio/popular/Disc01-Track02.wav",
+    "checksum": "3fc8c7ad13b55817050e6291db69b6e708bc3b67c43a805140aacf1fd1cb5a43"
+  },
+  "RWC_AUDIO_P003": {
+    "path": "rwc/audio/popular/Disc01-Track03.wav",
+    "checksum": "9a9a5da2d32b70e46881501f9a9c7eb778637d8654c638b64afc2e69603ed9b2"
+  },
+  "RWC_AUDIO_P004": {
+    "path": "rwc/audio/popular/Disc01-Track04.wav",
+    "checksum": "5faa2d17214aa68f9641a9a830cfe7a21c11006b6e5b38812bfc3cb9f1f18c80"
+  },
+  "RWC_AUDIO_P005": {
+    "path": "rwc/audio/popular/Disc01-Track05.wav",
+    "checksum": "7c8c51f5c5c0ad496a71cbdc882dbf69ace6d3a9240966e7986a46a1b9ad0551"
+  },
+  "RWC_AUDIO_P006": {
+    "path": "rwc/audio/popular/Disc01-Track06.wav",
+    "checksum": "a094773edf62fab113ffbaa7c347ecfaa42cd1594a02b25aaa45b22053c3de72"
+  },
+  "RWC_AUDIO_P007": {
+    "path": "rwc/audio/popular/Disc01-Track07.wav",
+    "checksum": "7f4239db121045937b59d8e847d31d6e777b51680df4c8a90d8bf11074b2923d"
+  },
+  "RWC_AUDIO_P008": {
+    "path": "rwc/audio/popular/Disc01-Track08.wav",
+    "checksum": "9bdb948623ec3147821ceb7ace21b6ee520c16be38a5f85f20dd5389744c7f57"
+  },
+  "RWC_AUDIO_P009": {
+    "path": "rwc/audio/popular/Disc01-Track09.wav",
+    "checksum": "c0ef75e8a666c30f15b6877cca3b642cc6d29f4873c67f955d36c431f683462a"
+  },
+  "RWC_AUDIO_P010": {
+    "path": "rwc/audio/popular/Disc01-Track10.wav",
+    "checksum": "44eaf9c147417a8de7ebd1e9ff3c0c665ab4756c1de01aa3cbe8fef144d9b093"
+  },
+  "RWC_AUDIO_P011": {
+    "path": "rwc/audio/popular/Disc01-Track11.wav",
+    "checksum": "706a1071dd62bb295aabd149260f4bfabb1f518c543ee70b4bbf125cba62b7f1"
+  },
+  "RWC_AUDIO_P012": {
+    "path": "rwc/audio/popular/Disc01-Track12.wav",
+    "checksum": "8aae6241e568d57d6d799c5a41a56d9ca94701ed3d47d88fcc8301749753e21a"
+  },
+  "RWC_AUDIO_P013": {
+    "path": "rwc/audio/popular/Disc01-Track13.wav",
+    "checksum": "506ce74f93a845b7662b91ce6d38ec39b4775135777fe484648e12277621c8de"
+  },
+  "RWC_AUDIO_P014": {
+    "path": "rwc/audio/popular/Disc01-Track14.wav",
+    "checksum": "bbef26a4fb4b35658ffabd13872e9225bcdb85cb15ca0173efb45004eef6827b"
+  },
+  "RWC_AUDIO_P015": {
+    "path": "rwc/audio/popular/Disc01-Track15.wav",
+    "checksum": "de554bef1617e32ccd9d72a0cc2caa983ee011c110851f7d74f74e44dc4b16c9"
+  },
+  "RWC_AUDIO_P016": {
+    "path": "rwc/audio/popular/Disc01-Track16.wav",
+    "checksum": "136ec67368e350566e00f4d57e5d5ae3bc23b198e25d82a863981259439f43e0"
+  },
+  "RWC_AUDIO_P017": {
+    "path": "rwc/audio/popular/Disc02-Track01.wav",
+    "checksum": "bd0fd4253d8c1cd638f338ae5b574a7fc4372925c4234b86f3932d5eed8da9b3"
+  },
+  "RWC_AUDIO_P018": {
+    "path": "rwc/audio/popular/Disc02-Track02.wav",
+    "checksum": "64705f052b1d0e68899aa3c52075e996b694e38cdb8304afb888dc73bc4819da"
+  },
+  "RWC_AUDIO_P019": {
+    "path": "rwc/audio/popular/Disc02-Track03.wav",
+    "checksum": "fe9e670756eb45f58d47413d52cf765e03ffbca35824f66b455b7435f0d4114d"
+  },
+  "RWC_AUDIO_P020": {
+    "path": "rwc/audio/popular/Disc02-Track04.wav",
+    "checksum": "f863baef44360241fa72731b9f137ef5b0c6eaf675454caea1dc5c45c22211c8"
+  },
+  "RWC_AUDIO_P021": {
+    "path": "rwc/audio/popular/Disc02-Track05.wav",
+    "checksum": "d7816ee0308649c2c0bee7e7163d1bb7224c7b95dfb213a0122dc04450125cf3"
+  },
+  "RWC_AUDIO_P022": {
+    "path": "rwc/audio/popular/Disc02-Track06.wav",
+    "checksum": "9c270cbc0094093b27e797275c6a3c94df40abf48a5d2e9214841dd58b09337c"
+  },
+  "RWC_AUDIO_P023": {
+    "path": "rwc/audio/popular/Disc02-Track07.wav",
+    "checksum": "2c274358d4f33cf9ec4fe0245fbd1c998d33e482281879f23f2a6fd7c3b7499a"
+  },
+  "RWC_AUDIO_P024": {
+    "path": "rwc/audio/popular/Disc02-Track08.wav",
+    "checksum": "bee5275d6adba07dbcd68fb5bb469c6de080e067719081750ab389207f20cf2b"
+  },
+  "RWC_AUDIO_P025": {
+    "path": "rwc/audio/popular/Disc02-Track09.wav",
+    "checksum": "2d8e14540938d1248605d77afb2e148e314832243b02b8df5ae5e6a917cd2902"
+  },
+  "RWC_AUDIO_P026": {
+    "path": "rwc/audio/popular/Disc02-Track10.wav",
+    "checksum": "5d7aad2ef83c1d96f8659be1032aa8063a0dffadfa03bb69a59be43f65497938"
+  },
+  "RWC_AUDIO_P027": {
+    "path": "rwc/audio/popular/Disc02-Track11.wav",
+    "checksum": "bb6985e93ec21074f5a28bcea8e79b295dbe8b0530a1f054fe6d461743baff97"
+  },
+  "RWC_AUDIO_P028": {
+    "path": "rwc/audio/popular/Disc02-Track12.wav",
+    "checksum": "d943bff0cad3b410c430e5cd9ee5d1525b8629b27f7ee52a2e2dc17c2f49b92e"
+  },
+  "RWC_AUDIO_P029": {
+    "path": "rwc/audio/popular/Disc02-Track13.wav",
+    "checksum": "0de843098251f66e957b5c468ed63dfab12be0a5783d00fdfa9c0614e25801f5"
+  },
+  "RWC_AUDIO_P030": {
+    "path": "rwc/audio/popular/Disc02-Track14.wav",
+    "checksum": "dad5c97b37a331f29f0ac25edf64003992d3cce03353016165ec7cbbec29afe0"
+  },
+  "RWC_AUDIO_P031": {
+    "path": "rwc/audio/popular/Disc02-Track15.wav",
+    "checksum": "b806b174b5e42d7688ca81565b9cad239545298044477c1f39190a33ea8220fd"
+  },
+  "RWC_AUDIO_P032": {
+    "path": "rwc/audio/popular/Disc02-Track16.wav",
+    "checksum": "d354bf2f7cd82d8c52edd4d5d053efbb6181c16eb703208a921ecfac5ce98460"
+  },
+  "RWC_AUDIO_P033": {
+    "path": "rwc/audio/popular/Disc03-Track01.wav",
+    "checksum": "35e1c68154a4cb154b41183bf174bff0d687a31063d8e0eff60cc75d84b6a814"
+  },
+  "RWC_AUDIO_P034": {
+    "path": "rwc/audio/popular/Disc03-Track02.wav",
+    "checksum": "c93a1e3af4e1e74b5e3bc65d75c2b76e1746b7c415401382bc2d348bedacc84f"
+  },
+  "RWC_AUDIO_P035": {
+    "path": "rwc/audio/popular/Disc03-Track03.wav",
+    "checksum": "043dff0c66a95b3ddbdf4977a2fd4cc6d3c558eb520689c7d806baa6a1d787eb"
+  },
+  "RWC_AUDIO_P036": {
+    "path": "rwc/audio/popular/Disc03-Track04.wav",
+    "checksum": "de38e41032051a17c05dc5e1c15d6abc53cb486ec8c5fe5c5a1794a0b985a2a4"
+  },
+  "RWC_AUDIO_P037": {
+    "path": "rwc/audio/popular/Disc03-Track05.wav",
+    "checksum": "f7d8afa5cafff62426c4d13ecfe46fafcfb58e36b9e8c67c63dc6b428f48da29"
+  },
+  "RWC_AUDIO_P038": {
+    "path": "rwc/audio/popular/Disc03-Track06.wav",
+    "checksum": "39afc8975959618b481f1dc4deaa048ba21eab93921b5ae475ab823086880bc8"
+  },
+  "RWC_AUDIO_P039": {
+    "path": "rwc/audio/popular/Disc03-Track07.wav",
+    "checksum": "12b387f2915f49df84fb109d61cde8082bbba920d2a4b8eb06536ea2540ceafa"
+  },
+  "RWC_AUDIO_P040": {
+    "path": "rwc/audio/popular/Disc03-Track08.wav",
+    "checksum": "cef4ccb18e02051a5676b6a273839b94c38633d68be2bcfc6fc20289be607d44"
+  },
+  "RWC_AUDIO_P041": {
+    "path": "rwc/audio/popular/Disc03-Track09.wav",
+    "checksum": "abafa6f17dece4e5f7e8a6fb27fe22a463cd0c70d2b477c02de2978185cdad85"
+  },
+  "RWC_AUDIO_P042": {
+    "path": "rwc/audio/popular/Disc03-Track10.wav",
+    "checksum": "b949f672fd55cd91535b5f7a56a73ca4c433f741dee2532e99fb4a757a09db0e"
+  },
+  "RWC_AUDIO_P043": {
+    "path": "rwc/audio/popular/Disc03-Track11.wav",
+    "checksum": "787c8fbbf703bdb4ac8843c41937a73ef135051e99b420d9c16d409421d7282c"
+  },
+  "RWC_AUDIO_P044": {
+    "path": "rwc/audio/popular/Disc03-Track12.wav",
+    "checksum": "ab28649f880035f4c618d5da13d1c5067ab3f2f9ff86041bbcb4b221901e73a4"
+  },
+  "RWC_AUDIO_P045": {
+    "path": "rwc/audio/popular/Disc03-Track13.wav",
+    "checksum": "780c8e3811f0f55f1dbdd037f14b2a4fd2c15f55a35d15f6796ad2f811e23cb7"
+  },
+  "RWC_AUDIO_P046": {
+    "path": "rwc/audio/popular/Disc03-Track14.wav",
+    "checksum": "285df1c5d0bddc6ac21843836585f6a36bc4f0e36acb907d9ce89af993b30242"
+  },
+  "RWC_AUDIO_P047": {
+    "path": "rwc/audio/popular/Disc03-Track15.wav",
+    "checksum": "7ce74a94730ed1e3887562e1aff73354ffd8c1a7636c0224b60692114cd2ca0e"
+  },
+  "RWC_AUDIO_P048": {
+    "path": "rwc/audio/popular/Disc03-Track16.wav",
+    "checksum": "59735dd6d42e4b44f8fa4d9f2a582c965d8ac67498fc00945e4e60cf6a1604f6"
+  },
+  "RWC_AUDIO_P049": {
+    "path": "rwc/audio/popular/Disc04-Track01.wav",
+    "checksum": "f425c0a85baa217bc98f3547537dffb5467bfea55881278cb9799bcbc863cc31"
+  },
+  "RWC_AUDIO_P050": {
+    "path": "rwc/audio/popular/Disc04-Track02.wav",
+    "checksum": "52be603011f7293c770555bb9df768f520cb534a3a82ee2887285f99a21922b5"
+  },
+  "RWC_AUDIO_P051": {
+    "path": "rwc/audio/popular/Disc04-Track03.wav",
+    "checksum": "596d2170841ed7155e9878beda0585992aa3ae3a03414498e4ba872c4750263f"
+  },
+  "RWC_AUDIO_P052": {
+    "path": "rwc/audio/popular/Disc04-Track04.wav",
+    "checksum": "35de0bf051f6eb2a771737320fab3299f54b3c01f6d4a8f378e89028e871b5b3"
+  },
+  "RWC_AUDIO_P053": {
+    "path": "rwc/audio/popular/Disc04-Track05.wav",
+    "checksum": "14afa5a928513ecb7e4703a783e4ebe7e93d8dde97dc983bc7d7e869e54034d8"
+  },
+  "RWC_AUDIO_P054": {
+    "path": "rwc/audio/popular/Disc04-Track06.wav",
+    "checksum": "0a1690d7deb4ab10f37a46e89af2358455e75bf49238ddad3bde6648b5257bd2"
+  },
+  "RWC_AUDIO_P055": {
+    "path": "rwc/audio/popular/Disc04-Track07.wav",
+    "checksum": "2f56ccbe4587aab67b01e3cf2ffabb26e1232b6782d37b315a9ddb805d28c81c"
+  },
+  "RWC_AUDIO_P056": {
+    "path": "rwc/audio/popular/Disc04-Track08.wav",
+    "checksum": "1ca1cc314f15d95fb6f5dc3139e2745dd39cefefcfa7a491257c5a54312f633b"
+  },
+  "RWC_AUDIO_P057": {
+    "path": "rwc/audio/popular/Disc04-Track09.wav",
+    "checksum": "9175643fc1d0dde54bd1c03a12928440039392b6c23047f82a7eda9ea13facb4"
+  },
+  "RWC_AUDIO_P058": {
+    "path": "rwc/audio/popular/Disc04-Track10.wav",
+    "checksum": "fa84e74b4565df33a82f5d15ca652eee5bb231c3f288454b8e7c83a18cd9f689"
+  },
+  "RWC_AUDIO_P059": {
+    "path": "rwc/audio/popular/Disc04-Track11.wav",
+    "checksum": "1a3cda3b24cd88ea164549ef13ec4f4841de7ec5290cbc7bad9e10bacd1002a2"
+  },
+  "RWC_AUDIO_P060": {
+    "path": "rwc/audio/popular/Disc04-Track12.wav",
+    "checksum": "943ab44b3c88c8ad1f3d0489e05183a806da7ed238488d9e1c6d82e95ae31f06"
+  },
+  "RWC_AUDIO_P061": {
+    "path": "rwc/audio/popular/Disc04-Track13.wav",
+    "checksum": "addfd02ea3af58a0a0ad8bf00e956e4ec6f1cc9ebcfe941720f6d3885832640f"
+  },
+  "RWC_AUDIO_P062": {
+    "path": "rwc/audio/popular/Disc04-Track14.wav",
+    "checksum": "d1c820128f17a94b026eb588f7d87b93cad052ed35929048c41ce9920aa24d79"
+  },
+  "RWC_AUDIO_P063": {
+    "path": "rwc/audio/popular/Disc04-Track15.wav",
+    "checksum": "86c93c1d10326a84e7c05eae75666416b6da90fa74e736e793d6c2b3742c70ce"
+  },
+  "RWC_AUDIO_P064": {
+    "path": "rwc/audio/popular/Disc04-Track16.wav",
+    "checksum": "2f0fcf624f6ecb81b89f510fb781e9834eb91e98924f99ddd0b5eb95b07f7f58"
+  },
+  "RWC_AUDIO_P065": {
+    "path": "rwc/audio/popular/Disc05-Track01.wav",
+    "checksum": "dacf5e0ad9ea034c42c29ba92043a5944d4200bfef60f79f5aae82acc78797ae"
+  },
+  "RWC_AUDIO_P066": {
+    "path": "rwc/audio/popular/Disc05-Track02.wav",
+    "checksum": "36d43859f21bb20b1537404bc4b6ab60826a5a94aa9b1223ffc8218537950ef6"
+  },
+  "RWC_AUDIO_P067": {
+    "path": "rwc/audio/popular/Disc05-Track03.wav",
+    "checksum": "403f551442849b0f21d9920b7414f17cb35ad44b74a35f2fe117b8958c14d14e"
+  },
+  "RWC_AUDIO_P068": {
+    "path": "rwc/audio/popular/Disc05-Track04.wav",
+    "checksum": "186f876e1febf7ffeb38c1f72be78a3b0bfea21e0ba493cc897ad9965abd48f3"
+  },
+  "RWC_AUDIO_P069": {
+    "path": "rwc/audio/popular/Disc05-Track05.wav",
+    "checksum": "7c5e9623bbdfddf95cf16aa9f115b85a6f2f94bd4ae4247506d95ebf196a8887"
+  },
+  "RWC_AUDIO_P070": {
+    "path": "rwc/audio/popular/Disc05-Track06.wav",
+    "checksum": "7bc06b86ff01075589dee396427ed27247e0c63dc0e49f6dcf44f070b3fa9bc5"
+  },
+  "RWC_AUDIO_P071": {
+    "path": "rwc/audio/popular/Disc05-Track07.wav",
+    "checksum": "107f5a0cae932e385be8c8cf361dbaf3adbbea10b4e57a51df7204e7a9aeb85c"
+  },
+  "RWC_AUDIO_P072": {
+    "path": "rwc/audio/popular/Disc05-Track08.wav",
+    "checksum": "5887206f5e90c21eb58e40138bf0d1f620631534e26fe87b162f8c52cd6ed7a6"
+  },
+  "RWC_AUDIO_P073": {
+    "path": "rwc/audio/popular/Disc05-Track09.wav",
+    "checksum": "f7794f858c3ccd85c6af84f77cb9affdbda7945ae8a380e8736da8bbdb4e746b"
+  },
+  "RWC_AUDIO_P074": {
+    "path": "rwc/audio/popular/Disc05-Track10.wav",
+    "checksum": "7b27f1097a33ea8ac37ed090e672543cb1f3f8f032c89197097a1492c3d79b6b"
+  },
+  "RWC_AUDIO_P075": {
+    "path": "rwc/audio/popular/Disc05-Track11.wav",
+    "checksum": "f8f01e72126acba42754f0a586037007043c430c2e16bc98c6fda89ac8c4cfad"
+  },
+  "RWC_AUDIO_P076": {
+    "path": "rwc/audio/popular/Disc05-Track12.wav",
+    "checksum": "fc12a6918a9a6c7bf656af52c199cfa4cda1f9d35f53a0f7254505b574491bb0"
+  },
+  "RWC_AUDIO_P077": {
+    "path": "rwc/audio/popular/Disc05-Track13.wav",
+    "checksum": "b56cc52410de8b1fa2ae80e04ace3da124b3e4844e4dd91f6367d6d5bf281b94"
+  },
+  "RWC_AUDIO_P078": {
+    "path": "rwc/audio/popular/Disc05-Track14.wav",
+    "checksum": "a35baf462283522869669b8183690c152c409a113615ea112ad9eed11bb16051"
+  },
+  "RWC_AUDIO_P079": {
+    "path": "rwc/audio/popular/Disc05-Track15.wav",
+    "checksum": "d39fb3ea61f2a52b8cdd97e2edf4bea5ea746a5a117fac8e99c42659268ef347"
+  },
+  "RWC_AUDIO_P080": {
+    "path": "rwc/audio/popular/Disc05-Track16.wav",
+    "checksum": "a6271ade2c61bfa43901cea27775e16366d3439d514931ac663ee93459ed112a"
+  },
+  "RWC_AUDIO_P081": {
+    "path": "rwc/audio/popular/Disc06-Track01.wav",
+    "checksum": "4683e0835ae9e37681b03b5bdd0c86d80979431318ea5d76062fef22f73c31df"
+  },
+  "RWC_AUDIO_P082": {
+    "path": "rwc/audio/popular/Disc06-Track02.wav",
+    "checksum": "24ebd4166ac1ee058b56e13b326055f9b42d514a0efe43abf9fe7f9a6d25a1af"
+  },
+  "RWC_AUDIO_P083": {
+    "path": "rwc/audio/popular/Disc06-Track03.wav",
+    "checksum": "cf63d49a3944e4479d4945cce0a9c14b209249cd1b85ba99cf7bb70e70e3a28a"
+  },
+  "RWC_AUDIO_P084": {
+    "path": "rwc/audio/popular/Disc06-Track04.wav",
+    "checksum": "a359bb8906007725491437617987787c29e6b6aba7067514db3898e467a53a63"
+  },
+  "RWC_AUDIO_P085": {
+    "path": "rwc/audio/popular/Disc06-Track05.wav",
+    "checksum": "7640eeeacea9e8b71ed851ba6af471361564b7a6646246c6fb588a7521dfc8ab"
+  },
+  "RWC_AUDIO_P086": {
+    "path": "rwc/audio/popular/Disc06-Track06.wav",
+    "checksum": "7cd5f1b2a74f15d4c6382f4bee5a6ae433da64668679b4a7e016fbf2a515481a"
+  },
+  "RWC_AUDIO_P087": {
+    "path": "rwc/audio/popular/Disc06-Track07.wav",
+    "checksum": "b8413c1c7e543768b25f67456f0435d28d60011c39c3ccc63325f5ba1a4ef2b5"
+  },
+  "RWC_AUDIO_P088": {
+    "path": "rwc/audio/popular/Disc06-Track08.wav",
+    "checksum": "d01da5a3dc68aa147d130797a17733b67249393370d9626a9f0291a6e0400547"
+  },
+  "RWC_AUDIO_P089": {
+    "path": "rwc/audio/popular/Disc06-Track09.wav",
+    "checksum": "d2c2d9aafd65096693cdd34e5648ee0e4cdb674ade8d2a11f7500eafe05072d5"
+  },
+  "RWC_AUDIO_P090": {
+    "path": "rwc/audio/popular/Disc06-Track10.wav",
+    "checksum": "0e8ef9521bbe6da5f510f1e6ad0216df370b8c3959d87ac95d12575da41d293e"
+  },
+  "RWC_AUDIO_P091": {
+    "path": "rwc/audio/popular/Disc07-Track01.wav",
+    "checksum": "f833f20c09fe93a98f6190534e9047aa80886ea2fa04ef9235f993d7fe484e17"
+  },
+  "RWC_AUDIO_P092": {
+    "path": "rwc/audio/popular/Disc07-Track02.wav",
+    "checksum": "7df56cf8a88f27946532cd895360988dc6da5635fffd024beec1aa10bbf497fb"
+  },
+  "RWC_AUDIO_P093": {
+    "path": "rwc/audio/popular/Disc07-Track03.wav",
+    "checksum": "30a38da553289a707e5c3aef735554d8e5d3078726f7f8730a19478dea6cbdad"
+  },
+  "RWC_AUDIO_P094": {
+    "path": "rwc/audio/popular/Disc07-Track04.wav",
+    "checksum": "0d4999d1072beba94d8666f8bc5bdf5f045b05fed934e35d51c61cfc07d3fc6c"
+  },
+  "RWC_AUDIO_P095": {
+    "path": "rwc/audio/popular/Disc07-Track05.wav",
+    "checksum": "50a2332ff6ecceab7dc5782fd0c29365b2b07c209166b68d30b36b05e961854c"
+  },
+  "RWC_AUDIO_P096": {
+    "path": "rwc/audio/popular/Disc07-Track06.wav",
+    "checksum": "9b1cf7cdb67a13666173ff818651930788ed47ae40d6858872e60edf4d6e04e1"
+  },
+  "RWC_AUDIO_P097": {
+    "path": "rwc/audio/popular/Disc07-Track07.wav",
+    "checksum": "678d3622d6eda57fbe312d77b8fb636daebbf2b1b4a6490e0228e3231c30f79e"
+  },
+  "RWC_AUDIO_P098": {
+    "path": "rwc/audio/popular/Disc07-Track08.wav",
+    "checksum": "3d4db9248ad7f50c0832f14d3e80e6ede8d7aff8b6510a4d3af950010a897981"
+  },
+  "RWC_AUDIO_P099": {
+    "path": "rwc/audio/popular/Disc07-Track09.wav",
+    "checksum": "ed848ccc161496352480362ad21491d31b8930ce761153ecb006fbdfd9192c60"
+  },
+  "RWC_AUDIO_P100": {
+    "path": "rwc/audio/popular/Disc07-Track10.wav",
+    "checksum": "305e343af5db2687edcfb9e3eafd6a6c1e67534b5da387e34d4eddef249ba277"
+  },
+  "RWC_AUDIO_G001": {
+    "path": "rwc/audio/genre/Disc01-Track01.wav",
+    "checksum": "8954dac4ce704a091fcde7a69beb82e4f0a15dc1e1d88f1e6286933c3de749cf"
+  },
+  "RWC_AUDIO_G002": {
+    "path": "rwc/audio/genre/Disc01-Track02.wav",
+    "checksum": "aa89b13b1af9d8572c3c0c08e2fa2df54a47c382cbda3ba0bed5b47f9392f18f"
+  },
+  "RWC_AUDIO_G003": {
+    "path": "rwc/audio/genre/Disc01-Track03.wav",
+    "checksum": "858ae525268c8c526fbba22a05a609669053aff98742c95d5f41ce6ac700b49e"
+  },
+  "RWC_AUDIO_G004": {
+    "path": "rwc/audio/genre/Disc01-Track04.wav",
+    "checksum": "6879700f73ed1d4faac823d8b67ea8e7d6ecb10e29549ffe321f6e82d8d2f0d4"
+  },
+  "RWC_AUDIO_G005": {
+    "path": "rwc/audio/genre/Disc01-Track05.wav",
+    "checksum": "17d02332b5e625ab21ea3d9da3e976a86f2a481da7d0c7daa4d8bf38818225db"
+  },
+  "RWC_AUDIO_G006": {
+    "path": "rwc/audio/genre/Disc01-Track06.wav",
+    "checksum": "cad5cc225ef3d901e45d98a776ceee5a28b51fca2d8c4b1405d5d96fbd8eaa75"
+  },
+  "RWC_AUDIO_G007": {
+    "path": "rwc/audio/genre/Disc01-Track07.wav",
+    "checksum": "26912d841fac8cc04827ce32fd972eaf875da9802d797dc5b055210a3c980143"
+  },
+  "RWC_AUDIO_G008": {
+    "path": "rwc/audio/genre/Disc01-Track08.wav",
+    "checksum": "7971b1edbc6a9eb8690c3f889d0152521929159c54082c382e2f02cb677f9fde"
+  },
+  "RWC_AUDIO_G009": {
+    "path": "rwc/audio/genre/Disc01-Track09.wav",
+    "checksum": "eeea51135335945639d43c3c3246af166f9c529a1f04219e4939510f2cf341f3"
+  },
+  "RWC_AUDIO_G010": {
+    "path": "rwc/audio/genre/Disc01-Track10.wav",
+    "checksum": "23a311a6289687e1edef94bf68a365b6498c7862847bb37ec789d57172e023c3"
+  },
+  "RWC_AUDIO_G011": {
+    "path": "rwc/audio/genre/Disc01-Track11.wav",
+    "checksum": "03bf5c3fe215dbe384a977f3fca00e0fb2dd8b8c005eb1b45556d72b34a80c5b"
+  },
+  "RWC_AUDIO_G012": {
+    "path": "rwc/audio/genre/Disc01-Track12.wav",
+    "checksum": "77ff0a204dccd10163283210b2045cc9df6c6f173f359f64bdf442f2cd87f902"
+  },
+  "RWC_AUDIO_G013": {
+    "path": "rwc/audio/genre/Disc02-Track01.wav",
+    "checksum": "84ca4fa9dbc35f3c42f6054440e3dcf2fadca2e0bace8e17d40aed7206d1576d"
+  },
+  "RWC_AUDIO_G014": {
+    "path": "rwc/audio/genre/Disc02-Track02.wav",
+    "checksum": "55cea08c1b65018cbc57be2918adc1f42311edf4a58432c36768d167b51fde76"
+  },
+  "RWC_AUDIO_G015": {
+    "path": "rwc/audio/genre/Disc02-Track03.wav",
+    "checksum": "63b1a1512b4812d0b7b728b5b239b7bcd266dd2c0d66ac1ff08f43cf651526ef"
+  },
+  "RWC_AUDIO_G016": {
+    "path": "rwc/audio/genre/Disc02-Track04.wav",
+    "checksum": "ab3b22fdd462244690f696a5c68f187f27e82a86efbd935e4df3f6fa38083951"
+  },
+  "RWC_AUDIO_G017": {
+    "path": "rwc/audio/genre/Disc02-Track05.wav",
+    "checksum": "ccd985d292467b9c1a23e29a06b427436052ad693cd5ab141949cc0100179937"
+  },
+  "RWC_AUDIO_G018": {
+    "path": "rwc/audio/genre/Disc02-Track06.wav",
+    "checksum": "fbd3989d1735a4690ab576967b9adc174b9d6955a7b49448238f7d98414d0cdc"
+  },
+  "RWC_AUDIO_G019": {
+    "path": "rwc/audio/genre/Disc02-Track07.wav",
+    "checksum": "21fb45184356324b687f15b35250dc29fa01de8da3f2eb3bf56fc9a4cb9756d0"
+  },
+  "RWC_AUDIO_G020": {
+    "path": "rwc/audio/genre/Disc02-Track08.wav",
+    "checksum": "5e26420c50fa25ce53fe63df4e763fd975a4a49bf949f507179c3c5137e33c8b"
+  },
+  "RWC_AUDIO_G021": {
+    "path": "rwc/audio/genre/Disc02-Track09.wav",
+    "checksum": "fe5522d55de66934944c03576aaf9ac7f9f000413210e37b29adb0dad772b453"
+  },
+  "RWC_AUDIO_G022": {
+    "path": "rwc/audio/genre/Disc02-Track10.wav",
+    "checksum": "e55a3a068002f8dfb0353bdfa42fe557a9d8a77ba1801891dff757c35fcd1df5"
+  },
+  "RWC_AUDIO_G023": {
+    "path": "rwc/audio/genre/Disc02-Track11.wav",
+    "checksum": "2187cbe1a1b03fbe666d49b2cf961627c0c0999bfb6cdc988902ea69c9910b91"
+  },
+  "RWC_AUDIO_G024": {
+    "path": "rwc/audio/genre/Disc02-Track12.wav",
+    "checksum": "e2ffb7b534ec47bff3a56400bae1485d799af5dfa3ab51e31e012cc2c42dd01e"
+  },
+  "RWC_AUDIO_G025": {
+    "path": "rwc/audio/genre/Disc02-Track13.wav",
+    "checksum": "82343036a7d21da76c076fdafe9e4b53c9682d4c805236bc9250815c04db1ce7"
+  },
+  "RWC_AUDIO_G026": {
+    "path": "rwc/audio/genre/Disc02-Track14.wav",
+    "checksum": "34be8841a68e4459c7e2d2e7b5a3921b501d328e1354a8422dce64244a8eafdd"
+  },
+  "RWC_AUDIO_G027": {
+    "path": "rwc/audio/genre/Disc02-Track15.wav",
+    "checksum": "04fa85020659c4215002238148f8b1acd0eba8b47df54085796862bba8ad5f31"
+  },
+  "RWC_AUDIO_G028": {
+    "path": "rwc/audio/genre/Disc03-Track01.wav",
+    "checksum": "2b48556cc2f102c25c4c8b3312224996d414594cd1b8b45d22c5df3b0a066577"
+  },
+  "RWC_AUDIO_G029": {
+    "path": "rwc/audio/genre/Disc03-Track02.wav",
+    "checksum": "b2f3e426cf8df9303ec8461e4bdbe1e68af6ca65ab025a0566ef56790b82b9fa"
+  },
+  "RWC_AUDIO_G030": {
+    "path": "rwc/audio/genre/Disc03-Track03.wav",
+    "checksum": "2e92582da6a0bd144fee277764940f302c3827773c74b61257facae9eb36a84b"
+  },
+  "RWC_AUDIO_G031": {
+    "path": "rwc/audio/genre/Disc03-Track04.wav",
+    "checksum": "c81a3d1d6c9da5d1660ab398f3b979cf04c7a4e104c015840e4b0be5f246490f"
+  },
+  "RWC_AUDIO_G032": {
+    "path": "rwc/audio/genre/Disc03-Track05.wav",
+    "checksum": "fefdd8298ef900a7a85aaca5877be5d8d34a97e401eeaa369be90bd9faef99e9"
+  },
+  "RWC_AUDIO_G033": {
+    "path": "rwc/audio/genre/Disc03-Track06.wav",
+    "checksum": "42c959e81c9b1dca8d4123a037f210ed930738821ab1e8d701650ef41ca0ef25"
+  },
+  "RWC_AUDIO_G034": {
+    "path": "rwc/audio/genre/Disc03-Track07.wav",
+    "checksum": "5963528852e7e849debeb4c5d300c20d23da8f50bf445d9c70eff9e52687c843"
+  },
+  "RWC_AUDIO_G035": {
+    "path": "rwc/audio/genre/Disc03-Track08.wav",
+    "checksum": "1a7aacaf858733b6faf4b9baa532c1dfb8600f1e5bf6789b25553a28890fa584"
+  },
+  "RWC_AUDIO_G036": {
+    "path": "rwc/audio/genre/Disc03-Track09.wav",
+    "checksum": "c1197e8a8df39d84e9e30ed21d17ffcb14b825f87156ff07e5d6a943b8fb9193"
+  },
+  "RWC_AUDIO_G037": {
+    "path": "rwc/audio/genre/Disc04-Track01.wav",
+    "checksum": "6d354de59c32e555667a13f39014e4c178ccefdc440fc6925b47944219e22955"
+  },
+  "RWC_AUDIO_G038": {
+    "path": "rwc/audio/genre/Disc04-Track02.wav",
+    "checksum": "595186f135cf48202aefee68294a31485dd491f715c12acf3726fb10f882cfea"
+  },
+  "RWC_AUDIO_G039": {
+    "path": "rwc/audio/genre/Disc04-Track03.wav",
+    "checksum": "baf95b80224869d277d3b805f4ab433e3a2370c58679fd336709e1105d4273a5"
+  },
+  "RWC_AUDIO_G040": {
+    "path": "rwc/audio/genre/Disc04-Track04.wav",
+    "checksum": "472a7f533be7982b232960249c007e141bb743f30ff49d6c12eaedacba628003"
+  },
+  "RWC_AUDIO_G041": {
+    "path": "rwc/audio/genre/Disc04-Track05.wav",
+    "checksum": "f21c261386d09161eeac0d69842e83fc268cf317f208adbb9b379801b2aad46f"
+  },
+  "RWC_AUDIO_G042": {
+    "path": "rwc/audio/genre/Disc04-Track06.wav",
+    "checksum": "3ee5e9c6f5b94ac2cd27bfed9cfc36e287d209ac72e4d9bd9527b3c055539a54"
+  },
+  "RWC_AUDIO_G043": {
+    "path": "rwc/audio/genre/Disc04-Track07.wav",
+    "checksum": "28dadd36bbab22e62ff2dd27fb51730a3164f252397abc9863f918bb8f7743b8"
+  },
+  "RWC_AUDIO_G044": {
+    "path": "rwc/audio/genre/Disc04-Track08.wav",
+    "checksum": "235d3b3cd72a55fc8cb2031d8823ea2c7929f31b1fc5248954dd3c04b929b4ad"
+  },
+  "RWC_AUDIO_G045": {
+    "path": "rwc/audio/genre/Disc04-Track09.wav",
+    "checksum": "c2bbef5e50306e7c7fad3174076b13b58e3c0f05fa0cf70893312acec0a7c04c"
+  },
+  "RWC_AUDIO_G046": {
+    "path": "rwc/audio/genre/Disc04-Track10.wav",
+    "checksum": "3905736c6f73d70115c47d654ccc790d2b383a67e9bbc713df04f322c94c09e4"
+  },
+  "RWC_AUDIO_G047": {
+    "path": "rwc/audio/genre/Disc04-Track11.wav",
+    "checksum": "b7cec9f56d6feefa75b3760295d11a927ba0ebaa628a523d0b16b17bd4be018e"
+  },
+  "RWC_AUDIO_G048": {
+    "path": "rwc/audio/genre/Disc04-Track12.wav",
+    "checksum": "c2ab0394cc86cae4552a6cbe42160034169b7e5919a5e869323bbe3517af4576"
+  },
+  "RWC_AUDIO_G049": {
+    "path": "rwc/audio/genre/Disc05-Track01.wav",
+    "checksum": "3e4c0e9b882768eb9587977629ec8672d6e2c6f056b21f2dee925f8c39da4078"
+  },
+  "RWC_AUDIO_G050": {
+    "path": "rwc/audio/genre/Disc05-Track02.wav",
+    "checksum": "52080c7d6f0f5244f0dfeb45198b337293b61a71afc8f601867918a59fe8481f"
+  },
+  "RWC_AUDIO_G051": {
+    "path": "rwc/audio/genre/Disc05-Track03.wav",
+    "checksum": "7a5d9dd8c463b0bfe0cf786a02a477e3df47765e97612d7f3115c9a8b7f7bb1a"
+  },
+  "RWC_AUDIO_G052": {
+    "path": "rwc/audio/genre/Disc05-Track04.wav",
+    "checksum": "0ca2672371bfb8eb3269305968af9ea94ba8e29738498a8485adab6c4d327189"
+  },
+  "RWC_AUDIO_G053": {
+    "path": "rwc/audio/genre/Disc05-Track05.wav",
+    "checksum": "a6d0bde0e6bf99c7618c7e334c0c2025e456c8e2e45e0d03f18b2055bc119e8e"
+  },
+  "RWC_AUDIO_G054": {
+    "path": "rwc/audio/genre/Disc05-Track06.wav",
+    "checksum": "a22b2345ffb46572f5904cc4479ce1c21620c8325db4db4ce9cb6a63e7fc44f2"
+  },
+  "RWC_AUDIO_G055": {
+    "path": "rwc/audio/genre/Disc05-Track07.wav",
+    "checksum": "90e6047b2a07b6d4559859868a43afc7497be444d352ae11091a7480f7558a4c"
+  },
+  "RWC_AUDIO_G056": {
+    "path": "rwc/audio/genre/Disc05-Track08.wav",
+    "checksum": "54436dcf9d718dd221601ed5f2c0c8b4119d02fda965eb42db2ada88c82b9345"
+  },
+  "RWC_AUDIO_G057": {
+    "path": "rwc/audio/genre/Disc06-Track01.wav",
+    "checksum": "b5cff7202e758187649ddf003f5daa782dffaf2dab8b86c8b70f9c3286e06d8b"
+  },
+  "RWC_AUDIO_G058": {
+    "path": "rwc/audio/genre/Disc06-Track02.wav",
+    "checksum": "a115fcb4a9657430b80d5194aa027a8e98b2d5a8096cfac58587a784620f0550"
+  },
+  "RWC_AUDIO_G059": {
+    "path": "rwc/audio/genre/Disc06-Track03.wav",
+    "checksum": "1cf95a4ae864093a55ca24027bb0d34deccbf095022f8f38c52983db9de9c198"
+  },
+  "RWC_AUDIO_G060": {
+    "path": "rwc/audio/genre/Disc06-Track04.wav",
+    "checksum": "6981a6ba69261e927f190bdcbe90b4f67a038f7a78352380dc0f8385b924b6bf"
+  },
+  "RWC_AUDIO_G061": {
+    "path": "rwc/audio/genre/Disc06-Track05.wav",
+    "checksum": "535f386419c48b9cd2677b2a552e3e9e1f16d3e84946281ffb3bb4d38b191e9b"
+  },
+  "RWC_AUDIO_G062": {
+    "path": "rwc/audio/genre/Disc06-Track06.wav",
+    "checksum": "d7563a56dc6bacc9bc7f8291814ab76fb4756e7e923dd737d23d5f5543073d1b"
+  },
+  "RWC_AUDIO_G063": {
+    "path": "rwc/audio/genre/Disc06-Track07.wav",
+    "checksum": "e419bd7870f72dd26be45d3e83a8b8b1a1b56e5fa6c8b7a7fb95ab18e4a67524"
+  },
+  "RWC_AUDIO_G064": {
+    "path": "rwc/audio/genre/Disc06-Track08.wav",
+    "checksum": "d6f656a12e4839106da5dcd55d808b91668fc6515dd5e53ae428b21e2a296ad3"
+  },
+  "RWC_AUDIO_G065": {
+    "path": "rwc/audio/genre/Disc06-Track09.wav",
+    "checksum": "d6b1175776084cf70a3d13f814598c6158311b2b8fda16e54dc461daedb912ee"
+  },
+  "RWC_AUDIO_G066": {
+    "path": "rwc/audio/genre/Disc07-Track01.wav",
+    "checksum": "cd6a62a38917bab5cae151f10746af169aa2f98a921309ce1e0c1b2f1db1cb4b"
+  },
+  "RWC_AUDIO_G067": {
+    "path": "rwc/audio/genre/Disc07-Track02.wav",
+    "checksum": "20aaab9e2cd1faeb911e0a96cfef75a49d03833352e62f11564fb288cd3ab4c3"
+  },
+  "RWC_AUDIO_G068": {
+    "path": "rwc/audio/genre/Disc07-Track03.wav",
+    "checksum": "c41e13032bc7ca20bb214658a0e39c7715f68cd18949d106ca32477f8aa996dc"
+  },
+  "RWC_AUDIO_G069": {
+    "path": "rwc/audio/genre/Disc07-Track04.wav",
+    "checksum": "b4f27f4e4bfc0dd68fed8a7aa8b2f8b2f8dccbc41b4541ef1ac1a6d885987697"
+  },
+  "RWC_AUDIO_G070": {
+    "path": "rwc/audio/genre/Disc07-Track05.wav",
+    "checksum": "136bbd7a895bcb8ed2572573c8958f237b4474f721a7d6f3e4ed4994cc228536"
+  },
+  "RWC_AUDIO_G071": {
+    "path": "rwc/audio/genre/Disc07-Track06.wav",
+    "checksum": "3011d512d0c7061c301e71d5d32ad3f6b97b2043c0c96705a82070b5a95670f4"
+  },
+  "RWC_AUDIO_G072": {
+    "path": "rwc/audio/genre/Disc07-Track07.wav",
+    "checksum": "59efe4b4ac59b373c52d92671d9417c5b217d1a3f57f5ea9eac84cf4a57a66ea"
+  },
+  "RWC_AUDIO_G073": {
+    "path": "rwc/audio/genre/Disc07-Track08.wav",
+    "checksum": "d6a7879c823a16c2339c51cc619dd3b755a8477b79c1ec61c09947395ced91ff"
+  },
+  "RWC_AUDIO_G074": {
+    "path": "rwc/audio/genre/Disc07-Track09.wav",
+    "checksum": "463dc83bef1680e79b113e2e4a31b4c3a845eb52db4b0813080471e64017314f"
+  },
+  "RWC_AUDIO_G075": {
+    "path": "rwc/audio/genre/Disc07-Track10.wav",
+    "checksum": "653bd6adc484e368e5bee64000b8bc834c27fcfdf64824c599691ff421f83a7c"
+  },
+  "RWC_AUDIO_G076": {
+    "path": "rwc/audio/genre/Disc07-Track11.wav",
+    "checksum": "4731720e4c2d2ccbd2f8bb263a14d1fac0059913466a55ecbe8ef3c662742b87"
+  },
+  "RWC_AUDIO_G077": {
+    "path": "rwc/audio/genre/Disc07-Track12.wav",
+    "checksum": "a23391c10d9a1450ccffd715dafe91629a297dcb2e9d3e7d2b7152bf75458df5"
+  },
+  "RWC_AUDIO_G078": {
+    "path": "rwc/audio/genre/Disc08-Track01.wav",
+    "checksum": "6c49a42bbc4976ccda6718bb445d2c5f1b0ebb69a6c72b861df0899bdc4a610c"
+  },
+  "RWC_AUDIO_G079": {
+    "path": "rwc/audio/genre/Disc08-Track02.wav",
+    "checksum": "530c6ba9a38f6bf7db7c6fa0089da25131cd478ed94e34cbaca6781928dd1c4d"
+  },
+  "RWC_AUDIO_G080": {
+    "path": "rwc/audio/genre/Disc08-Track03.wav",
+    "checksum": "96e8eea82546bf08f12ce8e81a1f24507f071eb19f72721369f08ccd5a81039c"
+  },
+  "RWC_AUDIO_G081": {
+    "path": "rwc/audio/genre/Disc08-Track04.wav",
+    "checksum": "8bb8e158dd909ae605222b8a4db02672ca02c7c9caf74a63d7fdccacf0364a13"
+  },
+  "RWC_AUDIO_G082": {
+    "path": "rwc/audio/genre/Disc08-Track05.wav",
+    "checksum": "c13f5132af5c318f3bf0ca12e7bb5ee8500ef5c23eb4a3f373427b1a348b8009"
+  },
+  "RWC_AUDIO_G083": {
+    "path": "rwc/audio/genre/Disc08-Track06.wav",
+    "checksum": "00307189b1af0000aa9cf182ab4956c4626af8ff7001aa151006f094e27e5af7"
+  },
+  "RWC_AUDIO_G084": {
+    "path": "rwc/audio/genre/Disc08-Track07.wav",
+    "checksum": "60f5bb606fb263dda879dcdddeb37c02ead05873c38a7bdaf71f1226480b906f"
+  },
+  "RWC_AUDIO_G085": {
+    "path": "rwc/audio/genre/Disc08-Track08.wav",
+    "checksum": "85e921667c206838af83db1991861675de05f08f9c5c35ed0727ab832d794749"
+  },
+  "RWC_AUDIO_G086": {
+    "path": "rwc/audio/genre/Disc08-Track09.wav",
+    "checksum": "62330e963ec4bdd410fda4b109e1850650f5a84b5e927bec935040c878d17716"
+  },
+  "RWC_AUDIO_G087": {
+    "path": "rwc/audio/genre/Disc08-Track10.wav",
+    "checksum": "ccf79c063c140c6264465a15c609ea71d422593cfdc6131f76ea140d7b99b9e5"
+  },
+  "RWC_AUDIO_G088": {
+    "path": "rwc/audio/genre/Disc08-Track11.wav",
+    "checksum": "549b1db9fa6e75bba088ab6c817adaa040327d26d5090afcf8d6f241db114fcb"
+  },
+  "RWC_AUDIO_G089": {
+    "path": "rwc/audio/genre/Disc08-Track12.wav",
+    "checksum": "a4666d959147afb5a6e8df9237e93063cf08ad38b538ce752004451466d9ab17"
+  },
+  "RWC_AUDIO_G090": {
+    "path": "rwc/audio/genre/Disc08-Track13.wav",
+    "checksum": "1622c66447b55567b4b4dcaffdef630dcc8875056f08248669d211c6b2f22330"
+  },
+  "RWC_AUDIO_G091": {
+    "path": "rwc/audio/genre/Disc08-Track14.wav",
+    "checksum": "abd80c0e6ad4c65c85c57c94e7dcb38c855b81324141701a9873b66533ae5ea8"
+  },
+  "RWC_AUDIO_G092": {
+    "path": "rwc/audio/genre/Disc08-Track15.wav",
+    "checksum": "d6de92fb2d2e385d598fe3e8efea77fc84006af8187635e048338865a987bb7b"
+  },
+  "RWC_AUDIO_G093": {
+    "path": "rwc/audio/genre/Disc09-Track01.wav",
+    "checksum": "6c23b3e8c9b0211a645e57297e4b6a2d4e6f692b3b49c3dfce58cb42d3fb2773"
+  },
+  "RWC_AUDIO_G094": {
+    "path": "rwc/audio/genre/Disc09-Track02.wav",
+    "checksum": "eae7eddca84317822ffed3e71c9182e636f9117a5951db04029464ec6839dccc"
+  },
+  "RWC_AUDIO_G095": {
+    "path": "rwc/audio/genre/Disc09-Track03.wav",
+    "checksum": "ade2c48a0cc28b44d650ba9970f6a61e360770edf0ae05f0dd86425428d732ab"
+  },
+  "RWC_AUDIO_G096": {
+    "path": "rwc/audio/genre/Disc09-Track04.wav",
+    "checksum": "752368cfd2e442b5d50286b850f76c40b693786cf3e768504f51d64b220a87c3"
+  },
+  "RWC_AUDIO_G097": {
+    "path": "rwc/audio/genre/Disc09-Track05.wav",
+    "checksum": "170d45237811246285df111105dd5a5e4df7a38578ad2ca93c27c9a59750e22a"
+  },
+  "RWC_AUDIO_G098": {
+    "path": "rwc/audio/genre/Disc09-Track06.wav",
+    "checksum": "be3734d7d55057f80d56bd825b2c6f9e3963b096dd92a5a9b7b67568d0e5e9a8"
+  },
+  "RWC_AUDIO_G099": {
+    "path": "rwc/audio/genre/Disc09-Track07.wav",
+    "checksum": "8e345d7c76f7d178564253e09a416096759a372a88582855e074eacf0eae5132"
+  },
+  "RWC_AUDIO_G100": {
+    "path": "rwc/audio/genre/Disc09-Track08.wav",
+    "checksum": "754229f447c29c23907cc347cc59b8aadac98247d01f33edb05997b1378c68f7"
+  },
+  "RWC_AUDIO_G101": {
+    "path": "rwc/audio/genre/Disc09-Track09.wav",
+    "checksum": "c21ddbfb0e6f9f1c0a6d799a14dccc3222e7471619e07a95663437e94329faf4"
+  },
+  "RWC_AUDIO_G102": {
+    "path": "rwc/audio/genre/Disc09-Track10.wav",
+    "checksum": "64de776c4813b89d4e9837245fbe10ad70f4984cace61ee43d3b486052e3a2c6"
+  }
+}
