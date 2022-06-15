@@ -1,9 +1,10 @@
 import hashlib
 import pathlib
+import subprocess
 import tempfile
 import unittest
 
-from .utils import compute_checksum
+from .utils import compute_checksum, run_cmd_sync
 
 
 class TestUtils(unittest.TestCase):
@@ -43,3 +44,19 @@ class TestUtils(unittest.TestCase):
             compute_checksum(None, algorithm="shake_128")
         with self.assertRaises(ValueError):
             compute_checksum(None, algorithm="foo256")
+
+    def test_run_cmd_sync(self):
+        status, stdout, stderr = run_cmd_sync(
+            "ls", cwd=pathlib.Path(__file__).resolve().parent
+        )
+        self.assertEqual(status, 0)
+        self.assertTrue(pathlib.Path(__file__).parts[-1] in stdout)
+        self.assertEqual(stderr, "")
+        with self.assertRaises(FileNotFoundError):
+            run_cmd_sync("")
+        with self.assertRaises(FileNotFoundError):
+            run_cmd_sync("itwouldbereallyunusualforthistobethenameofaprogram")
+        with self.assertRaises(NotADirectoryError):
+            run_cmd_sync("ls", cwd=pathlib.Path(__file__).resolve())
+        with self.assertRaises(subprocess.TimeoutExpired):
+            run_cmd_sync("sleep 1", timeout=1e-3)
