@@ -1,0 +1,10 @@
+{
+  "HOOKTHEORY": {
+    "path": "hooktheory/Hooktheory.json.gz",
+    "checksum": "0c3a2a8eacf811802b348fc013e10a19ba89ef1a9950d7992260e50a0d63ae5d"
+  },
+  "HOOKTHEORY_RAW": {
+    "path": "hooktheory/Hooktheory_Raw.json.gz",
+    "checksum": "716af2979f060400c302ab098dd45d9f8c5fe4d4b3b1fe61c478dd9bdf041634"
+  }
+}
