@@ -91,15 +91,7 @@ class MelodyTranscriptionExample:
     def from_midi(
         cls, midi, segment_start=None, segment_end=None, uid=None, audio_tag=None
     ):
-        if isinstance(midi, bytes):
-            midi = pretty_midi.PrettyMIDI(BytesIO(midi))
-        elif isinstance(midi, str) or isinstance(midi, pathlib.Path):
-            midi = pretty_midi.PrettyMIDI(str(midi))
-        elif isinstance(midi, pretty_midi.PrettyMIDI):
-            pass
-        else:
-            raise TypeError()
-
+        midi = as_pretty_midi(midi)
         segment = []
         melody = []
         for i in midi.instruments:
@@ -165,6 +157,18 @@ _CONFIG_TO_TAGS = {
         "deny": ["TEMPO_CHANGES"],
     },
 }
+
+
+def as_pretty_midi(midi):
+    if isinstance(midi, bytes):
+        midi = pretty_midi.PrettyMIDI(BytesIO(midi))
+    elif isinstance(midi, str) or isinstance(midi, pathlib.Path):
+        midi = pretty_midi.PrettyMIDI(str(midi))
+    elif isinstance(midi, pretty_midi.PrettyMIDI):
+        pass
+    else:
+        raise TypeError()
+    return midi
 
 
 def load_hooktheory_raw(
