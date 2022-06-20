@@ -1,8 +1,16 @@
+import shutil
 import unittest
 
 import pretty_midi
 
-from .data import MelodyTranscriptionExample, Note, iter_hooktheory, load_hooktheory_raw
+from .assets import retrieve_asset
+from .data import (
+    MelodyTranscriptionExample,
+    Note,
+    iter_archive,
+    iter_hooktheory,
+    load_hooktheory_raw,
+)
 from .utils import compute_checksum
 
 
@@ -76,6 +84,16 @@ class TestData(unittest.TestCase):
             MelodyTranscriptionExample(
                 segment_start, segment_end, [Note(0.0, 60, 1.0), Note(0.5, 62, 1.5)]
             )
+
+    def test_hooktheory_test_midi_equivalence(self):
+        hooktheory_test = list(iter_hooktheory(split="TEST"))
+        hooktheory_test_midi = list(
+            iter_archive(retrieve_asset("HOOKTHEORY_TEST_MIDI"))
+        )
+        self.assertEqual(len(hooktheory_test), len(hooktheory_test_midi))
+        hooktheory_test_midi = {e.uid: e for e in hooktheory_test_midi}
+        for e in hooktheory_test:
+            self.assertEqual(e.to_midi(), hooktheory_test_midi[e.uid].to_midi())
 
     def test_hooktheory(self):
         pretty_midi.pretty_midi.MAX_TICK = 1e8

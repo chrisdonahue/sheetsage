@@ -1,5 +1,7 @@
 import gzip
 import json
+import pathlib
+import shutil
 import tempfile
 from enum import Enum
 from io import BytesIO
@@ -86,11 +88,13 @@ class MelodyTranscriptionExample:
         self.audio_tag = audio_tag
 
     @classmethod
-    def from_midi(cls, midi, segment_start=None, segment_end=None):
+    def from_midi(
+        cls, midi, segment_start=None, segment_end=None, uid=None, audio_tag=None
+    ):
         if isinstance(midi, bytes):
             midi = pretty_midi.PrettyMIDI(BytesIO(midi))
-        elif isinstance(midi, bytes):
-            midi = pretty_midi.PrettyMIDI(midi)
+        elif isinstance(midi, str) or isinstance(midi, pathlib.Path):
+            midi = pretty_midi.PrettyMIDI(str(midi))
         elif isinstance(midi, pretty_midi.PrettyMIDI):
             pass
         else:
@@ -110,7 +114,13 @@ class MelodyTranscriptionExample:
                 raise ValueError("Unknown segment")
             segment_start, segment_end = sorted(segment)
 
-        return cls(segment_start=segment_start, segment_end=segment_end, melody=melody)
+        return cls(
+            segment_start=segment_start,
+            segment_end=segment_end,
+            melody=melody,
+            uid=uid,
+            audio_tag=audio_tag,
+        )
 
     def to_midi(self, velocity=100):
         midi = pretty_midi.PrettyMIDI(resolution=_TICKS_PER_SECOND, initial_tempo=60.0)
@@ -204,6 +214,17 @@ def load_hooktheory_raw(
     }
 
     return hooktheory
+
+
+def iter_archive(archive_path):
+    with tempfile.TemporaryDirectory() as d:
+        shutil.unpack_archive(str(archive_path), d)
+        midi_paths = list(pathlib.Path(d).glob("*.mid*"))
+        uids = [p.stem for p in midi_paths]
+        if len(set(uids)) != len(uids):
+            raise ValueError("Duplicate UID")
+        for p in sorted(midi_paths):
+            yield MelodyTranscriptionExample.from_midi(p, uid=p.stem)
 
 
 def iter_hooktheory(

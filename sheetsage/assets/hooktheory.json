@@ -3,6 +3,10 @@
     "path": "hooktheory/Hooktheory.json.gz",
     "checksum": "917b7cd58f5f4e07d6c36acf7bfad958c99ee05472dab3555399141094698e0c"
   },
+  "HOOKTHEORY_TEST_MIDI": {
+    "path": "hooktheory/Hooktheory_Test_MIDI.tar.gz",
+    "checksum": "1b5f7c9b8c4a3ff8821bd528a6e4fcdbb85dd0ed7d1903abfa5b37fd007f56b8"
+  },
   "HOOKTHEORY_RAW": {
     "path": "hooktheory/Hooktheory_Raw.json.gz",
     "checksum": "716af2979f060400c302ab098dd45d9f8c5fe4d4b3b1fe61c478dd9bdf041634"
