@@ -227,6 +227,13 @@ def iter_archive(archive_path):
             yield MelodyTranscriptionExample.from_midi(p, uid=p.stem)
 
 
+def iter_rwc_ryy(vox_only=False):
+    asset_tag = "RWC_RYYVOX_MIDI" if vox_only else "RWC_RYY_MIDI"
+    for e in iter_archive(retrieve_asset(asset_tag)):
+        e.audio_tag = f"RWC_AUDIO_{e.uid}"
+        yield e
+
+
 def iter_hooktheory(
     alignment=HooktheoryAlignment.REFINED,
     split=None,
@@ -249,19 +256,16 @@ def iter_hooktheory(
 
     for uid, attrs in tqdm(hooktheory_raw.items()):
         youtube_id = attrs["youtube"]["id"]
-        if youtube_id is None:
-            raise Exception("Audio unavailable")
+        assert youtube_id is not None
 
         alignment_ = attrs["alignment"][alignment.name.lower()]
-        if alignment_ is None or len(alignment_["times"]) < 2:
-            raise Exception("Alignment unavailable")
+        assert alignment_ is not None and len(alignment_["times"]) >= 2
         beat_to_time = create_beat_to_time_fn(alignment_["beats"], alignment_["times"])
         segment_start = float(beat_to_time(0))
         segment_end = float(beat_to_time(attrs["annotations"]["num_beats"]))
 
         melody = attrs["annotations"]["melody"]
-        if melody is None or len(melody) == 0:
-            raise Exception("Melody unavailable")
+        assert melody is not None and len(melody) > 0
         melody = [
             Note(
                 onset=float(beat_to_time(n["onset"])),

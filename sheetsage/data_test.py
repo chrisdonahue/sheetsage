@@ -9,6 +9,7 @@ from .data import (
     Note,
     iter_archive,
     iter_hooktheory,
+    iter_rwc_ryy,
     load_hooktheory_raw,
 )
 from .utils import compute_checksum
@@ -84,6 +85,23 @@ class TestData(unittest.TestCase):
             MelodyTranscriptionExample(
                 segment_start, segment_end, [Note(0.0, 60, 1.0), Note(0.5, 62, 1.5)]
             )
+
+    def test_rwc_ryy(self):
+        rwc_ryy = list(iter_rwc_ryy())
+        self.assertEqual(len(rwc_ryy), 10)
+        rwc_ryy_midi = list(iter_archive(retrieve_asset("RWC_RYY_MIDI")))
+        self.assertEqual(len(rwc_ryy), len(rwc_ryy_midi))
+        rwc_ryy_midi = {e.uid: e for e in rwc_ryy_midi}
+        for e in rwc_ryy:
+            self.assertEqual(e.to_midi(), rwc_ryy_midi[e.uid].to_midi())
+
+        rwc_ryyvox = list(iter_rwc_ryy(vox_only=True))
+        self.assertEqual(len(rwc_ryyvox), 8)
+        rwc_ryyvox_midi = list(iter_archive(retrieve_asset("RWC_RYYVOX_MIDI")))
+        self.assertEqual(len(rwc_ryyvox), len(rwc_ryyvox_midi))
+        rwc_ryyvox_midi = {e.uid: e for e in rwc_ryyvox_midi}
+        for e in rwc_ryyvox:
+            self.assertEqual(e.to_midi(), rwc_ryyvox_midi[e.uid].to_midi())
 
     def test_hooktheory_test_midi_equivalence(self):
         hooktheory_test = list(iter_hooktheory(split="TEST"))
