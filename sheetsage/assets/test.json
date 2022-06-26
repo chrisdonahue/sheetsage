@@ -3,5 +3,10 @@
     "path": "test/test1_44100.wav",
     "url": "https://github.com/librosa/librosa-test-data/raw/b49a879c3045ee5a54bacf62c7907915738e445d/test1_44100.wav",
     "checksum": "ff8bf45609bfd5fd759af718b1e44e5544a5783c316156b6b7450ec48652718c"
+  },
+  "TEST_MP3": {
+    "path": "test/test1_22050.mp3",
+    "url": "https://github.com/librosa/librosa-test-data/raw/b49a879c3045ee5a54bacf62c7907915738e445d/test1_22050.mp3",
+    "checksum": "a2084c37c252a1de25586549ef0ab5c512f8e91a2c072d5a8941817d949996b2"
   }
 }
