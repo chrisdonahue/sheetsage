@@ -8,5 +8,9 @@
     "path": "test/test1_22050.mp3",
     "url": "https://github.com/librosa/librosa-test-data/raw/b49a879c3045ee5a54bacf62c7907915738e445d/test1_22050.mp3",
     "checksum": "a2084c37c252a1de25586549ef0ab5c512f8e91a2c072d5a8941817d949996b2"
+  },
+  "TEST_MP3_OAFMELSPEC_REF": {
+    "path": "test/test1_22050_oafmelspec.npy",
+    "checksum": "40ed817c33f40035346e7f8f42a2712fb52d20773924bd4ebfd57a4716029ecd"
   }
 }
