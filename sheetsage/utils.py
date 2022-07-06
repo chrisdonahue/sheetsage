@@ -1,5 +1,6 @@
 import gzip
 import hashlib
+import json
 import pathlib
 import shlex
 import subprocess
@@ -287,3 +288,19 @@ def encode_audio(path, sr, audio, bitexact=False, timeout=60.0):
         if status != 0:
             raise Exception(f"FFmpeg failed: {stderr}")
         assert pathlib.Path(path).is_file()
+
+
+def get_approximate_audio_length(path, timeout=10):
+    """Retrieves the approximate length of an audio file."""
+    status, stdout, stderr = run_cmd_sync(
+        f"ffprobe -v error -i {path} -show_format -show_streams -print_format json",
+        timeout=timeout,
+    )
+    try:
+        assert status == 0
+        assert len(stderr) == 0
+    except:
+        raise Exception(f"FFmpeg failed: {stderr}")
+    d = json.loads(stdout)
+    duration = float(d["format"]["duration"])
+    return duration

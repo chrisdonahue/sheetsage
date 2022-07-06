@@ -39,7 +39,7 @@ class TestJukebox(unittest.TestCase):
         )
         self.assertEqual(np.unique(audio_codified[1580:]).tolist(), [653, 1489])
 
-        audio_codified_nopad = jukebox.codify_audio(audio, pad=False)
+        audio_codified_nopad = jukebox._codify_audio(audio, pad=False)
         self.assertEqual(audio_codified_nopad.shape, (1580,))
         eq = audio_codified[: audio_codified_nopad.shape[0]] == audio_codified_nopad
         acc = eq.astype(np.float32).mean()
@@ -80,7 +80,7 @@ class TestJukebox(unittest.TestCase):
         jukebox = Jukebox(num_layers=_TEST_NUM_LAYERS)
         audio = jukebox.decode_audio(retrieve_asset("TEST_JUKEBOX_LEGACY"))
         audio = audio[: 25 * _SAMPLE_RATE]
-        codified_audio = jukebox.codify_audio(audio, window_size=25 * _SAMPLE_RATE)
+        codified_audio = jukebox._codify_audio(audio, window_size=25 * _SAMPLE_RATE)
         codified_audio = codified_audio[:_CHUNK_FRAMES]
         activations = jukebox.lm_activations(
             codified_audio, metadata_total_length_seconds=62

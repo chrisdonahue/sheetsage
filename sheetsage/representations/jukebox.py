@@ -10,7 +10,7 @@ import librosa
 import numpy as np
 import torch
 
-from ..utils import decode_audio
+from ..utils import decode_audio, get_approximate_audio_length
 from . import Representation
 
 _SAMPLE_RATE = 44100
@@ -105,55 +105,32 @@ class Jukebox(Representation):
                 audio /= norm_factor
         return audio
 
-    def codify_audio(
-        self,
-        audio,
-        # NOTE: This is the window (in samples) that will be fed into the VQVAE
-        window_size=_CHUNK_SAMPLES,
-        # NOTE: This is the hop (in samples) for feeding into the VQVAE
-        hop_size=_CHUNK_SAMPLES,
-        pad=True,
-        centered=False,
-        tqdm=lambda x: x,
+    def _codify_audio(
+        self, audio, tqdm=lambda x: x, window_size=_CHUNK_SAMPLES, pad=True
     ):
-        if centered:
-            raise NotImplementedError()
-        if window_size < hop_size:
-            raise ValueError()
-        if hop_size % _FRAME_HOP_SIZE != 0:
-            raise ValueError()
-        hop_size_frames = hop_size // _FRAME_HOP_SIZE
-
+        # NOTE: Ugly API for legacy test case.
+        hop_size = _CHUNK_SAMPLES
+        hop_size_frames = window_size // _FRAME_HOP_SIZE
         result = []
         for i in tqdm(list(range(0, audio.shape[0], hop_size))):
-            # Select context window
             context = audio[i : i + window_size]
-
-            # Zero pad context
-            if pad:
-                pad_amt = window_size - context.shape[0]
-                context = np.pad(context, (0, pad_amt))
-
-            # Codify context
+            if pad and context.shape[0] < window_size:
+                context = np.pad(context, (0, window_size - context.shape[0]))
             with torch.no_grad():
                 context = torch.tensor(
                     context, dtype=torch.float32, device=self.device
                 ).view(1, -1, 1)
                 context_codified = self.vqvae.encode(context)[-1].view(-1).cpu().numpy()
             context_codified = context_codified[:hop_size_frames]
-
-            # Select hop size amount
             result.append(context_codified)
-
         return np.concatenate(result, axis=0)
+
+    def codify_audio(self, audio, tqdm=lambda x: x):
+        return self._codify_audio(audio, tqdm=tqdm)
 
     def lm_activations(
         self,
         audio_codified,
-        # NOTE: This is the window (in frames) that will be fed into the LM
-        window_size=_CHUNK_FRAMES,
-        # NOTE: This is the hop (in frames) for feeding into the LM
-        hop_size=_CHUNK_FRAMES,
         metadata_offset_seconds=0.0,
         metadata_total_length_seconds=None,
         metadata_artist=None,
@@ -161,16 +138,10 @@ class Jukebox(Representation):
         metadata_lyrics=None,
         tqdm=lambda x: x,
     ):
-        # NOTE: All three of these require manipulating hps.sample_length for window lengths != 8192
-        if window_size < hop_size:
-            raise ValueError()
-        if window_size != _CHUNK_FRAMES:
-            raise NotImplementedError()
-        if hop_size != _CHUNK_FRAMES:
-            # NOTE: Padding could potentially be implemented... 5b VQVAE seems to mostly encode silence as "653"
-            raise NotImplementedError()
+        hop_size = _CHUNK_FRAMES
+        window_size = _CHUNK_FRAMES
         if audio_codified.shape[0] % _CHUNK_FRAMES != 0:
-            raise NotImplementedError()
+            raise ValueError()
 
         # Compute metadata offset
         metadata_initial_offset = int(metadata_offset_seconds * _SAMPLE_RATE)
@@ -255,7 +226,7 @@ class Jukebox(Representation):
         if offset == 0.0 and duration is None:
             total_length = audio.shape[0] / _SAMPLE_RATE
         else:
-            total_length = get_audio_length(audio_path)
+            total_length = get_approximate_audio_length(audio_path)
         codified_audio = self.codify_audio(audio)
         activations = self.lm_activations(
             codified_audio,
