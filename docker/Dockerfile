@@ -1,5 +1,6 @@
 # Import Ubuntu/CUDA/cuDNN
 FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04
+#RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub
 
 # Configure shell
 ENV DEBIAN_FRONTEND=noninteractive
@@ -16,7 +17,11 @@ RUN python -m pip install --no-cache-dir --upgrade "pip<20.3" setuptools
 RUN python -m pip install --no-cache-dir jupyter matplotlib
 
 # Install ffmpeg
-RUN apt-get install -y software-properties-common; add-apt-repository ppa:jonathonf/ffmpeg-4; apt-get update; apt-get install -y ffmpeg
+RUN \
+	apt-get install -y software-properties-common \
+	&& add-apt-repository ppa:jonathonf/ffmpeg-4 \
+	&& apt-get update \
+	&& apt-get install -y ffmpeg
 
 # Install Jukebox
 RUN python -m pip install --no-cache-dir torch==1.4.0+cu101 -f https://nelsonliu.me/files/pytorch/whl/torch_stable.html
@@ -72,6 +77,8 @@ RUN ln -s $(which yt-dlp) /usr/local/bin/youtube-dl
 # Install Flask
 RUN python -m pip install --no-cache-dir Flask==2.0.1
 RUN python -m pip install --no-cache-dir Flask-Cors==3.0.10
+
+RUN python -m pip install --no-cache-dir --upgrade resampy==0.2.2
 
 # Create workdir and cache
 ARG WORKDIR=/sheetsage
