@@ -97,7 +97,7 @@ class TestUtils(unittest.TestCase):
         )
         sr, audio = decode_audio(audio_bytes)
         self.assertEqual(sr, 48000)
-        self.assertEqual(audio.shape, (553133, 2))
+        self.assertEqual(audio.shape, (552821, 2))
         with self.assertRaises(subprocess.TimeoutExpired):
             retrieve_audio_bytes(youtube_url, timeout=1e-3)
         with self.assertRaisesRegex(Exception, "Unsupported URL"):
