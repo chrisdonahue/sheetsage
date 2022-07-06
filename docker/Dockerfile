@@ -25,6 +25,7 @@ RUN \
 # Install Jukebox
 RUN python -m pip install --no-cache-dir torch==1.4.0+cu101 -f https://nelsonliu.me/files/pytorch/whl/torch_stable.html
 RUN python -m pip install --no-cache-dir librosa==0.7.2
+RUN python -m pip install --no-cache-dir --upgrade resampy==0.2.2
 RUN python -m pip install --no-cache-dir numba==0.48
 ENV NUMBA_CACHE_DIR /tmp/numba
 RUN apt-get install -y libopenmpi-dev
@@ -76,8 +77,6 @@ RUN ln -s $(which yt-dlp) /usr/local/bin/youtube-dl
 # Install Flask
 RUN python -m pip install --no-cache-dir Flask==2.0.1
 RUN python -m pip install --no-cache-dir Flask-Cors==3.0.10
-
-RUN python -m pip install --no-cache-dir --upgrade resampy==0.2.2
 
 # Create workdir and cache
 ARG WORKDIR=/sheetsage
