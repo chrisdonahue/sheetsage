@@ -16,12 +16,17 @@ RUN python -m pip install --no-cache-dir --upgrade "pip<20.3" setuptools
 RUN python -m pip install --no-cache-dir jupyter matplotlib
 
 # Install ffmpeg
-RUN apt-get install -y software-properties-common; add-apt-repository ppa:jonathonf/ffmpeg-4; apt-get update; apt-get install -y ffmpeg
+RUN \
+	apt-get install -y software-properties-common \
+	&& add-apt-repository ppa:jonathonf/ffmpeg-4 \
+	&& apt-get update \
+	&& apt-get install -y ffmpeg
 
 # Install Jukebox
 RUN python -m pip install --no-cache-dir torch==1.4.0+cu101 -f https://nelsonliu.me/files/pytorch/whl/torch_stable.html
-RUN python -m pip install --no-cache-dir librosa==0.7.2
 RUN python -m pip install --no-cache-dir numba==0.48
+RUN python -m pip install --no-cache-dir resampy==0.2.2
+RUN python -m pip install --no-cache-dir librosa==0.7.2
 ENV NUMBA_CACHE_DIR /tmp/numba
 RUN apt-get install -y libopenmpi-dev
 RUN apt-get install -y openssh-server

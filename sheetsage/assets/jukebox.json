@@ -1,0 +1,12 @@
+{
+  "JUKEBOX_VQVAE": {
+    "path": "jukebox/models/5b/vqvae.pth.tar",
+    "url": "https://openaipublic.azureedge.net/jukebox/models/5b/vqvae.pth.tar",
+    "checksum": "69745413a48e887f8a3fe91b972a6f7f434021a1ce911a99187b331eb48c059a"
+  },
+  "JUKEBOX_LM": {
+    "path": "jukebox/models/5b/prior_level_2.pth.tar",
+    "url": "https://openaipublic.azureedge.net/jukebox/models/5b/prior_level_2.pth.tar",
+    "checksum": "89a1dd14f5b2f9b16b3e73b53fa2138cc89fd96bb13249b4267fea471de92672"
+  }
+}

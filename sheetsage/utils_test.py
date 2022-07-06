@@ -12,6 +12,7 @@ from .utils import (
     compute_checksum,
     decode_audio,
     encode_audio,
+    get_approximate_audio_length,
     retrieve_audio_bytes,
     run_cmd_sync,
 )
@@ -96,7 +97,7 @@ class TestUtils(unittest.TestCase):
         )
         sr, audio = decode_audio(audio_bytes)
         self.assertEqual(sr, 48000)
-        self.assertEqual(audio.shape, (553133, 2))
+        self.assertEqual(audio.shape, (552821, 2))
         with self.assertRaises(subprocess.TimeoutExpired):
             retrieve_audio_bytes(youtube_url, timeout=1e-3)
         with self.assertRaisesRegex(Exception, "Unsupported URL"):
@@ -198,3 +199,8 @@ class TestUtils(unittest.TestCase):
         with tempfile.NamedTemporaryFile(suffix=".unknowncodec") as f:
             with self.assertRaisesRegex(Exception, "suitable output format"):
                 encode_audio(f.name, sr, audio)
+
+    def test_get_approximate_audio_length(self):
+        mp3_path = retrieve_asset("TEST_MP3")
+        duration_approx = get_approximate_audio_length(mp3_path)
+        self.assertAlmostEqual(duration_approx, 4.65, places=2)
