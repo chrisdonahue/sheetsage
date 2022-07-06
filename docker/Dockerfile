@@ -1,6 +1,5 @@
 # Import Ubuntu/CUDA/cuDNN
 FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04
-#RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub
 
 # Configure shell
 ENV DEBIAN_FRONTEND=noninteractive
