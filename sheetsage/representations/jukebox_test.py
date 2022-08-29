@@ -60,7 +60,7 @@ class TestJukebox(unittest.TestCase):
     def test_extract(self):
         jukebox = Jukebox(num_layers=_TEST_NUM_LAYERS, fp16=True)
         mp3_path = retrieve_asset("TEST_MP3")
-        rate, audio_activations = jukebox.extract(mp3_path)
+        rate, audio_activations = jukebox(mp3_path)
         self.assertAlmostEqual(rate, 344.5, places=1)
         self.assertEqual(audio_activations.shape, (1580, 4800))
         self.assertAlmostEqual(np.abs(audio_activations).mean(), 1.7705, places=4)
@@ -70,7 +70,7 @@ class TestJukebox(unittest.TestCase):
 
     def test_edge_cases(self):
         jukebox = Jukebox(num_layers=_TEST_NUM_LAYERS)
-        jukebox.extract(
+        jukebox(
             retrieve_asset("YOUTUBE_ZqJiXLJs_Pg"),
             offset=281.66999999999996,
             duration=15.360000000000014,

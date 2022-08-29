@@ -1,8 +1,10 @@
+import pickle
+
 import librosa
 import numpy as np
 
 from ..utils import decode_audio
-from . import Representation
+from .base import Representation
 
 
 class OAFMelSpec(Representation):
@@ -17,7 +19,7 @@ class OAFMelSpec(Representation):
     _HTK = False
     _LOG = True
 
-    def extract(self, audio_path, offset=0.0, duration=None):
+    def __call__(self, audio_path, offset=0.0, duration=None):
         sr, audio = decode_audio(
             audio_path,
             sr=self._SR,
@@ -39,3 +41,15 @@ class OAFMelSpec(Representation):
         if self._LOG:
             features = librosa.power_to_db(features)
         return self._SR / self._HOP_SIZE, features
+
+
+class OAFMelSpecNorm(OAFMelSpec):
+    def __init__(self, moments, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._moments = moments
+
+    def __call__(self, *args, **kwargs):
+        fr, feats = super().__call__(*args, **kwargs)
+        feats -= self._moments[0]
+        feats /= self._moments[1]
+        return fr, feats

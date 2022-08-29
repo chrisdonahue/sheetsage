@@ -11,7 +11,7 @@ import numpy as np
 import torch
 
 from ..utils import decode_audio, get_approximate_audio_length
-from . import Representation
+from .base import Representation
 
 _SAMPLE_RATE = 44100
 _FRAME_HOP_SIZE = 128
@@ -221,7 +221,7 @@ class Jukebox(Representation):
 
         return np.concatenate(result, axis=0)
 
-    def extract(self, audio_path, offset=0.0, duration=None):
+    def __call__(self, audio_path, offset=0.0, duration=None):
         audio = self.decode_audio(audio_path, offset=offset, duration=duration)
         if offset == 0.0 and duration is None:
             total_length = audio.shape[0] / _SAMPLE_RATE
