@@ -170,7 +170,7 @@ class TestUtils(unittest.TestCase):
                 decode_audio(f.name + ".noexist")
             with open(f.name, "w") as f:
                 f.write("Text data cannot be decoded as audio.")
-            with self.assertRaisesRegex(RuntimeError, "Unknown format"):
+            with self.assertRaisesRegex(RuntimeError, "Unknown audio format"):
                 decode_audio(f.name)
 
     def test_encode_audio(self):

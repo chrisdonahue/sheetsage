@@ -240,7 +240,7 @@ def decode_audio(
                     res_type=res_type,
                 )
         except audioread.exceptions.NoBackendError as e:
-            raise RuntimeError("Unknown format") from e
+            raise RuntimeError("Unknown audio format") from e
 
     # Check output and rearrange to [nsamps, nch]
     assert isinstance(sr, int)

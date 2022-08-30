@@ -6,6 +6,7 @@ from functools import lru_cache as cache
 
 import numpy as np
 import torch
+import validators
 
 from .align import create_beat_to_time_fn
 from .assets import retrieve_asset
@@ -210,11 +211,20 @@ def sheetsage(
         raise ValueError("Beat detection padding cannot be negative")
     input_feats = InputFeats.JUKEBOX if use_jukebox else InputFeats.HANDCRAFTED
 
-    # Download audio if URL specified
+    # Disambiguate between URL and file path for string inputs
     audio_path_or_bytes = audio_path_bytes_or_url
     if isinstance(audio_path_bytes_or_url, str):
-        logging.info(f"Retrieving audio from {audio_path_bytes_or_url}")
-        audio_path_or_bytes = retrieve_audio_bytes(audio_path_bytes_or_url)
+        if validators.url(audio_path_bytes_or_url):
+            logging.info(f"Retrieving audio from {audio_path_bytes_or_url}")
+            audio_path_or_bytes = retrieve_audio_bytes(audio_path_bytes_or_url)
+        else:
+            logging.info(f"Loading audio from {audio_path_bytes_or_url}")
+            audio_path_or_bytes = pathlib.Path(audio_path_bytes_or_url).resolve()
+    if (
+        isinstance(audio_path_or_bytes, pathlib.Path)
+        and not audio_path_or_bytes.exists()
+    ):
+        raise FileNotFoundError(audio_path_or_bytes)
 
     logging.info("Detecting beats")
 
