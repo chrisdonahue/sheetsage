@@ -42,11 +42,6 @@ class Model(Enum):
     TRANSFORMER = 1
 
 
-class OutputModality(Enum):
-    MELODY_MIDI = 0
-    LEAD_SHEET = 1
-
-
 _INPUT_TO_FRAME_RATE = {
     InputFeats.HANDCRAFTED: 16000 / 512,
     InputFeats.JUKEBOX: 44100 / 128,
@@ -91,7 +86,7 @@ def _init_model(task, input_feats, model):
         raise NotImplementedError()
 
     asset_prefix = f"SHEETSAGE_V02_{input_feats.name}_{task.name}"
-    with open(retrieve_asset(f"{asset_prefix}_CFG"), "r") as f:
+    with open(retrieve_asset(f"{asset_prefix}_CFG", log=False), "r") as f:
         cfg = json.load(f)
     assert cfg["src_max_len"] == _MAX_TERTIARIES_PER_CHUNK
 
@@ -134,7 +129,9 @@ def _init_model(task, input_feats, model):
     device = torch.device("cpu")
     model.to(device)
     model.load_state_dict(
-        torch.load(retrieve_asset(f"{asset_prefix}_MODEL"), map_location=device)
+        torch.load(
+            retrieve_asset(f"{asset_prefix}_MODEL", log=False), map_location=device
+        )
     )
     model.eval()
     return model
@@ -146,29 +143,31 @@ def _closest_idx(x, l):
 
 
 def sheetsage(
-    audio_path_or_bytes_url,
+    audio_path_bytes_or_url,
     segment_start_hint=None,
     segment_end_hint=None,
     segment_hints_are_downbeats=False,
-    measures_per_segment=8,
-    input_feats=InputFeats.JUKEBOX,
-    output_modality=OutputModality.LEAD_SHEET,
-    beat_detection_padding=15.0,
+    input_feats=InputFeats.HANDCRAFTED,
+    measures_per_chunk=8,
     beats_per_measure_hint=None,
+    detect_harmony=True,
+    beat_detection_padding=15.0,
 ):
     """Main driver function for Sheet Sage.
 
     Parameters
     ----------
-    audio_path_or_bytes_url : :class:`pathlib.Path`, bytes, or str
+    audio_path_bytes_or_url : :class:`pathlib.Path`, bytes, or str
        The filepath, raw bytes, or string URL of the audio file.
     segment_start_hint : float or None
        Pass
     segment_end_hint : float or None
        Pass
+    segment_hints_are_downbeats
+    measures_per_chunk : int
+       Pass
     input_feats : :class:`Input`
     output_modality : :class:`Output`
-    measures_per_segment : int
     beat_detection_padding : float
     beats_per_measure_hint : int or None
 
@@ -190,20 +189,20 @@ def sheetsage(
     if segment_start_hint is not None and segment_end_hint is not None:
         if segment_end_hint <= segment_start_hint:
             raise ValueError("Segment end before segment start")
-    if measures_per_segment <= 0:
-        raise ValueError("Invalid measures per segment specified")
-    if measures_per_segment > 24:
-        raise ValueError("Sheet Sage can only transcribe 24 measures per segment")
+    if measures_per_chunk <= 0:
+        raise ValueError("Invalid measures per chunk specified")
+    if measures_per_chunk > 24:
+        raise ValueError("Sheet Sage can only transcribe 24 measures per chunk")
     if beats_per_measure_hint is not None and beats_per_measure_hint not in [3, 4]:
         raise ValueError(
             "Currently, Sheet Sage only supports 4/4 and 3/4 time signatures"
         )
 
     # Download audio if URL specified
-    audio_path_or_bytes = audio_path_or_bytes_url
-    if isinstance(audio_path_or_bytes_url, str):
-        logging.info(f"Retrieving audio from {audio_path_or_bytes_url}")
-        audio_path_or_bytes = retrieve_audio_bytes(audio_path_or_bytes_url)
+    audio_path_or_bytes = audio_path_bytes_or_url
+    if isinstance(audio_path_bytes_or_url, str):
+        logging.info(f"Retrieving audio from {audio_path_bytes_or_url}")
+        audio_path_or_bytes = retrieve_audio_bytes(audio_path_bytes_or_url)
 
     logging.info("Detecting beats")
 
@@ -281,11 +280,11 @@ def sheetsage(
 
     # Identify suitable chunks for running through transcription model
     tertiary_chunks = []
-    beats_per_segment = beats_per_measure * measures_per_segment
-    tertiaries_per_segment = _TERTIARIES_PER_BEAT * beats_per_segment
-    for beat_idx in range(first_downbeat_idx, last_downbeat_idx, beats_per_segment):
+    beats_per_chunk = beats_per_measure * measures_per_chunk
+    tertiaries_per_chunk = _TERTIARIES_PER_BEAT * beats_per_chunk
+    for beat_idx in range(first_downbeat_idx, last_downbeat_idx, beats_per_chunk):
         tertiary_start_idx = beat_idx * _TERTIARIES_PER_BEAT
-        tertiary_end_idx = ((beat_idx + beats_per_segment) * _TERTIARIES_PER_BEAT) + 1
+        tertiary_end_idx = ((beat_idx + beats_per_chunk) * _TERTIARIES_PER_BEAT) + 1
         tertiary_end_idx = min(tertiary_end_idx, tertiary_times.shape[0])
         duration = (
             tertiary_times[tertiary_end_idx - 1] - tertiary_times[tertiary_start_idx]
@@ -293,7 +292,7 @@ def sheetsage(
         assert duration > 0
         if duration > _JUKEBOX_CHUNK_DURATION_EDGE:
             raise NotImplementedError(
-                "Dynamic chunking not implemented. Try halving measures_per_segment."
+                "Dynamic chunking not implemented. Try halving measures_per_chunk."
             )
         tertiary_chunks.append((tertiary_start_idx, tertiary_end_idx))
 
@@ -333,7 +332,9 @@ def sheetsage(
     # NOTE: Normalizing after beat resampling is probably a bug in retrospect, but it's
     # what the model expects.
     if input_feats == InputFeats.HANDCRAFTED:
-        moments = np.load(retrieve_asset("SHEETSAGE_V02_HANDCRAFTED_MOMENTS"))
+        moments = np.load(
+            retrieve_asset("SHEETSAGE_V02_HANDCRAFTED_MOMENTS", log=False)
+        )
         for chunk in features:
             chunk -= moments[0]
             chunk /= moments[1]
@@ -342,7 +343,7 @@ def sheetsage(
     logging.info("Transcribing")
     melody_model = _init_model(Task.MELODY, input_feats, Model.TRANSFORMER)
     melody_logits = []
-    if output_modality == OutputModality.LEAD_SHEET:
+    if detect_harmony:
         harmony_model = _init_model(Task.HARMONY, input_feats, Model.TRANSFORMER)
         harmony_logits = []
     device = torch.device("cpu")
@@ -356,17 +357,15 @@ def sheetsage(
             src.to(device)
             src_len.to(device)
 
-            chunk_melody_logits = melody_model(src, src_len, None, None)[
-                : src_len.item(), 0
-            ]
+            chunk_melody_logits = melody_model(src, src_len, None, None)
+            chunk_melody_logits = chunk_melody_logits[: src_len.item(), 0]
             melody_logits.append(chunk_melody_logits.cpu().numpy())
-            if output_modality == OutputModality.LEAD_SHEET:
-                chunk_harmony_logits = harmony_model(src, src_len, None, None)[
-                    : src_len.item(), 0
-                ]
+            if detect_harmony:
+                chunk_harmony_logits = harmony_model(src, src_len, None, None)
+                chunk_harmony_logits = chunk_harmony_logits[: src_len.item(), 0]
                 harmony_logits.append(chunk_harmony_logits.cpu().numpy())
     melody_logits = np.concatenate(melody_logits, axis=0)
-    if output_modality == OutputModality.LEAD_SHEET:
+    if detect_harmony:
         harmony_logits = np.concatenate(harmony_logits, axis=0)
     total_num_tertiary = melody_logits.shape[0]
 
@@ -391,7 +390,8 @@ def sheetsage(
     melody = Melody(*melody)
 
     # Decode harmony
-    if output_modality == OutputModality.LEAD_SHEET:
+    harmony = Harmony()
+    if detect_harmony:
         harmony_preds = np.argmax(harmony_logits, axis=-1)
         harmony = []
         last_chord = None
@@ -423,3 +423,45 @@ def sheetsage(
     )
 
     return lead_sheet
+
+
+if __name__ == "__main__":
+    import multiprocessing
+    from argparse import ArgumentParser
+
+    parser = ArgumentParser()
+
+    parser.add_argument("audio_path_or_url", type=str, help="")
+    parser.add_argument("-s", "--segment_start_hint", type=float, help="")
+    parser.add_argument("-e", "--segment_end_hint", type=float, help="")
+    parser.add_argument("--segment_hints_are_downbeats", action="store_true", help="")
+    parser.add_argument("--use_jukebox", action="store_true", help="")
+    parser.add_argument("--measures_per_chunk", type=int, help="")
+    parser.add_argument("--beats_per_measure", type=int, choices=[3, 4], help="")
+    parser.add_argument("--melody_only", action="store_true", help="")
+
+    parser.set_defaults(
+        segment_start_hint=None,
+        segment_end_hint=None,
+        segment_hints_are_downbeats=False,
+        use_jukebox=False,
+        measures_per_chunk=8,
+        beats_per_measure=None,
+        melody_only=False,
+    )
+
+    args = parser.parse_args()
+
+    logging.basicConfig(level=logging.INFO)
+
+    lead_sheet = sheetsage(
+        args.audio_path_or_url,
+        segment_start_hint=args.segment_start_hint,
+        segment_end_hint=args.segment_end_hint,
+        segment_hints_are_downbeats=args.segment_hints_are_downbeats,
+        input_feats=InputFeats.JUKEBOX if args.use_jukebox else InputFeats.HANDCRAFTED,
+        measures_per_chunk=args.measures_per_chunk,
+        beats_per_measure_hint=args.beats_per_measure,
+        detect_harmony=not args.melody_only,
+    )
+    print(lead_sheet)

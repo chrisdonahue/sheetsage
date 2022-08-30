@@ -51,7 +51,7 @@ def _download(url, dest_path, chunk_size=_DEFAULT_CHUNK_SIZE):
             f.write(chunk)
 
 
-def retrieve_asset(tag, delete_wrong=False, chunk_size=_DEFAULT_CHUNK_SIZE):
+def retrieve_asset(tag, delete_wrong=False, chunk_size=_DEFAULT_CHUNK_SIZE, log=True):
     """Attempts to acquire and/or verify existance of a tagged asset in the cache.
 
     Returns
@@ -72,12 +72,14 @@ def retrieve_asset(tag, delete_wrong=False, chunk_size=_DEFAULT_CHUNK_SIZE):
     asset = _ASSETS[tag]
     path = asset["path_abs"]
     checksum = asset["checksum"]
-    logging.info(f"Verifying asset: {tag}")
-    logging.info(f"Asset location: {path}")
+    if log:
+        logging.info(f"Verifying asset: {tag}")
+        logging.info(f"Asset location: {path}")
 
     # Create parent directory
     if not path.parent.is_dir():
-        logging.info(f"Creating parent: {path.parent}")
+        if log:
+            logging.info(f"Creating parent: {path.parent}")
         path.parent.mkdir(parents=True)
 
     def verify():
@@ -112,7 +114,8 @@ def retrieve_asset(tag, delete_wrong=False, chunk_size=_DEFAULT_CHUNK_SIZE):
         url = asset.get("url")
         if url is None:
             raise Exception("File is missing and cannot be downloaded")
-        logging.info(f"Downloading from: {url}")
+        if log:
+            logging.info(f"Downloading from: {url}")
         try:
             _download(url, path)
         except Exception as e:
@@ -124,7 +127,8 @@ def retrieve_asset(tag, delete_wrong=False, chunk_size=_DEFAULT_CHUNK_SIZE):
     # Ensure file integrity
     if not already_verified:
         verify()
-    logging.info(f"Verified!")
+    if log:
+        logging.info(f"Verified!")
 
     return path
 
