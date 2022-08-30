@@ -1,4 +1,3 @@
-import itertools
 import json
 import logging
 import tempfile
@@ -24,7 +23,7 @@ from .theory import (
     TempoChanges,
     estimate_key_changes,
 )
-from .utils import decode_audio, get_approximate_audio_length, retrieve_audio_bytes
+from .utils import decode_audio, retrieve_audio_bytes
 
 
 class InputFeats(Enum):
@@ -146,57 +145,70 @@ def sheetsage(
     audio_path_bytes_or_url,
     segment_start_hint=None,
     segment_end_hint=None,
-    segment_hints_are_downbeats=False,
-    input_feats=InputFeats.HANDCRAFTED,
+    use_jukebox=False,
     measures_per_chunk=8,
+    segment_hints_are_downbeats=False,
     beats_per_measure_hint=None,
+    detect_melody=True,
     detect_harmony=True,
     beat_detection_padding=15.0,
 ):
-    """Main driver function for Sheet Sage.
+    """Main driver function for Sheet Sage: music audio -> lead sheet.
 
     Parameters
     ----------
     audio_path_bytes_or_url : :class:`pathlib.Path`, bytes, or str
-       The filepath, raw bytes, or string URL of the audio file.
+       The filepath, raw bytes, or string URL of the audio to transcribe.
     segment_start_hint : float or None
-       Pass
+       Approximate timestamp of start downbeat (to transcribe a segment of the audio).
     segment_end_hint : float or None
-       Pass
-    segment_hints_are_downbeats
+       Approximate timestamp of end downbeat (to transcribe a segment of the audio).
+    use_jukebox : bool
+       If True, improves transcription quality by using OpenAI Jukebox (requires GPU w/ >=12GB VRAM).
     measures_per_chunk : int
-       Pass
-    input_feats : :class:`Input`
-    output_modality : :class:`Output`
-    beat_detection_padding : float
+       The number of measures which Sheet Sage transcribes at a time (for best results,
+       set to phrase length).
+    segment_hints_are_downbeats: bool
+       If True, overrides downbeat detection using the specified segment hints (note that the hints must be *very* precise for this to work as intended).
     beats_per_measure_hint : int or None
-
-    Raises
-    ------
+       If specified, overrides time signature detection (4 for "4/4" or 3 for "3/4").
+    detect_melody : bool
+       If False, skips melody transcription.
+    detect_harmony : bool
+       If False, skips chord recognition.
+    beat_detection_padding : float
+       Amount of audio padding to use when running beat detection on segment.
 
     Returns
     -------
+    :class:`sheetsage.LeadSheet`
+       Pass
+    Callable[float, float]
+       Metronome function for converting beat values to timestamps
     """
-    # Check arguments
-    if segment_start_hint is not None:
-        if segment_start_hint < 0:
-            raise ValueError("Segment start hint must be non-negative")
-    if segment_end_hint is not None:
-        if segment_end_hint < 0:
-            raise ValueError("Segment end hint must be non-negative")
-        if segment_start_hint is None:
-            raise ValueError("Must specify a start hint with end hint")
-    if segment_start_hint is not None and segment_end_hint is not None:
-        if segment_end_hint <= segment_start_hint:
-            raise ValueError("Segment end before segment start")
+    # Check values
+    if segment_start_hint is not None and segment_start_hint < 0:
+        raise ValueError("Segment start hint cannot be negative")
+    if segment_end_hint is not None and segment_end_hint < 0:
+        raise ValueError("Segment end hint cannot be negative")
+    if (
+        segment_start_hint is not None
+        and segment_end_hint is not None
+        and segment_end_hint <= segment_start_hint
+    ):
+        raise ValueError("Segment end hint should be greater than start hint")
     if measures_per_chunk <= 0:
         raise ValueError("Invalid measures per chunk specified")
     if measures_per_chunk > 24:
+        # TODO: Allow 32 if time signature is 3/4??
         raise ValueError("Sheet Sage can only transcribe 24 measures per chunk")
     if beats_per_measure_hint is not None and beats_per_measure_hint not in [3, 4]:
         raise ValueError(
             "Currently, Sheet Sage only supports 4/4 and 3/4 time signatures"
         )
+    if beat_detection_padding < 0:
+        raise ValueError("Beat detection padding cannot be negative")
+    input_feats = InputFeats.JUKEBOX if use_jukebox else InputFeats.HANDCRAFTED
 
     # Download audio if URL specified
     audio_path_or_bytes = audio_path_bytes_or_url
@@ -314,7 +326,6 @@ def sheetsage(
             duration = chunk_tertiaries[-1] - offset
             assert duration <= _JUKEBOX_CHUNK_DURATION_EDGE
             fr, feats = extractor(audio_path, offset=offset, duration=duration)
-
             beat_resampled = []
             for i in range(chunk_tertiaries.shape[0] - 1):
                 s = int((chunk_tertiaries[i] - offset) * fr)
@@ -322,18 +333,15 @@ def sheetsage(
                 assert e > s
                 beat_resampled.append(np.mean(feats[s:e], axis=0, keepdims=True))
             beat_resampled = np.concatenate(beat_resampled, axis=0)
-
             features.append(beat_resampled)
-
-    global _PROBE
-    _PROBE = np.copy(features[0])
+    total_num_tertiary = sum([f.shape[0] for f in features])
 
     # Normalize handcrafted features (after beat resampling)
     # NOTE: Normalizing after beat resampling is probably a bug in retrospect, but it's
     # what the model expects.
     if input_feats == InputFeats.HANDCRAFTED:
         moments = np.load(
-            retrieve_asset("SHEETSAGE_V02_HANDCRAFTED_MOMENTS", log=False)
+            retrieve_asset(f"SHEETSAGE_V02_{input_feats.name}_MOMENTS", log=False)
         )
         for chunk in features:
             chunk -= moments[0]
@@ -341,57 +349,62 @@ def sheetsage(
 
     # Transcribe chunks
     logging.info("Transcribing")
-    melody_model = _init_model(Task.MELODY, input_feats, Model.TRANSFORMER)
-    melody_logits = []
+    if detect_melody:
+        melody_model = _init_model(Task.MELODY, input_feats, Model.TRANSFORMER)
+        melody_logits = []
     if detect_harmony:
         harmony_model = _init_model(Task.HARMONY, input_feats, Model.TRANSFORMER)
         harmony_logits = []
-    device = torch.device("cpu")
-    with torch.no_grad():
-        for src in features:
-            src_len = src.shape[0]
-            src = np.pad(src, [(0, _MAX_TERTIARIES_PER_CHUNK - src_len), (0, 0)])
-            src = src[:, np.newaxis]
-            src = torch.tensor(src).float()
-            src_len = torch.tensor(src_len).long().view(-1)
-            src.to(device)
-            src_len.to(device)
+    if detect_melody or detect_harmony:
+        device = torch.device("cpu")
+        with torch.no_grad():
+            for src in features:
+                src_len = src.shape[0]
+                src = np.pad(src, [(0, _MAX_TERTIARIES_PER_CHUNK - src_len), (0, 0)])
+                src = src[:, np.newaxis]
+                src = torch.tensor(src).float()
+                src_len = torch.tensor(src_len).long().view(-1)
+                src.to(device)
+                src_len.to(device)
 
-            chunk_melody_logits = melody_model(src, src_len, None, None)
-            chunk_melody_logits = chunk_melody_logits[: src_len.item(), 0]
-            melody_logits.append(chunk_melody_logits.cpu().numpy())
-            if detect_harmony:
-                chunk_harmony_logits = harmony_model(src, src_len, None, None)
-                chunk_harmony_logits = chunk_harmony_logits[: src_len.item(), 0]
-                harmony_logits.append(chunk_harmony_logits.cpu().numpy())
-    melody_logits = np.concatenate(melody_logits, axis=0)
-    if detect_harmony:
-        harmony_logits = np.concatenate(harmony_logits, axis=0)
-    total_num_tertiary = melody_logits.shape[0]
+                if detect_melody:
+                    chunk_melody_logits = melody_model(src, src_len, None, None)
+                    chunk_melody_logits = chunk_melody_logits[: src_len.item(), 0]
+                    melody_logits.append(chunk_melody_logits.cpu().numpy())
+                if detect_harmony:
+                    chunk_harmony_logits = harmony_model(src, src_len, None, None)
+                    chunk_harmony_logits = chunk_harmony_logits[: src_len.item(), 0]
+                    harmony_logits.append(chunk_harmony_logits.cpu().numpy())
 
     logging.info("Formatting output")
 
     # Decode melody
-    melody_preds = np.argmax(melody_logits, axis=-1)
-    melody_onsets = []
-    for o, p in enumerate(melody_preds):
-        if p != 0:
-            assert p >= 1
-            p -= 1
-            p = (p + _MELODY_PITCH_MIN).tolist()
-            melody_onsets.append((o, Note(p % 12, p // 12)))
-    melody = []
-    for i, (o, n) in enumerate(melody_onsets):
-        if i + 1 < len(melody_onsets):
-            d = melody_onsets[i + 1][0] - o
-        else:
-            d = total_num_tertiary - o
-        melody.append((o, d, n))
-    melody = Melody(*melody)
+    melody = Melody()
+    if detect_melody:
+        melody_logits = np.concatenate(melody_logits, axis=0)
+        assert melody_logits.shape[0] == total_num_tertiary
+        melody_preds = np.argmax(melody_logits, axis=-1)
+        melody_onsets = []
+        for o, p in enumerate(melody_preds):
+            if p != 0:
+                assert p >= 1
+                p -= 1
+                p = (p + _MELODY_PITCH_MIN).tolist()
+                melody_onsets.append((o, Note(p % 12, p // 12)))
+        melody = []
+        for i, (o, n) in enumerate(melody_onsets):
+            if i + 1 < len(melody_onsets):
+                d = melody_onsets[i + 1][0] - o
+            else:
+                d = total_num_tertiary - o
+            melody.append((o, d, n))
+        melody = Melody(*melody)
 
     # Decode harmony
     harmony = Harmony()
     if detect_harmony:
+        harmony_logits = np.concatenate(harmony_logits, axis=0)
+        assert harmony_logits.shape[0] == total_num_tertiary
         harmony_preds = np.argmax(harmony_logits, axis=-1)
         harmony = []
         last_chord = None
@@ -426,28 +439,82 @@ def sheetsage(
 
 
 if __name__ == "__main__":
-    import multiprocessing
+    import pathlib
+    import uuid
     from argparse import ArgumentParser
+
+    from .utils import engrave
 
     parser = ArgumentParser()
 
-    parser.add_argument("audio_path_or_url", type=str, help="")
-    parser.add_argument("-s", "--segment_start_hint", type=float, help="")
-    parser.add_argument("-e", "--segment_end_hint", type=float, help="")
-    parser.add_argument("--segment_hints_are_downbeats", action="store_true", help="")
-    parser.add_argument("--use_jukebox", action="store_true", help="")
-    parser.add_argument("--measures_per_chunk", type=int, help="")
-    parser.add_argument("--beats_per_measure", type=int, choices=[3, 4], help="")
-    parser.add_argument("--melody_only", action="store_true", help="")
+    parser.add_argument(
+        "audio_path_or_url",
+        type=str,
+        help="The filepath or URL of the audio to transcribe.",
+    )
+    parser.add_argument(
+        "-s",
+        "--segment_start_hint",
+        type=float,
+        help="Approximate timestamp of start downbeat (to transcribe a segment of the audio).",
+    )
+    parser.add_argument(
+        "-e",
+        "--segment_end_hint",
+        type=float,
+        help="Approximate timestamp of end downbeat (to transcribe a segment of the audio).",
+    )
+    parser.add_argument(
+        "-o",
+        "--output_dir",
+        type=str,
+        help="Directory to save the output files (lead sheet PDF, synchronized MIDI, etc.).",
+    )
+    parser.add_argument(
+        "-j",
+        "--use_jukebox",
+        action="store_true",
+        help="If set, improves transcription quality by using OpenAI Jukebox (requires GPU w/ >=12GB VRAM).",
+    )
+    parser.add_argument(
+        "--measures_per_chunk",
+        type=int,
+        help="The number of measures which Sheet Sage transcribes at a time (for best results, set to phrase length).",
+    )
+    parser.add_argument(
+        "--segment_hints_are_downbeats",
+        action="store_true",
+        help="If set, overrides downbeat detection using the specified segment hints (note that the hints must be *very* precise for this to work as intended).",
+    )
+    parser.add_argument(
+        "--beats_per_measure",
+        type=int,
+        choices=[3, 4],
+        help="If specified, overrides time signature detection (4 for '4/4' or 3 for '3/4').",
+    )
+    parser.add_argument(
+        "--skip_melody",
+        action="store_false",
+        dest="detect_melody",
+        help="If set, skips melody transcription.",
+    )
+    parser.add_argument(
+        "--skip_harmony",
+        action="store_false",
+        dest="detect_harmony",
+        help="If set, skips chord recognition.",
+    )
 
     parser.set_defaults(
         segment_start_hint=None,
         segment_end_hint=None,
-        segment_hints_are_downbeats=False,
+        output_dir="./output",
         use_jukebox=False,
         measures_per_chunk=8,
+        segment_hints_are_downbeats=False,
         beats_per_measure=None,
-        melody_only=False,
+        detect_melody=True,
+        detect_harmony=True,
     )
 
     args = parser.parse_args()
@@ -458,10 +525,17 @@ if __name__ == "__main__":
         args.audio_path_or_url,
         segment_start_hint=args.segment_start_hint,
         segment_end_hint=args.segment_end_hint,
-        segment_hints_are_downbeats=args.segment_hints_are_downbeats,
-        input_feats=InputFeats.JUKEBOX if args.use_jukebox else InputFeats.HANDCRAFTED,
+        use_jukebox=args.use_jukebox,
         measures_per_chunk=args.measures_per_chunk,
+        segment_hints_are_downbeats=args.segment_hints_are_downbeats,
         beats_per_measure_hint=args.beats_per_measure,
-        detect_harmony=not args.melody_only,
+        detect_melody=args.detect_melody,
+        detect_harmony=args.detect_harmony,
     )
-    print(lead_sheet)
+
+    output_dir = pathlib.Path(args.output_dir).resolve()
+    if output_dir == pathlib.Path("./output").resolve():
+        uuid = uuid.uuid4().hex
+        output_dir = pathlib.Path(output_dir, uuid)
+    logging.info(f"Writing to {output_dir}")
+    output_dir.mkdir(parents=True, exist_ok=True)
