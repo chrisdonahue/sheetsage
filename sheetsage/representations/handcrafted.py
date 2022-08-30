@@ -41,15 +41,3 @@ class OAFMelSpec(Representation):
         if self._LOG:
             features = librosa.power_to_db(features)
         return self._SR / self._HOP_SIZE, features
-
-
-class OAFMelSpecNorm(OAFMelSpec):
-    def __init__(self, moments, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._moments = moments
-
-    def __call__(self, *args, **kwargs):
-        fr, feats = super().__call__(*args, **kwargs)
-        feats -= self._moments[0]
-        feats /= self._moments[1]
-        return fr, feats

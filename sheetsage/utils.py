@@ -6,10 +6,12 @@ import shlex
 import subprocess
 import tempfile
 import warnings
+from io import BytesIO
 
 import audioread
 import librosa
 import numpy as np
+from PIL import Image
 from scipy.io.wavfile import write as wavwrite
 
 
@@ -304,3 +306,87 @@ def get_approximate_audio_length(path, timeout=10):
     d = json.loads(stdout)
     duration = float(d["format"]["duration"])
     return duration
+
+
+_LILYPOND_ENGRAVE_TEMPLATE = """
+lilypond \
+        -s \
+        {args} \
+        --{out_format} \
+        -o {out_path} \
+        {in_path}
+""".strip()
+
+
+def engrave(
+    lilypond,
+    out_format="png",
+    transparent=True,
+    trim=True,
+    hide_footer=True,
+    args=None,
+    timeout=60,
+):
+    if out_format not in ["png", "pdf"]:
+        raise ValueError()
+    if args is not None and not isinstance(args, str):
+        raise ValueError()
+
+    # Adjust lilypond
+    if hide_footer:
+        lilypond += "\n\\header { tagline = ##f }"
+
+    # Engrave
+    with tempfile.TemporaryDirectory() as d:
+        # Create cmd
+        in_path = pathlib.Path(d, "in.ly")
+        with open(in_path, "w") as f:
+            f.write(lilypond)
+        args = "" if args is None else args
+        if out_format != "pdf":
+            args += " -dpixmap-format=pngalpha"
+        cmd = _LILYPOND_ENGRAVE_TEMPLATE.format(
+            args=args,
+            out_format=out_format,
+            out_path=pathlib.Path(d, "out"),
+            in_path=in_path,
+        )
+
+        # Run cmd
+        status, stdout, stderr = run_cmd_sync(cmd, timeout=timeout)
+        if status != 0:
+            raise Exception(f"Failed to engrave ({status}): {stderr}")
+
+        # Load output files
+        out_path = pathlib.Path(d, f"out.{out_format}")
+        if not out_path.is_file():
+            raise Exception("No output")
+        with open(out_path, "rb") as f:
+            result = f.read()
+
+    # Trim
+    if out_format == "png":
+        if trim:
+            im = Image.open(BytesIO(result))
+            bbox = im.getbbox()
+            if bbox is not None:
+                im = im.crop(bbox)
+            bio = BytesIO()
+            im.save(bio, format="png")
+            result = bio.getvalue()
+
+        if not transparent:
+            im = Image.open(BytesIO(result)).convert("RGBA")
+            background = Image.new("RGBA", im.size, (255, 255, 255))
+            im = Image.alpha_composite(background, im)
+            bio = BytesIO()
+            im.save(bio, format="png")
+            result = bio.getvalue()
+
+    # Format result
+    if len(result) == 0:
+        raise Exception("Lilypond did not produce any output files")
+    elif len(result) == 1:
+        result = result[0][1]
+
+    return result

@@ -1,14 +1,8 @@
 import numpy as np
 
 from ..assets import retrieve_asset
-from .handcrafted import OAFMelSpecNorm
+from .handcrafted import OAFMelSpec as Handcrafted
 from .jukebox import Jukebox as _Jukebox
-
-
-class Handcrafted(OAFMelSpecNorm):
-    def __init__(self):
-        moments = np.load(retrieve_asset("SHEETSAGE_V02_HANDCRAFTED_MOMENTS"))
-        super().__init__(moments)
 
 
 class Jukebox(_Jukebox):
