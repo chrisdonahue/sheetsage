@@ -32,7 +32,6 @@ while [[ $# -gt 0 ]]; do
 done
 
 echo "Running Sheet Sage via Docker with args: ${DOCKER_ARGS[@]}"
-echo "Output will be written to ./output"
 
 docker run \
   -it \
