@@ -320,9 +320,12 @@ def sheetsage(
 
     # Extract features
     logging.info(
-        "Extracting feats" + "; this could take several minutes to load and run Jukebox"
-        if use_jukebox
-        else ""
+        "Extracting feats"
+        + (
+            "; this could take several minutes when using Jukebox"
+            if use_jukebox
+            else ""
+        )
     )
     extractor = _init_extractor(input_feats)
     features = []
