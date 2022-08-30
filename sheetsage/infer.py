@@ -319,7 +319,11 @@ def sheetsage(
         tertiary_chunks.append((tertiary_start_idx, tertiary_end_idx))
 
     # Extract features
-    logging.info("Extracting feats")
+    logging.info(
+        "Extracting feats" + "; this could take several minutes to load and run Jukebox"
+        if use_jukebox
+        else ""
+    )
     extractor = _init_extractor(input_feats)
     features = []
     with tempfile.NamedTemporaryFile("wb") as f:
