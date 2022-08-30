@@ -7,4 +7,4 @@ from .jukebox import Jukebox as _Jukebox
 
 class Jukebox(_Jukebox):
     def __init__(self):
-        super().__init__(num_layers=53, fp16=False)
+        super().__init__(num_layers=53, fp16=False, log=False)

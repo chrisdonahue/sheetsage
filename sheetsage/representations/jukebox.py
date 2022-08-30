@@ -23,14 +23,15 @@ _CHUNK_SAMPLES = _CHUNK_FRAMES * _FRAME_HOP_SIZE
 _SINGLETON = None
 
 
-def init_jukebox_singleton(model="5b", num_layers=53):
+def init_jukebox_singleton(model="5b", num_layers=53, log=True):
     global _SINGLETON
 
     if _SINGLETON is None:
         # Set up device
         with redirect_stdout(io.StringIO()) as s:
             rank, local_rank, device = jukebox.utils.dist_utils.setup_dist_from_mpi()
-            logging.info(s.getvalue())
+            if log:
+                logging.info(s.getvalue())
 
         # Set up hyperparams
         hps = jukebox.hparams.Hyperparams()
@@ -51,7 +52,8 @@ def init_jukebox_singleton(model="5b", num_layers=53):
                 ),
                 device,
             )
-            logging.info(s.getvalue())
+            if log:
+                logging.info(s.getvalue())
 
         # Set up language model
         if num_layers is not None:
@@ -62,7 +64,8 @@ def init_jukebox_singleton(model="5b", num_layers=53):
             lm = jukebox.make_models.make_prior(
                 jukebox.hparams.setup_hparams(priors[-1], overrides), vqvae, device
             )
-            logging.info(s.getvalue())
+            if log:
+                logging.info(s.getvalue())
         lm.prior.only_encode = True
 
         _SINGLETON = (model, num_layers, hps, vqvae, lm, device)
@@ -74,7 +77,7 @@ def init_jukebox_singleton(model="5b", num_layers=53):
 
 
 class Jukebox(Representation):
-    def __init__(self, num_layers=53, fp16=False):
+    def __init__(self, num_layers=53, fp16=False, log=True):
         # NOTE: Layer 53 is the deepest that fit on a commodity 12GB card
         (
             _,
@@ -83,7 +86,7 @@ class Jukebox(Representation):
             self.vqvae,
             self.lm,
             self.device,
-        ) = init_jukebox_singleton(model="5b", num_layers=num_layers)
+        ) = init_jukebox_singleton(model="5b", num_layers=num_layers, log=log)
         self.fp16 = fp16
 
     @classmethod

@@ -1,24 +1,26 @@
 #!/bin/bash
 
-# NOTE: Override this with a local directory of your choosing
+# NOTE: Override these with local directories of your choosing
 SHEETSAGE_CACHE_DIR=$(python -c "import pathlib; print(pathlib.Path(pathlib.Path.home(), '.sheetsage').resolve())")
-mkdir -p $SHEETSAGE_CACHE_DIR
+SHEETSAGE_OUTPUT_DIR=$(pwd)/output
+
+DOCKER_CPUS=$(python3 -c "import os; cpus=os.sched_getaffinity(0); print(','.join(map(str,cpus)))")
+DOCKER_CPU_ARG="--cpuset-cpus ${DOCKER_CPUS}"
+DOCKER_GPU_ARG=""
 
 DOCKER_ARGS=()
 while [[ $# -gt 0 ]]; do
   case $1 in
-    # Positional argument
-    *)
-      if [ -f "$1" ]; then
-        # Input is local file that we need to mount on the container
-        # TODO: Handle file paths with spaces?
-        echo "Copying input file $1 to container as ./output/input"
-        cp $1 ./output/input
-        DOCKER_ARGS+=("./output/input")
-      else
-        # Input is URL or another positional argument
-        DOCKER_ARGS+=("$1")
-      fi
+    # GPU
+    -j|--use_jukebox)
+      DOCKER_ARGS+=("$1")
+      DOCKER_GPUS=$(nvidia-smi -L | python3 -c "import sys; print(','.join([l.strip().split()[-1][:-1] for l in list(sys.stdin)]))")
+      DOCKER_GPU_ARG="--gpus device=${DOCKER_GPUS}"
+      shift
+      ;;
+    # Flags
+    --segment_hints_are_downbeats|--skip_melody|--skip_harmony)
+      DOCKER_ARGS+=("$1")
       shift
       ;;
     # Optional argument
@@ -28,16 +30,35 @@ while [[ $# -gt 0 ]]; do
       shift
       shift
       ;;
+    # Positional argument
+    *)
+      if [ -f "$1" ]; then
+        # Input is local file that we need to mount on the container
+        # TODO: Handle file paths with spaces?
+        echo "Copying input file $1 to container as ./output/input"
+        cp $1 ${SHEETSAGE_OUTPUT_DIR}/input
+        DOCKER_ARGS+=("/sheetsage/output/input")
+      else
+        # Input is URL or another positional argument
+        DOCKER_ARGS+=("$1")
+      fi
+      shift
+      ;;
   esac
 done
 
 echo "Running Sheet Sage via Docker with args: ${DOCKER_ARGS[@]}"
 
+mkdir -p $SHEETSAGE_CACHE_DIR
+mkdir -p $SHEETSAGE_OUTPUT_DIR
 docker run \
   -it \
   --rm \
+  ${DOCKER_CPU_ARG} \
+  ${DOCKER_GPU_ARG} \
+  -u $(id -u) \
   -v $(pwd)/sheetsage:/sheetsage/sheetsage \
   -v $SHEETSAGE_CACHE_DIR:/sheetsage/cache \
-  -v $(pwd)/output:/sheetsage/output \
+  -v $SHEETSAGE_OUTPUT_DIR:/sheetsage/output \
   chrisdonahue/sheetsage \
   python -m sheetsage.infer ${DOCKER_ARGS[@]}
