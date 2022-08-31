@@ -5,8 +5,8 @@
 \usepackage{ismir,amsmath,cite,url}
 \usepackage{graphicx}
 \usepackage{color}
-\usepackage{lineno}
-\linenumbers
+%\usepackage{lineno}
+%\linenumbers
 
 \DeclareMathOperator*{\argmax}{arg\,max}
 
@@ -17,13 +17,13 @@ Melody transcription via generative pre-training
 }
 
 \threeauthors
-  {First Author} {Affiliation1 \\ {\tt author1@ismir.edu}}
-  {Second Author} {\bf Retain these fake authors in\\\bf submission to preserve the formatting}
-  {Third Author} {Affiliation3 \\ {\tt author3@ismir.edu}}
+  {Chris Donahue} {Stanford University}
+  {John Thickstun} {Stanford University}
+  {Percy Liang} {Stanford University}
 
 % For the author list in the Creative Common license, please enter author names. 
 % Please abbreviate the first names of authors and add 'and' between the second to last and last authors.
-\def\authorname{F. Author, S. Author, and T. Author}
+\def\authorname{C. Donahue, J. Thickstun, and P. Liang}
 
 % Optional: To use hyperref, uncomment the following.
 \usepackage[bookmarks=false,pdfauthor={\authorname},pdfsubject={\papersubject},hidelinks]{hyperref}
@@ -84,18 +84,21 @@ Melody transcription via generative pre-training
 
 \input{sections/9_ethics}
 
-%\section{Acknowledgements}
+\section{Acknowledgements}
 
-% TODO: Intro "conventional spectrogram features used for melody transcription" -> "spectrogram features (conventional for transcription")
-% TODO: Only italicize melody extractio once
-% TODO: "Ground truth offset" -> "user-annotated offset"
-
-% JohnH for helpful discussions
-% Annie for engraving advice
-% Sam Ainsworth for JAX help through JohnT
-% Megha Srivastava for being an enthusiastic user
-% Nelson Liu for being an enthusiastic user and helpful discussions
-% Rodrigo Castellon for helpful discussions
+Thanks to 
+Annie Hui-Hsin Hsieh, % for engraving advice
+John Hewitt, % for helpful discussions
+Maggie Henderson, % for being an amazingly supportive partner as well as an enthusiastic beta tester
+Megha Srivastava, % for being an enthusiastic beta tester
+Nelson Liu, % for being an enthusiastic beta tester and helpful discussions
+Pang Wei Koh, % for helpful discussions
+Rodrigo Castellon, % for helpful discussions
+Sam Ainsworth, % for JAX help via JohnT
+and
+Zachary C. Lipton % for being an enthusiastic beta tester
+for helpful discussions, support, and advice. 
+We thank all reviewers for their helpful comments.
 
 \bibliography{main}
 
