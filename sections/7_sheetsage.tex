@@ -9,27 +9,18 @@ In Western music, a piece can often be characterized by its melody and harmony.
 When engraved as a lead sheet---a musical score containing the melody as notes on a staff and the harmony as chord names---melody and harmony can be readily interpreted by musicians, enabling recognizable performances of existing pieces. 
 Hence, for some music, a lead sheet represents the essence of its underlying composition.
 Existing services like Chordify~\cite{de2014chordify} can already detect a subset of the information needed to produce lead sheets (specifically, chords, beats, and keys) for broad music audio. 
-%chords, beats, and keys in broad music audio and output the results in musician-friendly formats like guitar tablature. 
 However, despite past research efforts~\cite{ryynanen2008automatic,weil2009automatic}, no user-facing service yet exists which can convert broad music audio into lead sheets, presumably due to the poor performance of existing melody transcription systems.
-% By automatically transcribing music audio into lead sheets, our work helps reduce the gap between human perception and machine understanding of Western music.
 
 To build \sheetsage, we also train a \jukebox-based chord recognition model on the \hooktheory{} data, using the same methodology that we propose for melody transcription (we simply replace the target vocabulary of onset pitches with one containing chord labels).
-%\pl{is this jointly trained with the melody transcription? actually I don't remember if we're doing probing with an MLP?}
-% CHRIS: Not jointly trained, though it certainly could be.
 %We use an extended chord vocabulary consisting of $96$ chord labels (major, minor, 7, maj7, m7, sus, dim, aug for each of the 12 pitch classes).
 Passing audio through our \jukebox{}-based melody transcription and chord recognition models results in a score like format containing raw note names and chord labels per sixteenth note. 
 Engraving this information as a lead sheet requires additional information: the key signature and the time signature. 
 We estimate the former using the Krumhansl-Schmuckler algorithm~\cite{krumhansl1990cognitive,temperley1999key}, which takes the symbolic melody and chord information as input. 
 For the latter, we use \madmom~\cite{bock2016madmom,bock2016joint}. 
-%to estimate beats and downbeats from the audio, which implicitly gives us the time signature.
 Finally, we engrave a lead sheet using Lilypond~\cite{nienhuys2003lilypond}. 
 See~\Cref{fig:sheet_sage} for a full schematic.
 
 Subjectively speaking, \sheetsage{} often produces high-quality lead sheets, especially for the chorus and verse segments of pop music which have more prominent melodies. 
-% It can even successfully track the melody as it changes across instruments. 
-Performance is fairly robust across genres and instruments, even those which are less represented in the training data---one user reported particularly strong success on Bollywood music. 
+Performance is fairly robust across styles and instruments, even those which are less represented in the training data---one user reported particularly strong success on Bollywood music. 
 However, the system occasionally struggles, especially with quieter vocals, layered harmonies, unusual time signatures, or poor intonation. 
-% Additionally, because the transcription models take estimated beats as an input, results can suffer when these estimates are poor. 
 \sheetsage{} is also limited to fixed time and key signatures due to limitations of its downbeat detection and key estimation modules.
-% %only handle $3$/$4$ or $4$/$4$ time signatures and cannot handle key or time signature changes. 
-% Overcoming this limitation would involve either (1)~research into downbeat detection and key estimation which supports time / key signature changes, or (2)~user intervention to provide the correct information.

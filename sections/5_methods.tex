@@ -3,10 +3,7 @@
 
 Similar to state-of-the-art methodology used for polyphonic transcription~\cite{hawthorne2021sequence}, 
 our approach to melody transcription involves training Transformer models~\cite{vaswani2017attention} to predict notes from audio features. 
-However, to address the unique challenges 
-%\pl{which are?} 
-% CHRIS: Outlined the challenges in parallel w/ our solutions in the next two sentences
-of melody transcription, our approach differs in two distinct ways. 
+However, to address the unique challenges of melody transcription, our approach differs in two distinct ways. 
 First, because melody transcription involves operating on broad audio, we leverage representations from pre-trained models as drop-in replacements for the handcrafted spectrogram features used as inputs to other transcription systems. 
 Secondly, because alignments in our dataset are approximate, we propose a new strategy for training transcription models under such conditions.
 
@@ -41,8 +38,7 @@ Then, we align the remaining beats to the subsequent detected beats (see~\Cref{f
 This provides a beat-level alignment for the entire segment, which we linear interpolate to fractional subdivisions of the beat. 
 Formally, we construct an alignment function $\texttt{Align} : [0,B) \to [0,T)$ that assigns each of $B$ beats in the metrical structure to a time $t \in [0,T)$ in the audio.
 In an informal listening test, this produced an improved alignment for $95$ of $100$ segments, 
-%\pl{cases are notes? 95 sounds like an official statistic - could you give more information about which songs / how many notes were used to compute this? otherwise, sounds kind of sketchy}, 
-where the primary failure mode in the remaining $5$ cases occurred when \madmom{} detected the wrong beat as the downbeat. 
+where the primary failure mode in the remaining $5$ segments occurred when \madmom{} detected the wrong beat as the downbeat. 
 We use these refined alignments for training and evaluation and release them alongside the dataset.
 
 \subsection{\Beatpooling}
@@ -50,20 +46,15 @@ We use these refined alignments for training and evaluation and release them alo
 
 Here we outline our proposed approach for training models in the presence of imprecise alignments. 
 Existing transcription methods were largely designed for domains where perfect alignments are readily available, e.g.,~a Disklavier yields piano transcription data with perfect alignments. 
-%\pl{this seems like worth mentioning earlier as a limitation of previous transcription}
-% CHRIS: Agreed, but too high entropy for now. TODO for camera ready.
 Despite our best efforts, the refined \hooktheory{} alignments are still imprecise when compared to those used to develop existing methods. 
 In initial experiments, we found that naively adopting existing methods (specifically, \cite{hawthorne2017onsets,hawthorne2021sequence}) resulted in poor performance on our dataset and task.\footnote{Additionally, initial experiments on training models with an alignment-free approach~\cite{graves2006connectionist} also resulted in poor performance.} 
 Hence, we designed a new approach to sidestep small alignment deviations.
 
-%We propose to resample audio features $\bm{X} \in \mathbb{R}^{Tf_k \times d}$ using uniform sampling of beats (as defined by the alignments constructed in \cref{sec:dataset}) rather than uniform sampling of time. 
-We propose a \emph{\beatpooling} of audio features $\bm{X} \in \mathbb{R}^{Tf_k \times d}$ to yield features that are uniformly spaced in subdivisions of the beat (as defined by the alignments constructed in \Cref{sec:align}) rather than in time. 
+We propose a \beatpooling{} of audio features $\bm{X} \in \mathbb{R}^{Tf_k \times d}$ to yield features that are uniformly spaced in subdivisions of the beat (as defined by the alignments constructed in \Cref{sec:align}) rather than in time. 
 For an audio recording with $B$ beats, we sample features $\tilde{\bm{X}} \in \mathbb{R}^{4B \times d}$ at sixteenth-note intervals. The value $\tilde{\bm{X}}_i$ is constructed by averaging all feature vectors in $\bm{X}$ that are nearest to the $i$'th sixteenth note into a single vector which acts as a proxy feature for that sixteenth note. 
 For example, if a recording has a tempo of $120$~beats per minute, a sixteenth note represents $125$~ms of time, which would mean averaging across 
-%around 
 $43$ feature vectors from \jukebox{} (${f_k \approx 345}$ Hz). 
 The intuition is that, while our refined alignments may not be precise enough to identify exactly which of those $43$ frames contains an onset, we can be reasonably confident that it occurs \emph{somewhere} within them, and thus that information will be averaged into the proxy feature.
-%We refer to this strategy as \emph{\beatpooling}.
 
 %Formally, given a segment of length $B$ beats or $T$ seconds and an alignment function ${a: [1, B] \mapsto [0, T]}$, \beatpooling{} yields ${\hat{\bm{X}} = \hat{\bm{x}}_1, \ldots, \hat{\bm{x}}_{4B}}$, where ${\hat{\bm{x}}_i \in \mathbb{R}^d}$, and
 % \begin{gather*}
@@ -75,13 +66,10 @@ The intuition is that, while our refined alignments may not be precise enough to
 \subsection{Modeling}
 \label{sec:modeling}
 
-% \john{Section is titled training but this is really more of a concrete instantiation of the more abstract task from \cref{sec:task}; even some of the main characters are the same (e.g., OctaveShift). Does this really belong here?}
 Together with the \beatpooling{} ${\tilde{\bm{X}} \in \mathbb{R}^{4B\times d}}$, we convert 
-%a sparse melody sequence
 the sparse task labels ${\bm{y} \in (\mathbb{R}^+ \times \mathbb{V})^N}$ into 
 a dense sequence  
 ${\tilde{\bm{y}} \in \{\{\varnothing\}\cup\mathbb{V}\}^{4B}}$,
-% CHRIS: I think we need an intuitive explanation here, and it gives us a cleaner place to sneak in the footnote
 which indicates whether or not an onset occurs at each sixteenth note.\footnote{This requires quantizing labels to the nearest sixteenth note. In practice, less than $1\%$ of notes are affected by this quantization.} Formally, 
 \[
 \tilde{\bm{y}}_i =
@@ -99,16 +87,10 @@ We formulate melody transcription as an aligned sequence-to-sequence modeling pr
 attempt to predict the sequence $\tilde{\bm{y}}$ given $\tilde{\bm{X}}$. Specifically, we train models of the form ${f_{\theta} : \mathbb{R}^{4B \times d} \to \mathbb{R}^{4B \times (|\mathbb{V}| + 1)}}$, which parameterize probability distributions  ${p_\theta(\tilde{\bm{y}}_i|\bm{\tilde{X}}) = \texttt{SoftMax}(f_{\theta}(\tilde{\bm{X}})_i)}$ over elements of the sequence $\tilde{\bm{y}}$.
 One unique aspect of our dataset is that absolute octave information is absent (see \Cref{sec:dataset}). 
 Hence, we construct an octave-tolerant cross-entropy loss by 
-%calculating the standard cross-entropy loss (denoted \texttt{CE}) for the octave-shifted labels that minimize this loss:
 identifying the octave shift amount that minimizes the standard cross-entropy loss (denoted \texttt{CE}) when applied to the labels:
 \begin{equation*}
 \operatorname*{min}_{\sigma \in \mathbb{Z}} \sum_{i=0}^{4B-1} \texttt{CE}(p_\theta(\tilde{\bm{y}}_i|\bm{\tilde{X}}), \texttt{OctaveShift}(\tilde{\bm{y}}_i, \sigma)).
 \end{equation*}
-% \pl{wait, how do you differentiate this?}\john{Ooops Chris you had some comment about this before that was lost in my rewrite. I though it was obvious: you diff it just like maxpool}
-% An additional hyperparameter $\alpha$ determines the number of possible shifts (${\alpha = 0}$ constitutes standard cross entropy). 
-% %, and $\alpha = 0$ constitutes the standard cross entropy loss. 
-% In practice, we found ${\alpha = 2}$ produced the best performance, 
-% while ${\alpha > 3}$ resulted in unstable training.
 
 We require a thresholding scheme to convert the dense sequence of soft probability estimates $p_\theta(\tilde{\bm{y}}_i|\tilde{\bm{X}})$ into a sparse sequence of notes required by our task (see \Cref{sec:task}). Given a threshold $\tau\in\mathbb{R}$ (in practice, tuned on validation data), we define a sorted \emph{onset list}
 \[

@@ -1,15 +1,12 @@
 \section{Introduction}\label{sec:introduction}
 
 In the Western music canon, 
-%(and especially in popular music), 
 \emph{melody} is a defining characteristic of musical composition, 
-%so much that it is often sufficient for recognizing the identity of a piece of music
 and can even constitute the very identity of a piece of music within the collective consciousness. 
-%Even those without formal musical training can often effortlessly recognize a melody within a complex mixture of sounds, a ubiquitous skill which forms a pillar of our collective musical experience. %experience. \pl{same comment as abstract: I worry that people will be distracted by this not-quite-right-comparison}
 Because of the significance of melody to our music perception, 
 the ability to automatically transcribe the melody notes present in an arbitrary recording 
 could enable numerous applications in 
-% TODO: performance?
+% performance??
 interaction~\cite{ryynanen2008accompaniment}, 
 education~\cite{droe2006music}, 
 informatics~\cite{bainbridge1999towards}, 
@@ -17,7 +14,7 @@ retrieval~\cite{ghias1995query},
 source separation~\cite{ewert2014score},
 and generation~\cite{hawthorne2019enabling}.
 Despite the potential benefits, 
-reliable melody transcription remains an open challenge.% in MIR.
+reliable melody transcription remains an open challenge.
 
 A closely-related problem that has received considerable attention from the MIR community is \emph{melody extraction}~\cite{goto1999real,goto2004real,salamon2014melody,rao2022melody}, where the goal is to estimate the time-varying, continuous \fnot{} trajectory of the melody in an audio mixture. 
 In contrast, the goal of melody transcription is to output the \emph{notes} of the melody, where a note is defined by an onset time, a pitch, and an offset time. 
@@ -42,10 +39,7 @@ The relative lack of progress on melody transcription is perhaps counterintuitiv
 %and chord recognition~\cite{humphrey2012rethinking,boulanger2013audio}. 
 This circumstance stems from two primary factors.
 First, unlike in piano transcription, melody transcription involves operating on \emph{broad}
-% CHRIS: I like broad slightly more I think
-%\john{diverse?} 
 audio mixtures from arbitrary instrument ensembles and musical styles. 
-% CHRIS: I think the following are indeed reasons that melody transcription is hard, but they don't map as cleanly onto our contributions
 %Second, unlike in chord recognition, melody transcription involves isolating the notes from a single instrument voice (recognized to be the melodic voice) within the mixture. 
 %Second, melody transcription involves not only detecting notes but also identifying which of those notes constitutes the melody, which may require modeling the nuances of human music perception. 
 Second, there is a deficit of training data for melody transcription, which particularly impedes the deep learning approaches central to recent improvements on other transcription tasks. 
@@ -58,33 +52,21 @@ When used as input features to a Transformer model~\cite{vaswani2017attention}, 
 % (Hookthr) .615 vs .514 = 19.6%
 % (RWC Vox) .786 vs .621 = 26.6%
 up to $27$\% (relative). 
-% CHRIS: This was written conservatively because but could potentially be broadened... this may be the first time transfer learning has ever been used for transcription or any time-varying MIR task (though MT3 may be one instance)
 To the best of our knowledge, this is the first evidence that representations learned through generative modeling are useful for time-varying MIR tasks like transcription, as opposed to the song-level tasks (e.g.~tagging, genre detection) examined in~\cite{castellon2021calm}.
 
 To address the data deficit for melody transcription, 
 we release a new dataset containing $50$ hours of melody annotations for broad audio 
-%collected 
 which we derive 
 from \hooktheory.\footnote{\url{https://www.hooktheory.com/theorytab}} 
-% This dataset contains crowdsourced annotations for broad audio: 
-% $13$k unique recordings representing a wide variety of instruments and genres. 
-% However, the user-specified \emph{alignments} between the audio and melody annotations in this dataset are crude, imposing an obstacle to transcription. 
-% To overcome this, we refine the alignments using beat detection, such that they are approximately accurate at the beat level. 
-% Additionally, we propose an approach which \emph{resamples} audio features (uniformly spaced in time) to be representative of individual sixteenth notes (uniformly spaced in beats), 
-% thereby smoothing over remaining alignment jitter. 
-The user-specified alignments between the audio and melody annotations in \hooktheory{} are crude: we refine these alignments using beat detection, 
-and overcome remaining alignment jitter by training melody transcription models with beat-aligned representations from Jukebox as input. 
-Our use of beat-aligned inputs 
-%We also train our models with beat-aligned labels which 
-%We train models directly on these resampled features, which 
+The user-specified alignments between the audio and melody annotations in \hooktheory{} are crude---we refine these alignments using beat detection. 
+To overcome remaining alignment jitter, we resample representations from Jukebox to be uniformly spaced in beats (rather than time) and pass these \emph{beat-wise resampled} features as input to melody transcription models. 
+This procedure 
 has a secondary benefit of enabling simple conversion from raw model outputs to human-readable scores (\Cref{fig:fig1}).
 
 By training Transformer models on this new dataset using representations from Jukebox as input, we are able to improve overall performance on melody transcription by 
 % 0.786 vs 0.462 = 70%
 % 0.744 vs 0.420 = 77%
 $70$\% relative 
-%\pl{hard to understand relative - should maybe provide absolute numbers?} 
-%CHRIS: Readers less knowledgeable about transcription may not have enough context to understand absolute numbers at this point
 to the strongest available baseline. 
 For reproducibility, we will release all data, code, and models from this work upon publication.
 A summary of our primary \textbf{contributions} is as follows:
