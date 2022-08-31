@@ -140,7 +140,7 @@ def _init_model(task, input_feats, model):
 
 def _closest_idx(x, l):
     assert len(l) > 0
-    return np.argmin([abs(li - x) for li in l])
+    return int(np.argmin([abs(li - x) for li in l]) + 1e-6)
 
 
 def _beat_tracking_with_hints(
@@ -205,11 +205,11 @@ def _beat_tracking_with_hints(
             segment_start = segment_start_hint
         else:
             segment_start = downbeats[_closest_idx(segment_start_hint, downbeats)]
-    segment_start_beat = _closest_idx(segment_start, beats)
+    segment_start_downbeat = _closest_idx(segment_start, beats)
     downbeats = [
         t
         for i, t in enumerate(beats)
-        if i % beats_per_measure == segment_start_beat % beats_per_measure
+        if i % beats_per_measure == segment_start_downbeat % beats_per_measure
     ]
 
     # Find last downbeat of the song from optional hint
@@ -222,27 +222,31 @@ def _beat_tracking_with_hints(
             segment_end = downbeats[_closest_idx(segment_end_hint, downbeats)]
     segment_end_beat = _closest_idx(segment_end, beats)
 
+    # NOTE on naming conventions: segment_start_downbeat *is* an (internally-consistent)
+    # downbeat, but segment_end_beat may not be (if segment_hints_are_downbeats is true
+    # and user specifies an inaccurate timestamp).
+
     return (
         beats_per_measure,
         list(range(len(beats))),
         beats,
         tertiaries,
         tertiaries_times,
-        segment_start_beat,
+        segment_start_downbeat,
         segment_end_beat,
     )
 
 
 def _split_into_chunks(
+    tertiaries_times,
     measures_per_chunk,
     beats_per_measure,
-    segment_start_beat,
+    segment_start_downbeat,
     segment_end_beat,
-    tertiaries_times,
 ):
     chunks = []
     beats_per_chunk = beats_per_measure * measures_per_chunk
-    for b in range(segment_start_beat, segment_end_beat, beats_per_chunk):
+    for b in range(segment_start_downbeat, segment_end_beat, beats_per_chunk):
         chunk_start_tertiary = b * _TERTIARIES_PER_BEAT
         chunk_end_tertiary = ((b + beats_per_chunk) * _TERTIARIES_PER_BEAT) + 1
         chunk_end_tertiary = min(chunk_end_tertiary, tertiaries_times.shape[0])
@@ -302,6 +306,138 @@ def _extract_features(
             chunk /= moments[1]
 
     return chunks_features
+
+
+def _transcribe_chunks(chunks_features, input_feats, detect_melody, detect_harmony):
+    melody_logits = None
+    if detect_melody:
+        melody_model = _init_model(Task.MELODY, input_feats, Model.TRANSFORMER)
+        melody_logits = []
+
+    harmony_logits = None
+    if detect_harmony:
+        harmony_model = _init_model(Task.HARMONY, input_feats, Model.TRANSFORMER)
+        harmony_logits = []
+
+    if detect_melody or detect_harmony:
+        device = torch.device("cpu")
+        with torch.no_grad():
+            for src in chunks_features:
+                src_len = src.shape[0]
+                src = np.pad(src, [(0, _MAX_TERTIARIES_PER_CHUNK - src_len), (0, 0)])
+                src = src[:, np.newaxis]
+                src = torch.tensor(src).float()
+                src_len = torch.tensor(src_len).long().view(-1)
+                src.to(device)
+                src_len.to(device)
+
+                if detect_melody:
+                    chunk_melody_logits = melody_model(src, src_len, None, None)
+                    chunk_melody_logits = chunk_melody_logits[: src_len.item(), 0]
+                    melody_logits.append(chunk_melody_logits.cpu().numpy())
+                if detect_harmony:
+                    chunk_harmony_logits = harmony_model(src, src_len, None, None)
+                    chunk_harmony_logits = chunk_harmony_logits[: src_len.item(), 0]
+                    harmony_logits.append(chunk_harmony_logits.cpu().numpy())
+
+    total_num_tertiary = sum([c.shape[0] for c in chunks_features])
+    if detect_melody:
+        assert sum([c.shape[0] for c in melody_logits]) == total_num_tertiary
+    if detect_harmony:
+        assert sum([c.shape[0] for c in harmony_logits]) == total_num_tertiary
+
+    return melody_logits, harmony_logits
+
+
+def _format_lead_sheet(
+    melody_logits,
+    harmony_logits,
+    beats_per_measure,
+    beats,
+    beats_times,
+    segment_start_downbeat,
+    segment_end_beat,
+    total_num_tertiary,
+):
+    # Decode melody
+    if melody_logits is None:
+        melody = Melody()
+    else:
+        melody_logits = np.concatenate(melody_logits, axis=0)
+        assert melody_logits.shape[0] == total_num_tertiary
+        melody_preds = np.argmax(melody_logits, axis=-1)
+        melody_onsets = []
+        for o, p in enumerate(melody_preds):
+            if p != 0:
+                assert p >= 1
+                p -= 1
+                p = (p + _MELODY_PITCH_MIN).tolist()
+                melody_onsets.append((o, Note(p % 12, p // 12)))
+        melody = []
+        for i, (o, n) in enumerate(melody_onsets):
+            if i + 1 < len(melody_onsets):
+                d = melody_onsets[i + 1][0] - o
+            else:
+                d = total_num_tertiary - o
+            melody.append((o, d, n))
+        melody = Melody(*melody)
+
+    # Decode harmony
+    if harmony_logits is None:
+        harmony = Harmony()
+    else:
+        harmony_logits = np.concatenate(harmony_logits, axis=0)
+        assert harmony_logits.shape[0] == total_num_tertiary
+        harmony_preds = np.argmax(harmony_logits, axis=-1)
+        harmony = []
+        last_chord = None
+        for o, c in enumerate(harmony_preds):
+            if c != 0:
+                assert c >= 1
+                c -= 1
+                c = c.tolist()
+                c = (
+                    c // len(_HARMONY_FAMILIES),
+                    _HARMONY_FAMILIES[c % len(_HARMONY_FAMILIES)],
+                )
+                chord = Chord(c[0], _FAMILY_TO_INTERVALS[c[1]])
+                if chord != last_chord:
+                    harmony.append((o, chord))
+                last_chord = chord
+        harmony = Harmony(*harmony)
+
+    # Extract tempo
+    measures_bps = []
+    for b in range(segment_start_downbeat, segment_end_beat, beats_per_measure):
+        m0_time = beats_times[b]
+        try:
+            mp1_time = beats_times[b + beats_per_measure]
+        except IndexError:
+            break
+        assert mp1_time >= m0_time
+        if mp1_time > m0_time:
+            bps = beats_per_measure / (mp1_time - m0_time)
+            measures_bps.append(bps)
+    if len(measures_bps) > 0:
+        beats_per_second = np.median(measures_bps)
+    else:
+        beats_per_second = 2
+
+    meter_changes = MeterChanges((0, (beats_per_measure, 2, 2)))
+    tempo_changes = TempoChanges((0, (round(beats_per_second * 60),)))
+    if len(melody) == 0 and len(harmony) == 0:
+        # NOTE: C major by default
+        key_changes = KeyChanges((0, (0, (2, 2, 1, 2, 2, 2))))
+    else:
+        key_changes = estimate_key_changes(meter_changes, harmony, melody)
+    lead_sheet = LeadSheet(
+        meter_changes, tempo_changes, key_changes, harmony, melody, total_num_tertiary
+    )
+
+    assert beats[0] == 0
+    segment_beats = [b - segment_start_downbeat for b in beats]
+
+    return lead_sheet, segment_beats, beats_times
 
 
 def sheetsage(
@@ -396,7 +532,7 @@ def sheetsage(
         beats_times,
         tertiaries,
         tertiaries_times,
-        segment_start_beat,
+        segment_start_downbeat,
         segment_end_beat,
     ) = _beat_tracking_with_hints(
         audio_path_or_bytes,
@@ -409,11 +545,11 @@ def sheetsage(
 
     # Identify suitable chunks for running through transcription model
     chunks_tertiaries = _split_into_chunks(
+        tertiaries_times,
         measures_per_chunk,
         beats_per_measure,
-        segment_start_beat,
+        segment_start_downbeat,
         segment_end_beat,
-        tertiaries_times,
     )
 
     # Extract features
@@ -428,97 +564,28 @@ def sheetsage(
     chunks_features = _extract_features(
         audio_path_or_bytes, input_feats, tertiaries_times, chunks_tertiaries
     )
-    total_num_tertiary = sum([c.shape[0] for c in chunks_features])
 
     # Transcribe chunks
     logging.info("Transcribing")
-    if detect_melody:
-        melody_model = _init_model(Task.MELODY, input_feats, Model.TRANSFORMER)
-        melody_logits = []
-    if detect_harmony:
-        harmony_model = _init_model(Task.HARMONY, input_feats, Model.TRANSFORMER)
-        harmony_logits = []
-    if detect_melody or detect_harmony:
-        device = torch.device("cpu")
-        with torch.no_grad():
-            for src in chunks_features:
-                src_len = src.shape[0]
-                src = np.pad(src, [(0, _MAX_TERTIARIES_PER_CHUNK - src_len), (0, 0)])
-                src = src[:, np.newaxis]
-                src = torch.tensor(src).float()
-                src_len = torch.tensor(src_len).long().view(-1)
-                src.to(device)
-                src_len.to(device)
-
-                if detect_melody:
-                    chunk_melody_logits = melody_model(src, src_len, None, None)
-                    chunk_melody_logits = chunk_melody_logits[: src_len.item(), 0]
-                    melody_logits.append(chunk_melody_logits.cpu().numpy())
-                if detect_harmony:
-                    chunk_harmony_logits = harmony_model(src, src_len, None, None)
-                    chunk_harmony_logits = chunk_harmony_logits[: src_len.item(), 0]
-                    harmony_logits.append(chunk_harmony_logits.cpu().numpy())
-
-    logging.info("Formatting output")
-
-    # Decode melody
-    melody = Melody()
-    if detect_melody:
-        melody_logits = np.concatenate(melody_logits, axis=0)
-        assert melody_logits.shape[0] == total_num_tertiary
-        melody_preds = np.argmax(melody_logits, axis=-1)
-        melody_onsets = []
-        for o, p in enumerate(melody_preds):
-            if p != 0:
-                assert p >= 1
-                p -= 1
-                p = (p + _MELODY_PITCH_MIN).tolist()
-                melody_onsets.append((o, Note(p % 12, p // 12)))
-        melody = []
-        for i, (o, n) in enumerate(melody_onsets):
-            if i + 1 < len(melody_onsets):
-                d = melody_onsets[i + 1][0] - o
-            else:
-                d = total_num_tertiary - o
-            melody.append((o, d, n))
-        melody = Melody(*melody)
-
-    # Decode harmony
-    harmony = Harmony()
-    if detect_harmony:
-        harmony_logits = np.concatenate(harmony_logits, axis=0)
-        assert harmony_logits.shape[0] == total_num_tertiary
-        harmony_preds = np.argmax(harmony_logits, axis=-1)
-        harmony = []
-        last_chord = None
-        for o, c in enumerate(harmony_preds):
-            if c != 0:
-                assert c >= 1
-                c -= 1
-                c = c.tolist()
-                c = (
-                    c // len(_HARMONY_FAMILIES),
-                    _HARMONY_FAMILIES[c % len(_HARMONY_FAMILIES)],
-                )
-                chord = Chord(c[0], _FAMILY_TO_INTERVALS[c[1]])
-                if chord != last_chord:
-                    harmony.append((o, chord))
-                last_chord = chord
-        harmony = Harmony(*harmony)
-
-    # Create lead sheet
-    meter_changes = MeterChanges((0, (beats_per_measure, 2, 2)))
-    tempo_changes = TempoChanges((0, (120,)))
-    if len(melody) == 0:
-        # NOTE: C major by default
-        key_changes = KeyChanges((0, (0, (2, 2, 1, 2, 2, 2))))
-    else:
-        key_changes = estimate_key_changes(meter_changes, harmony, melody)
-    lead_sheet = LeadSheet(
-        meter_changes, tempo_changes, key_changes, harmony, melody, total_num_tertiary
+    melody_logits, harmony_logits = _transcribe_chunks(
+        chunks_features, input_feats, detect_melody, detect_harmony
     )
 
-    return lead_sheet
+    # Create lead sheet
+    logging.info("Formatting output")
+    total_num_tertiary = sum([c.shape[0] for c in chunks_features])
+    lead_sheet, segment_beats, segment_beats_times = _format_lead_sheet(
+        melody_logits,
+        harmony_logits,
+        beats_per_measure,
+        beats,
+        beats_times,
+        segment_start_downbeat,
+        segment_end_beat,
+        total_num_tertiary,
+    )
+
+    return lead_sheet, segment_beats, segment_beats_times
 
 
 if __name__ == "__main__":
