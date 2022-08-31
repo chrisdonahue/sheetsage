@@ -1,5 +1,6 @@
 import json
 import logging
+import pathlib
 import tempfile
 from enum import Enum
 from functools import lru_cache as cache
@@ -142,6 +143,167 @@ def _closest_idx(x, l):
     return np.argmin([abs(li - x) for li in l])
 
 
+def _beat_tracking_with_hints(
+    audio_path_or_bytes,
+    segment_start_hint,
+    segment_end_hint,
+    segment_hints_are_downbeats,
+    beats_per_measure_hint,
+    beat_detection_padding,
+):
+    # Decode a segment of the audio
+    beat_detection_start = 0.0 if segment_start_hint is None else segment_start_hint
+    beat_detection_start = max(beat_detection_start - beat_detection_padding, 0.0)
+    beat_detection_end = None if segment_end_hint is None else segment_end_hint
+    beat_detection_end = (
+        None
+        if beat_detection_end is None
+        else beat_detection_end + beat_detection_padding
+    )
+    sr, audio = decode_audio(
+        audio_path_or_bytes,
+        offset=beat_detection_start,
+        duration=None
+        if beat_detection_end is None
+        else beat_detection_end - beat_detection_start,
+    )
+
+    # Run beat detection on segment
+    first_downbeat_idx, beats_per_measure, beats = madmom(
+        sr,
+        audio,
+        beats_per_bar=beats_per_measure_hint
+        if beats_per_measure_hint is not None
+        else [3, 4],
+    )
+    if first_downbeat_idx is None or beats_per_measure is None or len(beats) == 0:
+        raise ValueError("Audio too short to detect time signature")
+    assert first_downbeat_idx >= 0 and first_downbeat_idx < beats_per_measure
+    assert beats_per_measure in [3, 4]
+    beats = [beat_detection_start + t for t in beats]
+    downbeats = [
+        t for i, t in enumerate(beats) if i % beats_per_measure == first_downbeat_idx
+    ]
+    assert len(beats) > 0
+    assert len(downbeats) > 0
+
+    # Convert beats into tertiary (sixteenth note) timestamps
+    # NOTE: Yes, this is super ugly, but sometimes you gotta do what you gotta do
+    beat_to_time_fn = create_beat_to_time_fn(list(range(len(beats))), beats)
+    tertiaries = np.arange(0, len(beats) - 1 + 1e-6, 1 / _TERTIARIES_PER_BEAT)
+    assert tertiaries.shape[0] == (len(beats) - 1) * _TERTIARIES_PER_BEAT + 1
+    tertiaries_centered = tertiaries - (1 / _TERTIARIES_PER_BEAT) / 2
+    tertiaries_times = beat_to_time_fn(tertiaries_centered)
+    tertiaries_times = np.maximum(tertiaries_times, 0.0)
+    tertiaries_times = np.minimum(tertiaries_times, beats[-1])
+
+    # Find first downbeat of the song from optional hint
+    if segment_start_hint is None:
+        segment_start = downbeats[0]
+    else:
+        if segment_hints_are_downbeats:
+            segment_start = segment_start_hint
+        else:
+            segment_start = downbeats[_closest_idx(segment_start_hint, downbeats)]
+    segment_start_beat = _closest_idx(segment_start, beats)
+    downbeats = [
+        t
+        for i, t in enumerate(beats)
+        if i % beats_per_measure == segment_start_beat % beats_per_measure
+    ]
+
+    # Find last downbeat of the song from optional hint
+    if segment_end_hint is None:
+        segment_end = downbeats[-1]
+    else:
+        if segment_hints_are_downbeats:
+            segment_end = segment_end_hint
+        else:
+            segment_end = downbeats[_closest_idx(segment_end_hint, downbeats)]
+    segment_end_beat = _closest_idx(segment_end, beats)
+
+    return (
+        beats_per_measure,
+        list(range(len(beats))),
+        beats,
+        tertiaries,
+        tertiaries_times,
+        segment_start_beat,
+        segment_end_beat,
+    )
+
+
+def _split_into_chunks(
+    measures_per_chunk,
+    beats_per_measure,
+    segment_start_beat,
+    segment_end_beat,
+    tertiaries_times,
+):
+    chunks = []
+    beats_per_chunk = beats_per_measure * measures_per_chunk
+    for b in range(segment_start_beat, segment_end_beat, beats_per_chunk):
+        chunk_start_tertiary = b * _TERTIARIES_PER_BEAT
+        chunk_end_tertiary = ((b + beats_per_chunk) * _TERTIARIES_PER_BEAT) + 1
+        chunk_end_tertiary = min(chunk_end_tertiary, tertiaries_times.shape[0])
+        chunk_slice = slice(chunk_start_tertiary, chunk_end_tertiary)
+        chunk_tertiaries_times = tertiaries_times[chunk_slice]
+        duration = chunk_tertiaries_times[-1] - chunk_tertiaries_times[0]
+        assert duration > 0
+        if duration > _JUKEBOX_CHUNK_DURATION_EDGE:
+            raise NotImplementedError(
+                "Dynamic chunking not implemented. Try halving measures_per_chunk."
+            )
+        chunks.append(chunk_slice)
+    return chunks
+
+
+def _extract_features(
+    audio_path_or_bytes, input_feats, tertiaries_times, chunks_tertiaries
+):
+    tertiary_diff_frames = np.diff(tertiaries_times) * _INPUT_TO_FRAME_RATE[input_feats]
+    if np.any(tertiary_diff_frames.astype(np.int64) == 0):
+        raise ValueError("Tempo too fast for beat-informed feature resampling")
+
+    extractor = _init_extractor(input_feats)
+    chunks_features = []
+    with tempfile.NamedTemporaryFile("wb") as f:
+        if isinstance(audio_path_or_bytes, bytes):
+            f.write(audio_path_or_bytes)
+            f.flush()
+            audio_path = f.name
+        else:
+            audio_path = audio_path_or_bytes
+
+        for chunk_slice in chunks_tertiaries:
+            chunk_tertiaries_times = tertiaries_times[chunk_slice]
+            offset = chunk_tertiaries_times[0]
+            duration = chunk_tertiaries_times[-1] - offset
+            assert duration <= _JUKEBOX_CHUNK_DURATION_EDGE
+            fr, feats = extractor(audio_path, offset=offset, duration=duration)
+            beat_resampled = []
+            for i in range(chunk_tertiaries_times.shape[0] - 1):
+                s = int((chunk_tertiaries_times[i] - offset) * fr)
+                e = int((chunk_tertiaries_times[i + 1] - offset) * fr)
+                assert e > s
+                beat_resampled.append(np.mean(feats[s:e], axis=0, keepdims=True))
+            beat_resampled = np.concatenate(beat_resampled, axis=0)
+            chunks_features.append(beat_resampled)
+
+    # Normalize handcrafted features (after beat resampling)
+    # NOTE: Normalizing after beat resampling is probably a bug in retrospect, but it's
+    # what the model expects.
+    if input_feats == InputFeats.HANDCRAFTED:
+        moments = np.load(
+            retrieve_asset(f"SHEETSAGE_V02_{input_feats.name}_MOMENTS", log=False)
+        )
+        for chunk in chunks_features:
+            chunk -= moments[0]
+            chunk /= moments[1]
+
+    return chunks_features
+
+
 def sheetsage(
     audio_path_bytes_or_url,
     segment_start_hint=None,
@@ -211,7 +373,7 @@ def sheetsage(
         raise ValueError("Beat detection padding cannot be negative")
     input_feats = InputFeats.JUKEBOX if use_jukebox else InputFeats.HANDCRAFTED
 
-    # Disambiguate between URL and file path for string inputs
+    # Disambiguate between URL and file path for string inputs and retrieve URL
     audio_path_or_bytes = audio_path_bytes_or_url
     if isinstance(audio_path_bytes_or_url, str):
         if validators.url(audio_path_bytes_or_url):
@@ -226,97 +388,33 @@ def sheetsage(
     ):
         raise FileNotFoundError(audio_path_or_bytes)
 
-    logging.info("Detecting beats")
-
     # Run beat detection
-    beat_detection_start = 0.0 if segment_start_hint is None else segment_start_hint
-    beat_detection_start = max(beat_detection_start - beat_detection_padding, 0.0)
-    beat_detection_end = None if segment_end_hint is None else segment_end_hint
-    beat_detection_end = (
-        None
-        if beat_detection_end is None
-        else beat_detection_end + beat_detection_padding
-    )
-    sr, audio = decode_audio(
+    logging.info("Detecting beats")
+    (
+        beats_per_measure,
+        beats,
+        beats_times,
+        tertiaries,
+        tertiaries_times,
+        segment_start_beat,
+        segment_end_beat,
+    ) = _beat_tracking_with_hints(
         audio_path_or_bytes,
-        offset=beat_detection_start,
-        duration=None
-        if beat_detection_end is None
-        else beat_detection_end - beat_detection_start,
+        segment_start_hint,
+        segment_end_hint,
+        segment_hints_are_downbeats,
+        beats_per_measure_hint,
+        beat_detection_padding,
     )
-    first_downbeat_idx, beats_per_measure, beats = madmom(
-        sr,
-        audio,
-        beats_per_bar=beats_per_measure_hint
-        if beats_per_measure_hint is not None
-        else [3, 4],
-    )
-    if first_downbeat_idx is None or beats_per_measure is None or len(beats) == 0:
-        raise ValueError("Audio too short to detect time signature")
-    assert first_downbeat_idx >= 0 and first_downbeat_idx < beats_per_measure
-    assert beats_per_measure in [3, 4]
-    beats = [beat_detection_start + t for t in beats]
-    downbeats = [
-        t
-        for i, t in enumerate(beats)
-        if i % beats_per_measure == first_downbeat_idx % beats_per_measure
-    ]
-    assert len(beats) > 0
-    assert len(downbeats) > 0
-
-    # Convert beats into tertiary (sixteenth note) timestamps
-    # NOTE: Yes, this is super ugly, but sometimes you gotta do what works :shrug:
-    beat_to_time_fn = create_beat_to_time_fn(list(range(len(beats))), beats)
-    tertiaries_raw = np.arange(0, len(beats) - 1 + 1e-6, 1 / _TERTIARIES_PER_BEAT)
-    assert tertiaries_raw.shape[0] == (len(beats) - 1) * _TERTIARIES_PER_BEAT + 1
-    tertiaries = tertiaries_raw - (1 / _TERTIARIES_PER_BEAT) / 2
-    tertiary_times = beat_to_time_fn(tertiaries)
-    tertiary_times = np.maximum(tertiary_times, 0.0)
-    tertiary_times = np.minimum(tertiary_times, beats[-1])
-    tertiary_diff_frames = np.diff(tertiary_times) * _INPUT_TO_FRAME_RATE[input_feats]
-    if np.any(tertiary_diff_frames.astype(np.int64) == 0):
-        raise ValueError("Tempo too fast for beat-informed feature resampling")
-
-    # Find first downbeat of the song from optional hint
-    if segment_start_hint is not None:
-        if segment_hints_are_downbeats:
-            first_downbeat = segment_start_hint
-        else:
-            first_downbeat = downbeats[_closest_idx(segment_start_hint, downbeats)]
-        first_downbeat_idx = _closest_idx(first_downbeat, beats)
-        downbeats = [
-            t
-            for i, t in enumerate(beats)
-            if i % beats_per_measure == first_downbeat_idx % beats_per_measure
-        ]
-
-    # Find last downbeat of the song from optional hint
-    if segment_end_hint is None:
-        last_downbeat = downbeats[-1]
-    else:
-        if segment_hints_are_downbeats:
-            last_downbeat = segment_end_hint
-        else:
-            last_downbeat = downbeats[_closest_idx(segment_end_hint, downbeats)]
-    last_downbeat_idx = _closest_idx(last_downbeat, beats)
 
     # Identify suitable chunks for running through transcription model
-    tertiary_chunks = []
-    beats_per_chunk = beats_per_measure * measures_per_chunk
-    tertiaries_per_chunk = _TERTIARIES_PER_BEAT * beats_per_chunk
-    for beat_idx in range(first_downbeat_idx, last_downbeat_idx, beats_per_chunk):
-        tertiary_start_idx = beat_idx * _TERTIARIES_PER_BEAT
-        tertiary_end_idx = ((beat_idx + beats_per_chunk) * _TERTIARIES_PER_BEAT) + 1
-        tertiary_end_idx = min(tertiary_end_idx, tertiary_times.shape[0])
-        duration = (
-            tertiary_times[tertiary_end_idx - 1] - tertiary_times[tertiary_start_idx]
-        )
-        assert duration > 0
-        if duration > _JUKEBOX_CHUNK_DURATION_EDGE:
-            raise NotImplementedError(
-                "Dynamic chunking not implemented. Try halving measures_per_chunk."
-            )
-        tertiary_chunks.append((tertiary_start_idx, tertiary_end_idx))
+    chunks_tertiaries = _split_into_chunks(
+        measures_per_chunk,
+        beats_per_measure,
+        segment_start_beat,
+        segment_end_beat,
+        tertiaries_times,
+    )
 
     # Extract features
     logging.info(
@@ -327,42 +425,10 @@ def sheetsage(
             else ""
         )
     )
-    extractor = _init_extractor(input_feats)
-    features = []
-    with tempfile.NamedTemporaryFile("wb") as f:
-        if isinstance(audio_path_or_bytes, bytes):
-            f.write(audio_path_or_bytes)
-            f.flush()
-            audio_path = f.name
-        else:
-            audio_path = audio_path_or_bytes
-
-        for tertiary_start_idx, tertiary_end_idx in tertiary_chunks:
-            chunk_tertiaries = tertiary_times[tertiary_start_idx:tertiary_end_idx]
-            offset = chunk_tertiaries[0]
-            duration = chunk_tertiaries[-1] - offset
-            assert duration <= _JUKEBOX_CHUNK_DURATION_EDGE
-            fr, feats = extractor(audio_path, offset=offset, duration=duration)
-            beat_resampled = []
-            for i in range(chunk_tertiaries.shape[0] - 1):
-                s = int((chunk_tertiaries[i] - offset) * fr)
-                e = int((chunk_tertiaries[i + 1] - offset) * fr)
-                assert e > s
-                beat_resampled.append(np.mean(feats[s:e], axis=0, keepdims=True))
-            beat_resampled = np.concatenate(beat_resampled, axis=0)
-            features.append(beat_resampled)
-    total_num_tertiary = sum([f.shape[0] for f in features])
-
-    # Normalize handcrafted features (after beat resampling)
-    # NOTE: Normalizing after beat resampling is probably a bug in retrospect, but it's
-    # what the model expects.
-    if input_feats == InputFeats.HANDCRAFTED:
-        moments = np.load(
-            retrieve_asset(f"SHEETSAGE_V02_{input_feats.name}_MOMENTS", log=False)
-        )
-        for chunk in features:
-            chunk -= moments[0]
-            chunk /= moments[1]
+    chunks_features = _extract_features(
+        audio_path_or_bytes, input_feats, tertiaries_times, chunks_tertiaries
+    )
+    total_num_tertiary = sum([c.shape[0] for c in chunks_features])
 
     # Transcribe chunks
     logging.info("Transcribing")
@@ -375,7 +441,7 @@ def sheetsage(
     if detect_melody or detect_harmony:
         device = torch.device("cpu")
         with torch.no_grad():
-            for src in features:
+            for src in chunks_features:
                 src_len = src.shape[0]
                 src = np.pad(src, [(0, _MAX_TERTIARIES_PER_CHUNK - src_len), (0, 0)])
                 src = src[:, np.newaxis]
