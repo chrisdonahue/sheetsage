@@ -357,36 +357,64 @@ def engrave(
         if status != 0:
             raise Exception(f"Failed to engrave ({status}): {stderr}")
 
-        # Load output files
-        out_path = pathlib.Path(d, f"out.{out_format}")
-        if not out_path.is_file():
+        # Load output pages
+        out_paths = sorted(
+            [p for p in pathlib.Path(d).glob(f"out*.{out_format}") if p.is_file()]
+        )
+        if len(out_paths) == 0:
             raise Exception("No output")
-        with open(out_path, "rb") as f:
-            result = f.read()
+        assert len(out_paths) == 1 or out_format == "png"
+        pages = []
+        for p in out_paths:
+            with open(p, "rb") as f:
+                pages.append(f.read())
 
-    # Trim
-    if out_format == "png":
-        if trim:
-            im = Image.open(BytesIO(result))
+    # Post processes
+    if out_format == "pdf":
+        assert len(out_paths) == 1
+        result_bytes = pages[0]
+    else:
+
+        def _png_to_image(png_bytes):
+            return Image.open(BytesIO(png_bytes))
+
+        def _image_to_png(im):
+            bio = BytesIO()
+            im.save(bio, format="png")
+            return bio.getvalue()
+
+        def _concatenate(pages_bytes):
+            pages = [_png_to_image(p) for p in pages_bytes]
+            cat_width = max([p.width for p in pages])
+            cat_height = sum([p.height for p in pages])
+            cat = Image.new("RGB", (cat_width, cat_height))
+            h = 0
+            for p in pages:
+                cat.paste(p, (0, h))
+                h += p.height
+            return _image_to_png(cat)
+
+        def _trim(page_bytes):
+            im = _png_to_image(page_bytes)
             bbox = im.getbbox()
             if bbox is not None:
                 im = im.crop(bbox)
-            bio = BytesIO()
-            im.save(bio, format="png")
-            result = bio.getvalue()
+            return _image_to_png(im)
 
-        if not transparent:
-            im = Image.open(BytesIO(result)).convert("RGBA")
+        def _remove_transparency(page_bytes):
+            im = _png_to_image(page_bytes).convert("RGBA")
             background = Image.new("RGBA", im.size, (255, 255, 255))
             im = Image.alpha_composite(background, im)
-            bio = BytesIO()
-            im.save(bio, format="png")
-            result = bio.getvalue()
+            return _image_to_png(im)
 
-    # Format result
-    if len(result) == 0:
-        raise Exception("Lilypond did not produce any output files")
-    elif len(result) == 1:
-        result = result[0][1]
+        if len(pages) == 1:
+            result_bytes = pages[0]
+        else:
+            result_bytes = _concatenate(pages)
 
-    return result
+        if trim:
+            result_bytes = _trim(result_bytes)
+        if not transparent:
+            result_bytes = _remove_transparency(result_bytes)
+
+    return result_bytes

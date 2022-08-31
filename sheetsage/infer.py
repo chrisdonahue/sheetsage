@@ -149,6 +149,7 @@ def _beat_tracking_with_hints(
     segment_end_hint,
     segment_hints_are_downbeats,
     beats_per_measure_hint,
+    beats_per_minute_hint,
     beat_detection_padding,
 ):
     # Decode a segment of the audio
@@ -175,6 +176,7 @@ def _beat_tracking_with_hints(
         beats_per_bar=beats_per_measure_hint
         if beats_per_measure_hint is not None
         else [3, 4],
+        beats_per_minute_hint=beats_per_minute_hint,
     )
     if first_downbeat_idx is None or beats_per_measure is None or len(beats) == 0:
         raise ValueError("Audio too short to detect time signature")
@@ -448,6 +450,7 @@ def sheetsage(
     measures_per_chunk=8,
     segment_hints_are_downbeats=False,
     beats_per_measure_hint=None,
+    beats_per_minute_hint=None,
     detect_melody=True,
     detect_harmony=True,
     beat_detection_padding=15.0,
@@ -463,14 +466,19 @@ def sheetsage(
     segment_end_hint : float or None
        Approximate timestamp of end downbeat (to transcribe a segment of the audio).
     use_jukebox : bool
-       If True, improves transcription quality by using OpenAI Jukebox (requires GPU w/ >=12GB VRAM).
+       If True, improves transcription quality by using OpenAI Jukebox (requires GPU w/
+       >=12GB VRAM).
     measures_per_chunk : int
        The number of measures which Sheet Sage transcribes at a time (for best results,
        set to phrase length).
     segment_hints_are_downbeats: bool
-       If True, overrides downbeat detection using the specified segment hints (note that the hints must be *very* precise for this to work as intended).
+       If True, overrides downbeat detection using the specified segment hints (note
+       that the hints must be *very* precise for this to work as intended).
     beats_per_measure_hint : int or None
        If specified, overrides time signature detection (4 for "4/4" or 3 for "3/4").
+    beats_per_minute_hint : int or None
+       If specified, helps the beat detector find the right tempo. Useful if detected
+       tempo is a factor of 2 off from real tempo.
     detect_melody : bool
        If False, skips melody transcription.
     detect_harmony : bool
@@ -540,6 +548,7 @@ def sheetsage(
         segment_end_hint,
         segment_hints_are_downbeats,
         beats_per_measure_hint,
+        beats_per_minute_hint,
         beat_detection_padding,
     )
 
@@ -643,6 +652,11 @@ if __name__ == "__main__":
         help="If specified, overrides time signature detection (4 for '4/4' or 3 for '3/4').",
     )
     parser.add_argument(
+        "--beats_per_minute_hint",
+        type=int,
+        help="If specified, helps the beat detector find the right tempo. Useful if detected tempo is a factor of 2 off from real tempo.",
+    )
+    parser.add_argument(
         "--skip_melody",
         action="store_false",
         dest="detect_melody",
@@ -679,6 +693,7 @@ if __name__ == "__main__":
         measures_per_chunk=args.measures_per_chunk,
         segment_hints_are_downbeats=args.segment_hints_are_downbeats,
         beats_per_measure_hint=args.beats_per_measure,
+        beats_per_minute_hint=args.beats_per_minute_hint,
         detect_melody=args.detect_melody,
         detect_harmony=args.detect_harmony,
     )
