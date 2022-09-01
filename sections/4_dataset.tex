@@ -6,9 +6,14 @@ A major obstacle to progress on melody transcription is the lack of a large volu
 To the best of our knowledge, 
 there are only two datasets available with annotations suitable for melody transcription: the RWC Music Database~\cite{goto2002rwc,goto2003rwc,goto2004development} (RWC-MDB), 
 and a dataset labeled by Laaksonen~\cite{laaksonen2014automatic}. 
+% A reviewer notes two additional datasets for vocal transcription but one is private ( https://zenodo.org/record/3532214 ) and the other is 404'd ( https://sites.google.com/site/unvoicedsoundseparation/mir-1k )
 The former is larger but the annotations are inconsistent---Ryyn{\"a}nen~and~Klapuri note that only $8.7$ hours ($130$ songs) are usable for melody transcription~\cite{ryynanen2008automatic}, while the latter only contains $1.5$ hours. 
 
-We derive a suitably large dataset for melody transcription using crowdsourced annotations from \hooktheory{}.\footnote{\hooktheory{} annotations are published under a \href{https://creativecommons.org/licenses/by-nc-sa/3.0/}{CC BY-NC-SA 3.0} license, which our dataset inherits.}
+We derive a suitably large dataset for melody transcription using crowdsourced annotations from \hooktheory{}.\footnote{
+% Reference for HookTheory license / ToS: https://forum.hooktheory.com/tos#3
+% Backup for above link: https://web.archive.org/web/20220421222223/https://www.hooktheory.com/terms
+\hooktheory{} annotations are published under a \href{https://creativecommons.org/licenses/by-nc-sa/3.0/}{CC BY-NC-SA 3.0} license, which our dataset inherits.
+}
 \hooktheory{} is a platform where users can easily create and share musical analyses of particular recordings hosted on YouTube, with Wikipedia-style editing. 
 The dataset contains annotations for $22$k segments of $13$k unique recordings totaling $50$ hours of labeled audio. 
 The audio content covers a wide range of genres---there is a skew towards pop and rock but many other genres are represented including EDM, jazz, and even classical. 

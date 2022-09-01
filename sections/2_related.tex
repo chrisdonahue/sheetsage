@@ -1,6 +1,6 @@
 \section{Related work}\label{sec:related}
 
-Melody transcription is closely related to but distinct from the task of \emph{melody extraction}, originally referred to as predominant fundamental frequency (\fnot) estimation~\cite{goto1999real,goto2004real}. 
+Melody transcription is closely related to but distinct from the task of melody extraction, originally referred to as predominant fundamental frequency (\fnot) estimation~\cite{goto1999real,goto2004real}. 
 Melody extraction has received significant interest from the MIR community over the last two decades (see~\cite{salamon2014melody,rao2022melody} for comprehensive reviews), 
 and is the subject of an annual MIREX competition~\cite{downie2014ten}. 
 Melody extraction may be a component of a melody transcription pipeline in combination with a strategy to segment \fnot{} into notes~\cite{salamon2015midi,nishikimi2016musical,nishikimi2017scale}---we directly compare to such a pipeline in \Cref{sec:exp2}.
@@ -8,8 +8,8 @@ Melody extraction may be a component of a melody transcription pipeline in combi
 Compared to melody extraction, melody transcription has received considerably less attention. 
 Earlier efforts use sophisticated DSP-based pipelines~\cite{paiva2004auditory,paiva2005detection,ryynanen2008automatic,weil2009automatic}---unfortunately none of these methods provide code, though~\cite{ryynanen2008automatic} provides example transcriptions which we use to facilitate direct comparison. 
 A more recent effort uses ground truth chord labels as extra information to improve melody transcription~\cite{laaksonen2014automatic}---in contrast, our method does not require extra information. 
-Another line of work seeks to transcribe solo vocal performances into notes~\cite{mauch2015computer,nishikimi2020bayesian,nishikimi2021audio}. 
-As singing voice often carries the melody in popular music, we directly compare to a baseline which firsts isolates the vocals (using~\cite{hennequin2020spleeter}) and then transcribes them.
+Another line of work seeks to transcribe solo vocal performances into notes~\cite{molina2014sipth,mauch2015computer,nishikimi2020bayesian,nishikimi2021audio}. 
+As singing voice often carries the melody in popular music, we directly compare to a baseline which firsts isolates the vocals (using Spleeter~\cite{hennequin2020spleeter}) and then transcribes them.
 
 Polyphonic music transcription is another related task which involves transcribing \emph{all} of the notes present in a recording (not just the melody).
 This task has its own MIREX contest (Multiple Fundamental \fnot{} Estimation) alongside a growing collection of supervised training data resources \cite{benetos2013automatic,thickstun2017learning,hawthorne2019enabling,manilow2019cutting}. 

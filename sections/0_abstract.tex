@@ -3,7 +3,9 @@ it remains an open challenge in MIR to reliably detect the notes of the melody p
 A key challenge in \emph{melody transcription} is building methods which can handle broad audio containing any number of instrument ensembles and musical styles---existing strategies work well for \emph{some} melody instruments or styles but not all. 
 To confront this challenge, we leverage representations from \jukebox{}~\cite{dhariwal2020jukebox}, 
 a generative model of broad music audio, 
-thereby improving performance on melody transcription by 
+thereby improving performance on melody transcription 
+% (as measured by note-wise onset-only F1)
+by 
 % (RWC All) .744 vs .631 = 17.9%
 % (Hookthr) .615 vs .514 = 19.6%
 % (RWC Vox) .786 vs .621 = 26.6%

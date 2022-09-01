@@ -45,21 +45,21 @@ audio mixtures from arbitrary instrument ensembles and musical styles.
 Second, there is a deficit of training data for melody transcription, which particularly impedes the deep learning approaches central to recent improvements on other transcription tasks. 
 Moreover, collecting data for melody transcription is difficult compared to collecting data for tasks like piano transcription, where a Disklavier can be used to create aligned training data in real time. 
 
-To overcome the challenge of transcribing broad audio, in this work we leverage representations from Jukebox~\cite{dhariwal2020jukebox}, a large-scale generative model of music audio pre-trained on $1$M songs~(\Cref{fig:fig1}). 
-In~\cite{castellon2021calm}, Castellon~et~al.\ demonstrate that internal representations from Jukebox are useful for improving performance on a wide variety of MIR tasks. 
-When used as input features to a Transformer model~\cite{vaswani2017attention}, representations from Jukebox outperform conventional spectrogram features used for melody transcription by 
+To overcome the challenge of transcribing broad audio, in this work we leverage representations from Jukebox~\cite{dhariwal2020jukebox}, a large-scale generative model of music audio pre-trained on $1$M songs. 
+In~\cite{castellon2021calm}, Castellon~et~al.\ demonstrate that representations from Jukebox are useful for improving performance on a wide variety of MIR tasks. 
+Here we show that, when used as input features to a Transformer model~\cite{vaswani2017attention}, representations from Jukebox yield 
 % (RWC All) .744 vs .631 = 17.9%
 % (Hookthr) .615 vs .514 = 19.6%
 % (RWC Vox) .786 vs .621 = 26.6%
-up to $27$\% (relative). 
-To the best of our knowledge, this is the first evidence that representations learned through generative modeling are useful for time-varying MIR tasks like transcription, as opposed to the song-level tasks (e.g.~tagging, genre detection) examined in~\cite{castellon2021calm}.
+$27$\% stronger performance on melody transcription (as measured by note-wise F1) relative to handcrafted spectrogram features conventionally used for transcription. 
+To our knowledge, this is the first evidence that representations learned via generative modeling are useful for time-varying MIR tasks like transcription, as opposed to the song-level tasks (e.g.~tagging, genre detection) examined in~\cite{castellon2021calm}.
 
 To address the data deficit for melody transcription, 
 we release a new dataset containing $50$ hours of melody annotations for broad audio 
 which we derive 
 from \hooktheory.\footnote{\url{https://www.hooktheory.com/theorytab}} 
 The user-specified alignments between the audio and melody annotations in \hooktheory{} are crude---we refine these alignments using beat detection. 
-To overcome remaining alignment jitter, we resample representations from Jukebox to be uniformly spaced in beats (rather than time) and pass these \emph{beat-wise resampled} features as input to melody transcription models. 
+To overcome remaining alignment jitter, we resample features to be uniformly spaced in beats (rather than time) and pass these \emph{beat-wise resampled} features as input to melody transcription models. 
 This procedure 
 has a secondary benefit of enabling simple conversion from raw model outputs to human-readable scores (\Cref{fig:fig1}).
 
@@ -68,8 +68,7 @@ By training Transformer models on this new dataset using representations from Ju
 % 0.744 vs 0.420 = 77%
 $70$\% relative 
 to the strongest available baseline. 
-For reproducibility, we will release all data, code, and models from this work upon publication.
-A summary of our primary \textbf{contributions} is as follows:
+A summary of our primary \textbf{contributions} follows:
 \begin{itemize}
     \item We show that representations from generative models can improve melody transcription (\Cref{sec:experiments}).
     \item We collect, align, and release a new dataset with $50$ hours of melody and chord annotations (\Cref{sec:dataset}).

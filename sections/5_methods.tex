@@ -35,7 +35,7 @@ Because transcription methodology generally depends on precise alignments, we ma
 To this end, we make use of the beat and downbeat detection algorithm from \madmom{}~\cite{bock2016joint,bock2016madmom}. 
 Specifically, our approach aligns the first beat of the segment to the detected downbeat which is nearest to the user-specified starting timestamp. 
 Then, we align the remaining beats to the subsequent detected beats (see~\Cref{fig:alignment} for an example). 
-This provides a beat-level alignment for the entire segment, which we linear interpolate to fractional subdivisions of the beat. 
+This provides a beat-level alignment for the entire segment, which we linearly interpolate to fractional subdivisions of the beat. 
 Formally, we construct an alignment function $\texttt{Align} : [0,B) \to [0,T)$ that assigns each of $B$ beats in the metrical structure to a time $t \in [0,T)$ in the audio.
 In an informal listening test, this produced an improved alignment for $95$ of $100$ segments, 
 where the primary failure mode in the remaining $5$ segments occurred when \madmom{} detected the wrong beat as the downbeat. 
@@ -44,17 +44,21 @@ We use these refined alignments for training and evaluation and release them alo
 \subsection{\Beatpooling}
 \label{sec:beatpool}
 
-Here we outline our proposed approach for training models in the presence of imprecise alignments. 
-Existing transcription methods were largely designed for domains where perfect alignments are readily available, e.g.,~a Disklavier yields piano transcription data with perfect alignments. 
-Despite our best efforts, the refined \hooktheory{} alignments are still imprecise when compared to those used to develop existing methods. 
-In initial experiments, we found that naively adopting existing methods (specifically, \cite{hawthorne2017onsets,hawthorne2021sequence}) resulted in poor performance on our dataset and task.\footnote{Additionally, initial experiments on training models with an alignment-free approach~\cite{graves2006connectionist} also resulted in poor performance.} 
-Hence, we designed a new approach to sidestep small alignment deviations.
+Here we outline our approach for training transcription models in the presence of imprecise alignments. 
+Existing transcription methods were largely designed for domains where perfect alignments are readily available, e.g.,~piano transcription data captured by a Disklavier. 
+Despite our best efforts, the refined \hooktheory{} alignments are still imprecise when compared to alignments in the datasets used to develop of existing methods. 
+Consequently, in initial experiments, we found that naively adopting existing methods (specifically, \cite{hawthorne2017onsets,hawthorne2021sequence}) resulted in poor performance on our dataset and task. 
+Additionally, initial experiments on training models with an alignment-free approach~\cite{graves2006connectionist} also resulted in poor performance.
+% Hence, we designed a new approach to sidestep small alignment deviations.
 
-We propose a \beatpooling{} of audio features $\bm{X} \in \mathbb{R}^{Tf_k \times d}$ to yield features that are uniformly spaced in subdivisions of the beat (as defined by the alignments constructed in \Cref{sec:align}) rather than in time. 
-For an audio recording with $B$ beats, we sample features $\tilde{\bm{X}} \in \mathbb{R}^{4B \times d}$ at sixteenth-note intervals. The value $\tilde{\bm{X}}_i$ is constructed by averaging all feature vectors in $\bm{X}$ that are nearest to the $i$'th sixteenth note into a single vector which acts as a proxy feature for that sixteenth note. 
-For example, if a recording has a tempo of $120$~beats per minute, a sixteenth note represents $125$~ms of time, which would mean averaging across 
+Accordingly, to sidestep small alignment deviations, we perform a \beatpooling{} of audio features $\bm{X}~\in~\mathbb{R}^{Tf_k \times d}$ to yield features that are uniformly spaced in subdivisions of the beat (using $\texttt{Align}$---see \Cref{sec:align}) rather than in time. 
+For an audio recording with $B$ beats, we sample features $\tilde{\bm{X}} \in \mathbb{R}^{4B \times d}$ at sixteenth-note intervals. 
+% NOTE: Sixteenth note timestamps are obtained by linear interpolation on the madmom-detected beats
+The value $\tilde{\bm{X}}_i$ is constructed by averaging all feature vectors in $\bm{X}$ that are nearest to the $i$'th sixteenth note into a single vector which acts as a proxy feature. 
+For example, if a recording has a tempo of $120$~BPM, a sixteenth note represents $125$~ms of time, which would involve averaging across 
 $43$ feature vectors from \jukebox{} (${f_k \approx 345}$ Hz). 
-The intuition is that, while our refined alignments may not be precise enough to identify exactly which of those $43$ frames contains an onset, we can be reasonably confident that it occurs \emph{somewhere} within them, and thus that information will be averaged into the proxy feature.
+The intuition is that, while our alignments may not be precise enough to identify which of those $43$ frames contains an onset, we can be reasonably confident that it occurs \emph{somewhere} within them, and thus the relevant frame will be incorporated into the proxy. 
+A similar approach was previously explored for song structure analysis~\cite{mcfee2014analyzing}.%---here we use it for transcription. 
 
 %Formally, given a segment of length $B$ beats or $T$ seconds and an alignment function ${a: [1, B] \mapsto [0, T]}$, \beatpooling{} yields ${\hat{\bm{X}} = \hat{\bm{x}}_1, \ldots, \hat{\bm{x}}_{4B}}$, where ${\hat{\bm{x}}_i \in \mathbb{R}^d}$, and
 % \begin{gather*}
@@ -63,6 +67,7 @@ The intuition is that, while our refined alignments may not be precise enough to
 % r_i = \left\lfloor a \left(\frac{2i + 7}{8} \right) \cdot f_k \right\rfloor.
 % \end{gather*}
 
+%\vspace{-3mm}
 \subsection{Modeling}
 \label{sec:modeling}
 
@@ -70,7 +75,7 @@ Together with the \beatpooling{} ${\tilde{\bm{X}} \in \mathbb{R}^{4B\times d}}$,
 the sparse task labels ${\bm{y} \in (\mathbb{R}^+ \times \mathbb{V})^N}$ into 
 a dense sequence  
 ${\tilde{\bm{y}} \in \{\{\varnothing\}\cup\mathbb{V}\}^{4B}}$,
-which indicates whether or not an onset occurs at each sixteenth note.\footnote{This requires quantizing labels to the nearest sixteenth note. In practice, less than $1\%$ of notes are affected by this quantization.} Formally, 
+which indicates whether or not an onset occurs at each sixteenth note.\footnote{This requires quantizing labels to the nearest sixteenth note. In practice, less than $1\%$ of notes in our dataset are affected by this quantization.} Formally, 
 \[
 \tilde{\bm{y}}_i =
 \begin{cases}

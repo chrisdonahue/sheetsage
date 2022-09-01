@@ -51,7 +51,7 @@ Approach & \fone{} (All) & \fone{} (Vocal)\\
 \midrule
 MT3 Zero-shot~\cite{gardner2021mt3} & $0.133$ & $0.085$ \\
 % TODO: This number is wrong... should be 0.224 and 0.2035
-Melodia~\cite{salamon2014melody} + Segmentation & $0.201$ & $0.268$ \\
+Melodia~\cite{salamon2012melody} + Segmentation & $0.201$ & $0.268$ \\
 Spleeter~\cite{hennequin2020spleeter} + Tony~\cite{mauch2015computer} & $0.341$ & $\bm{0.462}$ \\
 DSP + HMM~\cite{ryynanen2008automatic} & $\bm{0.420}$ & $0.381$ \\
 \midrule
@@ -102,7 +102,8 @@ We evaluate all methods on a small subset of $10$ songs from RWC-MDB~\cite{goto2
 another dataset which includes melody transcription labels. 
 We chose this specific subset in an effort to compare to early DSP-based work on melody transcription---none of the early approaches~\cite{paiva2004auditory,paiva2005detection,ryynanen2008automatic,weil2009automatic} shared code, however~\cite{ryynanen2008automatic} shared melody transcriptions for this $10$-song subset.
 
-In addition to~\cite{ryynanen2008automatic}, we also compare to a baseline which applies a note segmentation heuristic~\cite{salamon2015midi} to a melody extraction algorithm~\cite{salamon2014melody}. 
+In addition to~\cite{ryynanen2008automatic}, we also compare to a baseline which applies a note segmentation heuristic~\cite{salamon2015midi} to a melody extraction algorithm~\cite{salamon2012melody}. 
+% Note that there may be better melody extraction algorithms out there (e.g. \cite{bittner2017deep}) but we chose this one because it came paired with a segmentation heuristic specifically tuned for that algorithm...
 We additionally compare to \mtthree{} in a zero-shot fashion---this model was not trained on melody transcription but was trained on some tasks which incorporate vocal transcription. 
 Finally, because the vocals often carry the melody in popular music, we compare to a baseline of running the Tony~\cite{mauch2015computer} monophonic transcription software on source-separated vocals isolated with Spleeter~\cite{hennequin2020spleeter}. 
 Because this approach will only work for vocals, we also separately report performance on a subset of our evaluation set where the vocals represent the melody. 
