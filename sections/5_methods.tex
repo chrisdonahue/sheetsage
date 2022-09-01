@@ -46,7 +46,7 @@ We use these refined alignments for training and evaluation and release them alo
 
 Here we outline our approach for training transcription models in the presence of imprecise alignments. 
 Existing transcription methods were largely designed for domains where perfect alignments are readily available, e.g.,~piano transcription data captured by a Disklavier. 
-Despite our best efforts, the refined \hooktheory{} alignments are still imprecise when compared to alignments in the datasets used to develop of existing methods. 
+Despite our best efforts, the refined \hooktheory{} alignments are still imprecise when compared to alignments in the datasets used to develop existing methods. 
 Consequently, in initial experiments, we found that naively adopting existing methods (specifically, \cite{hawthorne2017onsets,hawthorne2021sequence}) resulted in poor performance on our dataset and task. 
 Additionally, initial experiments on training models with an alignment-free approach~\cite{graves2006connectionist} also resulted in poor performance.
 % Hence, we designed a new approach to sidestep small alignment deviations.
@@ -55,10 +55,10 @@ Accordingly, to sidestep small alignment deviations, we perform a \beatpooling{}
 For an audio recording with $B$ beats, we sample features $\tilde{\bm{X}} \in \mathbb{R}^{4B \times d}$ at sixteenth-note intervals. 
 % NOTE: Sixteenth note timestamps are obtained by linear interpolation on the madmom-detected beats
 The value $\tilde{\bm{X}}_i$ is constructed by averaging all feature vectors in $\bm{X}$ that are nearest to the $i$'th sixteenth note into a single vector which acts as a proxy feature. 
-For example, if a recording has a tempo of $120$~BPM, a sixteenth note represents $125$~ms of time, which would involve averaging across 
+For example, if a recording has a tempo of $120$~BPM, a sixteenth note represents $125$~ms of time, which would entail averaging across 
 $43$ feature vectors from \jukebox{} (${f_k \approx 345}$ Hz). 
 The intuition is that, while our alignments may not be precise enough to identify which of those $43$ frames contains an onset, we can be reasonably confident that it occurs \emph{somewhere} within them, and thus the relevant frame will be incorporated into the proxy. 
-A similar approach was previously explored for song structure analysis~\cite{mcfee2014analyzing}.%---here we use it for transcription. 
+A similar approach was previously explored for song structure analysis in~\cite{mcfee2014analyzing}.%---here we use it for transcription. 
 
 %Formally, given a segment of length $B$ beats or $T$ seconds and an alignment function ${a: [1, B] \mapsto [0, T]}$, \beatpooling{} yields ${\hat{\bm{X}} = \hat{\bm{x}}_1, \ldots, \hat{\bm{x}}_{4B}}$, where ${\hat{\bm{x}}_i \in \mathbb{R}^d}$, and
 % \begin{gather*}
