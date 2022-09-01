@@ -5,7 +5,7 @@
   },
   "RWC_RYY_MIDI": {
     "path": "rwc/RWC_Ryy_MIDI.tar.gz",
-    "checksum": "a67fde9831d364d3474d30524aa6be8aadc91a9689ab770a95f60beec43bb0c0"
+    "checksum": "7ef2bbd2f6fc457f271812a706f1b7fa3d4e7e3c32572c48fb3c18737bc5af4a"
   },
   "RWC_RYYVOX_SEGMENTS": {
     "path": "rwc/RWC_RyyVox_Segments.json",
@@ -13,7 +13,7 @@
   },
   "RWC_RYYVOX_MIDI": {
     "path": "rwc/RWC_RyyVox_MIDI.tar.gz",
-    "checksum": "69949cf73eadbe27e80232cb288692153bfd8336241db91b99a6929ad76aa489"
+    "checksum": "7099da70a3b983036e93e99218e2c10a2ed32b36b44becc24d0299929f235ff9"
   },
   "RWC_AUDIO_P012": {
     "path": "rwc/audio/popular/Disc01-Track12.wav",
