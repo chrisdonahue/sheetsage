@@ -4,6 +4,16 @@
     "url": "https://nlp.stanford.edu/data/cdonahue/sheetsage/hooktheory/Hooktheory.json.gz",
     "checksum": "917b7cd58f5f4e07d6c36acf7bfad958c99ee05472dab3555399141094698e0c"
   },
+  "HOOKTHEORY_TRAIN_SEGMENTS": {
+    "path": "hooktheory/Hooktheory_Train_Segments.json",
+    "url": "https://nlp.stanford.edu/data/cdonahue/sheetsage/hooktheory/Hooktheory_Train_Segments.json",
+    "checksum": "f2601eb544f2e5028ffad54d3827912865578fb9ad96e6768b35e4714d5c7207"
+  },
+  "HOOKTHEORY_TRAIN_MIDI": {
+    "path": "hooktheory/Hooktheory_Train_MIDI.tar.gz",
+    "url": "https://nlp.stanford.edu/data/cdonahue/sheetsage/hooktheory/Hooktheory_Train_MIDI.tar.gz",
+    "checksum": "a2345e13564c81740c087b79731b47e8323c4ceb7b85d40a1a11582af58145cb"
+  },
   "HOOKTHEORY_VALID_SEGMENTS": {
     "path": "hooktheory/Hooktheory_Valid_Segments.json",
     "url": "https://nlp.stanford.edu/data/cdonahue/sheetsage/hooktheory/Hooktheory_Valid_Segments.json",
