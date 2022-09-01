@@ -268,7 +268,7 @@ def _split_into_chunks(
 
 
 def _extract_features(
-    audio_path_or_bytes, input_feats, tertiaries_times, chunks_tertiaries
+    audio_path_or_bytes, input_feats, tertiaries_times, chunks_tertiaries, tqdm
 ):
     tertiary_diff_frames = np.diff(tertiaries_times) * _INPUT_TO_FRAME_RATE[input_feats]
     if np.any(tertiary_diff_frames.astype(np.int64) == 0):
@@ -284,7 +284,7 @@ def _extract_features(
         else:
             audio_path = audio_path_or_bytes
 
-        for chunk_slice in chunks_tertiaries:
+        for chunk_slice in tqdm(chunks_tertiaries):
             chunk_tertiaries_times = tertiaries_times[chunk_slice]
             offset = chunk_tertiaries_times[0]
             duration = chunk_tertiaries_times[-1] - offset
@@ -457,6 +457,7 @@ def sheetsage(
     detect_melody=True,
     detect_harmony=True,
     beat_detection_padding=15.0,
+    tqdm=lambda x: x,
 ):
     """Main driver function for Sheet Sage: music audio -> lead sheet.
 
@@ -574,7 +575,7 @@ def sheetsage(
         )
     )
     chunks_features = _extract_features(
-        audio_path_or_bytes, input_feats, tertiaries_times, chunks_tertiaries
+        audio_path_or_bytes, input_feats, tertiaries_times, chunks_tertiaries, tqdm
     )
 
     # Transcribe chunks
@@ -604,6 +605,8 @@ if __name__ == "__main__":
     import pathlib
     import uuid
     from argparse import ArgumentParser
+
+    from tqdm import tqdm
 
     from .utils import engrave
 
@@ -699,6 +702,7 @@ if __name__ == "__main__":
         beats_per_minute_hint=args.beats_per_minute_hint,
         detect_melody=args.detect_melody,
         detect_harmony=args.detect_harmony,
+        tqdm=tqdm,
     )
 
     output_dir = pathlib.Path(args.output_dir).resolve()
