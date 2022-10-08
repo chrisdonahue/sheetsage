@@ -16,7 +16,6 @@ class TestSheetSage(unittest.TestCase):
             retrieve_asset("TEST_FISHIN"),
             segment_start_hint=11,
             segment_end_hint=11 + 23.75,
-            measures_per_chunk=17,
         )
 
         self.assertTrue(isinstance(lead_sheet, LeadSheet))

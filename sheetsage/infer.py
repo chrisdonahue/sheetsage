@@ -245,9 +245,18 @@ def _split_into_chunks(
     beats_per_measure,
     segment_start_downbeat,
     segment_end_beat,
+    avoid_chunking_if_possible,
 ):
     chunks = []
     beats_per_chunk = beats_per_measure * measures_per_chunk
+    if avoid_chunking_if_possible:
+        chunk_start_tertiary = segment_start_downbeat * _TERTIARIES_PER_BEAT
+        chunk_end_tertiary = (segment_end_beat * _TERTIARIES_PER_BEAT) + 1
+        chunk_slice = slice(chunk_start_tertiary, chunk_end_tertiary)
+        chunk_tertiaries_times = tertiaries_times[chunk_slice]
+        duration = chunk_tertiaries_times[-1] - chunk_tertiaries_times[0]
+        if duration <= _JUKEBOX_CHUNK_DURATION_EDGE:
+            beats_per_chunk = segment_end_beat
     for b in range(segment_start_downbeat, segment_end_beat, beats_per_chunk):
         chunk_start_tertiary = b * _TERTIARIES_PER_BEAT
         chunk_end_tertiary = ((b + beats_per_chunk) * _TERTIARIES_PER_BEAT) + 1
@@ -456,6 +465,7 @@ def sheetsage(
     beats_per_minute_hint=None,
     detect_melody=True,
     detect_harmony=True,
+    avoid_chunking_if_possible=True,
     beat_detection_padding=15.0,
     tqdm=lambda x: x,
 ):
@@ -489,6 +499,8 @@ def sheetsage(
        If False, skips chord recognition.
     beat_detection_padding : float
        Amount of audio padding to use when running beat detection on segment.
+    avoid_chunking_if_possible : bool
+       If False, uses chunking even for segments shorter than training length.
 
     Returns
     -------
@@ -563,6 +575,7 @@ def sheetsage(
         beats_per_measure,
         segment_start_downbeat,
         segment_end_beat,
+        avoid_chunking_if_possible,
     )
 
     # Extract features
