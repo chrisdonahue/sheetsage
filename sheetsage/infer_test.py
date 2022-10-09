@@ -2,7 +2,7 @@ import ast
 import unittest
 
 from .assets import retrieve_asset
-from .infer import sheetsage
+from .infer import Status, sheetsage
 from .theory import LeadSheet
 
 # NOTE: Changed legacy output from 177 BPM -> 176 BPM.
@@ -17,10 +17,12 @@ _FISHIN_REF = """
 
 class TestSheetSage(unittest.TestCase):
     def test_sheetsage(self):
+        statuses = []
         lead_sheet, segment_beats, segment_beats_times = sheetsage(
             retrieve_asset("TEST_FISHIN"),
             segment_start_hint=11,
             segment_end_hint=11 + 23.75,
+            status_change_callback=lambda s: statuses.append(s),
         )
 
         self.assertTrue(isinstance(lead_sheet, LeadSheet))
@@ -37,6 +39,17 @@ class TestSheetSage(unittest.TestCase):
         self.assertEqual(segment_beats[-1], 114)
         self.assertAlmostEqual(segment_beats_times[0], 0.19)
         self.assertAlmostEqual(segment_beats_times[-1], 49.68)
+
+        self.assertEqual(
+            statuses,
+            [
+                Status.DETECTING_BEATS,
+                Status.EXTRACTING_FEATURES,
+                Status.TRANSCRIBING,
+                Status.FORMATTING,
+                Status.DONE,
+            ],
+        )
 
         # NOTE to future chrisdonahue: To test legacy behavior, need to write out wav file after legacy decode (which uses ffmpeg instead of librosa).
 

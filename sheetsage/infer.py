@@ -43,6 +43,15 @@ class Model(Enum):
     TRANSFORMER = 1
 
 
+class Status(Enum):
+    FETCHING_AUDIO = 0
+    DETECTING_BEATS = 1
+    EXTRACTING_FEATURES = 2
+    TRANSCRIBING = 3
+    FORMATTING = 4
+    DONE = 5
+
+
 _INPUT_TO_FRAME_RATE = {
     InputFeats.HANDCRAFTED: 16000 / 512,
     InputFeats.JUKEBOX: 44100 / 128,
@@ -524,6 +533,7 @@ def sheetsage(
     beat_detection_padding=15.0,
     avoid_chunking_if_possible=True,
     legacy_behavior=False,
+    status_change_callback=lambda s: logging.info(s.name),
     tqdm=lambda x: x,
 ):
     """Main driver function for Sheet Sage: music audio -> lead sheet.
@@ -560,6 +570,8 @@ def sheetsage(
        If False, uses chunking even for segments shorter than training length.
     legacy_behavior : bool
        If True, ignores segment_end_hint and transcribes exactly one max-length chunk.
+    status_change_callback : Callable
+       If specified, calls this method upon changes in `Status`.
 
     Returns
     -------
@@ -596,6 +608,7 @@ def sheetsage(
     audio_path_or_bytes = audio_path_bytes_or_url
     if isinstance(audio_path_bytes_or_url, str):
         if validators.url(audio_path_bytes_or_url):
+            status_change_callback(Status.FETCHING_AUDIO)
             logging.info(f"Retrieving audio from {audio_path_bytes_or_url}")
             audio_path_or_bytes = retrieve_audio_bytes(audio_path_bytes_or_url)
         else:
@@ -608,7 +621,7 @@ def sheetsage(
         raise FileNotFoundError(audio_path_or_bytes)
 
     # Run beat detection
-    logging.info("Detecting beats")
+    status_change_callback(Status.DETECTING_BEATS)
     (
         beats_per_measure,
         beats,
@@ -640,26 +653,21 @@ def sheetsage(
     )
 
     # Extract features
-    logging.info(
-        "Extracting feats"
-        + (
-            "; this could take several minutes when using Jukebox"
-            if use_jukebox
-            else ""
-        )
-    )
+    status_change_callback(Status.EXTRACTING_FEATURES)
+    if use_jukebox:
+        logging.info("Feature extraction w/ Jukebox could take several minutes.")
     chunks_features = _extract_features(
         audio_path_or_bytes, input_feats, tertiaries_times, chunks_tertiaries, tqdm
     )
 
     # Transcribe chunks
-    logging.info("Transcribing")
+    status_change_callback(Status.TRANSCRIBING)
     melody_logits, harmony_logits = _transcribe_chunks(
         chunks_features, input_feats, detect_melody, detect_harmony
     )
 
     # Create lead sheet
-    logging.info("Formatting output")
+    status_change_callback(Status.FORMATTING)
     total_num_tertiary = sum([c.shape[0] for c in chunks_features])
     lead_sheet, segment_beats, segment_beats_times = _format_lead_sheet(
         melody_logits,
@@ -672,6 +680,7 @@ def sheetsage(
         total_num_tertiary,
     )
 
+    status_change_callback(Status.DONE)
     return lead_sheet, segment_beats, segment_beats_times
 
 
