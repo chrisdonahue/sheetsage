@@ -151,6 +151,7 @@ def _beat_tracking_with_hints(
     beats_per_measure_hint,
     beats_per_minute_hint,
     beat_detection_padding,
+    legacy_behavior,
 ):
     # Decode a segment of the audio
     beat_detection_start = 0.0 if segment_start_hint is None else segment_start_hint
@@ -161,13 +162,24 @@ def _beat_tracking_with_hints(
         if beat_detection_end is None
         else beat_detection_end + beat_detection_padding
     )
-    sr, audio = decode_audio(
-        audio_path_or_bytes,
-        offset=beat_detection_start,
-        duration=None
-        if beat_detection_end is None
-        else beat_detection_end - beat_detection_start,
-    )
+    if legacy_behavior:
+        l = segment_start_hint - beat_detection_padding
+        r = segment_start_hint + _JUKEBOX_CHUNK_DURATION_EDGE + beat_detection_padding
+        sr, audio = decode_audio(audio_path_or_bytes)
+        audio_duration = audio.shape[0] / sr
+        l, r = [round(t * sr) for t in (l, r)]
+        l = max(0, l)
+        r = min(audio.shape[0], r)
+        assert r > l
+        audio = audio[l:r]
+    else:
+        sr, audio = decode_audio(
+            audio_path_or_bytes,
+            offset=beat_detection_start,
+            duration=None
+            if beat_detection_end is None
+            else beat_detection_end - beat_detection_start,
+        )
 
     # Run beat detection on segment
     first_downbeat_idx, beats_per_measure, beats = madmom(
@@ -223,10 +235,43 @@ def _beat_tracking_with_hints(
         else:
             segment_end = downbeats[_closest_idx(segment_end_hint, downbeats)]
     segment_end_beat = _closest_idx(segment_end, beats)
+    if segment_end_beat == segment_start_downbeat:
+        raise ValueError("Specified segment is too short (<1 measure).")
 
     # NOTE on naming conventions: segment_start_downbeat *is* an (internally-consistent)
     # downbeat, but segment_end_beat may not be (if segment_hints_are_downbeats is true
     # and user specifies an inaccurate timestamp).
+
+    if legacy_behavior:
+        beats = beats[segment_start_downbeat:]
+
+        beat_to_time_fn = create_beat_to_time_fn(list(range(len(beats))), beats)
+        tertiaries = np.arange(0, len(beats) + 1e-6, 1 / _TERTIARIES_PER_BEAT)
+        assert tertiaries.shape[0] > 0
+        tertiaries -= (1 / _TERTIARIES_PER_BEAT) / 2
+        tertiaries_times = beat_to_time_fn(tertiaries)
+        tertiaries_times = np.maximum(tertiaries_times, 0.0)
+        tertiaries_times = np.minimum(tertiaries_times, audio_duration)
+        segment_offset = tertiaries_times[0]
+        tertiaries_times = [
+            t
+            for t in tertiaries_times
+            if t < segment_offset + _JUKEBOX_CHUNK_DURATION_EDGE
+        ]
+        segment_duration = tertiaries_times[-1] - segment_offset
+        tertiaries = (
+            np.arange(len(tertiaries_times)) * (1 / _TERTIARIES_PER_BEAT)
+        ).tolist()
+
+        segment_end_beat = (
+            segment_start_downbeat + len(tertiaries) / _TERTIARIES_PER_BEAT
+        )
+        if abs(segment_end_beat - round(segment_end_beat)) < 1e-6:
+            segment_end_beat = round(segment_end_beat)
+        else:
+            segment_end_beat = int(np.ceil(segment_end_beat) + 1e-6)
+        tertiaries = np.array(tertiaries)
+        tertiaries_times = np.array(tertiaries_times)
 
     return (
         beats_per_measure,
@@ -248,44 +293,42 @@ def _split_into_chunks(
     avoid_chunking_if_possible,
     legacy_behavior,
 ):
-    beats_per_chunk = beats_per_measure * measures_per_chunk
-    if avoid_chunking_if_possible:
-        chunk_start_tertiary = segment_start_downbeat * _TERTIARIES_PER_BEAT
-        chunk_end_tertiary = (segment_end_beat * _TERTIARIES_PER_BEAT) + 1
-        chunk_slice = slice(chunk_start_tertiary, chunk_end_tertiary)
+    chunks = []
+
+    if legacy_behavior:
+        chunk_slice = slice(None, None)
         chunk_tertiaries_times = tertiaries_times[chunk_slice]
         duration = chunk_tertiaries_times[-1] - chunk_tertiaries_times[0]
-        if duration <= _JUKEBOX_CHUNK_DURATION_EDGE:
-            beats_per_chunk = segment_end_beat
+        assert duration > 0 and duration <= _JUKEBOX_CHUNK_DURATION_EDGE
+        chunks.append(chunk_slice)
+    else:
+        beats_per_chunk = beats_per_measure * measures_per_chunk
+        if avoid_chunking_if_possible:
+            chunk_start_tertiary = segment_start_downbeat * _TERTIARIES_PER_BEAT
+            chunk_end_tertiary = (segment_end_beat * _TERTIARIES_PER_BEAT) + 1
+            chunk_slice = slice(chunk_start_tertiary, chunk_end_tertiary)
+            chunk_tertiaries_times = tertiaries_times[chunk_slice]
+            duration = chunk_tertiaries_times[-1] - chunk_tertiaries_times[0]
+            if duration <= _JUKEBOX_CHUNK_DURATION_EDGE:
+                beats_per_chunk = segment_end_beat
 
-    chunks = []
-    for b in range(segment_start_downbeat, segment_end_beat, beats_per_chunk):
-        chunk_start_tertiary = b * _TERTIARIES_PER_BEAT
-        if legacy_behavior:
-            chunk_start_time = tertiaries_times[chunk_start_tertiary]
-            chunk_end_tertiary = chunk_start_tertiary
-            while (
-                tertiaries_times[chunk_end_tertiary] - chunk_start_time
-                <= _JUKEBOX_CHUNK_DURATION_EDGE
-            ):
-                chunk_end_tertiary += 1
-        else:
+        for b in range(segment_start_downbeat, segment_end_beat, beats_per_chunk):
+            chunk_start_tertiary = b * _TERTIARIES_PER_BEAT
             chunk_end_tertiary = ((b + beats_per_chunk) * _TERTIARIES_PER_BEAT) + 1
             chunk_end_tertiary = min(
                 chunk_end_tertiary, (segment_end_beat * _TERTIARIES_PER_BEAT) + 1
             )
-        assert chunk_end_tertiary <= tertiaries_times.shape[0]
-        chunk_slice = slice(chunk_start_tertiary, chunk_end_tertiary)
-        chunk_tertiaries_times = tertiaries_times[chunk_slice]
-        duration = chunk_tertiaries_times[-1] - chunk_tertiaries_times[0]
-        assert duration > 0
-        if duration > _JUKEBOX_CHUNK_DURATION_EDGE:
-            raise NotImplementedError(
-                "Dynamic chunking not implemented. Try halving measures_per_chunk."
-            )
-        chunks.append(chunk_slice)
-        if legacy_behavior:
-            break
+            assert chunk_end_tertiary <= tertiaries_times.shape[0]
+            chunk_slice = slice(chunk_start_tertiary, chunk_end_tertiary)
+            chunk_tertiaries_times = tertiaries_times[chunk_slice]
+            duration = chunk_tertiaries_times[-1] - chunk_tertiaries_times[0]
+            assert duration > 0
+            if duration > _JUKEBOX_CHUNK_DURATION_EDGE:
+                raise NotImplementedError(
+                    "Dynamic chunking not implemented. Try halving measures_per_chunk."
+                )
+            chunks.append(chunk_slice)
+
     return chunks
 
 
@@ -452,11 +495,11 @@ def _format_lead_sheet(
 
     meter_changes = MeterChanges((0, (beats_per_measure, 2, 2)))
     tempo_changes = TempoChanges((0, (round(beats_per_second * 60),)))
-    if len(melody) == 0 and len(harmony) == 0:
+    try:
+        key_changes = estimate_key_changes(meter_changes, harmony, melody)
+    except:
         # NOTE: C major by default
         key_changes = KeyChanges((0, (0, (2, 2, 1, 2, 2, 2))))
-    else:
-        key_changes = estimate_key_changes(meter_changes, harmony, melody)
     lead_sheet = LeadSheet(
         meter_changes, tempo_changes, key_changes, harmony, melody, total_num_tertiary
     )
@@ -582,6 +625,7 @@ def sheetsage(
         beats_per_measure_hint,
         beats_per_minute_hint,
         beat_detection_padding,
+        legacy_behavior,
     )
 
     # Identify suitable chunks for running through transcription model

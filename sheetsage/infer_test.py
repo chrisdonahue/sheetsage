@@ -33,3 +33,5 @@ class TestSheetSage(unittest.TestCase):
         self.assertEqual(segment_beats[-1], 114)
         self.assertAlmostEqual(segment_beats_times[0], 0.19)
         self.assertAlmostEqual(segment_beats_times[-1], 49.68)
+
+        # NOTE to future chrisdonahue: To test legacy behavior, need to write out wav file after legacy decode (which uses ffmpeg instead of librosa).

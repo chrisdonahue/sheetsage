@@ -111,5 +111,7 @@ change_penalty=12
             scale = (2, 2, 1, 2, 2, 2)
         key = Key(HumanPitchName(key).as_pitch_class(), scale)
         key_to_count[key] += 1
+    if len(key_to_count) == 0:
+        raise Exception("Failed to estimate key")
     key = sorted(key_to_count.keys(), key=lambda k: key_to_count[k])[-1]
     return KeyChanges((0, key))
