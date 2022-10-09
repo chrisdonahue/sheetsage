@@ -1,5 +1,5 @@
 # Import Ubuntu/CUDA/cuDNN
-FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04
+FROM ubuntu:18.04
 
 # Configure shell
 ENV DEBIAN_FRONTEND=noninteractive
@@ -12,9 +12,6 @@ RUN apt-get install -y python3 python3-dev python3-pip
 RUN ln -s $(which python3) /usr/local/bin/python
 RUN python -m pip install --no-cache-dir --upgrade "pip<20.3" setuptools
 
-# Install dev deps
-RUN python -m pip install --no-cache-dir jupyter matplotlib
-
 # Install ffmpeg
 RUN \
 	apt-get install -y software-properties-common \
@@ -23,7 +20,7 @@ RUN \
 	&& apt-get install -y ffmpeg
 
 # Install Jukebox
-RUN python -m pip install --no-cache-dir torch==1.4.0+cu101 -f https://nelsonliu.me/files/pytorch/whl/torch_stable.html
+RUN python -m pip install --no-cache-dir torch==1.4.0
 RUN python -m pip install --no-cache-dir numba==0.48
 RUN python -m pip install --no-cache-dir resampy==0.2.2
 RUN python -m pip install --no-cache-dir librosa==0.7.2

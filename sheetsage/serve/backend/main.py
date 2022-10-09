@@ -7,6 +7,7 @@ import traceback
 from enum import Enum
 
 from flask import Flask, abort, jsonify, request, send_file
+from flask_cors import CORS
 
 from ...infer import Status as SheetSageStatus
 from ...infer import sheetsage
@@ -263,19 +264,19 @@ ARG_TO_TYPE = {
 def dev_defaults():
     defaults = {k: None for k in ARG_TO_TYPE}
     defaults["port"] = 8000
-    defaults["cors"] = False
+    defaults["cors"] = 0
     defaults["tmp_dir"] = "/tmp/sheetsage"
-    defaults["jukebox"] = False
+    defaults["jukebox"] = 0
     defaults["num_workers"] = 4
     return defaults
 
 
 def prod_defaults():
     defaults = {k: None for k in ARG_TO_TYPE}
-    defaults["port"]: 8000
-    defaults["cors"] = True
+    defaults["port"] = 8000
+    defaults["cors"] = 1
     defaults["tmp_dir"] = "/tmp/sheetsage"
-    defaults["jukebox"] = False
+    defaults["jukebox"] = 0
     defaults["num_workers"] = 4
     defaults["max_payload_size_mb"] = 32
     defaults["fetch_max_filesize_mb"] = 128
