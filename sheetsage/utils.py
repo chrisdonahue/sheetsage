@@ -6,10 +6,12 @@ import shlex
 import subprocess
 import tempfile
 import warnings
+from io import BytesIO
 
 import audioread
 import librosa
 import numpy as np
+from PIL import Image
 from scipy.io.wavfile import write as wavwrite
 
 
@@ -238,7 +240,7 @@ def decode_audio(
                     res_type=res_type,
                 )
         except audioread.exceptions.NoBackendError as e:
-            raise RuntimeError("Unknown format") from e
+            raise RuntimeError("Unknown audio format") from e
 
     # Check output and rearrange to [nsamps, nch]
     assert isinstance(sr, int)
@@ -304,3 +306,115 @@ def get_approximate_audio_length(path, timeout=10):
     d = json.loads(stdout)
     duration = float(d["format"]["duration"])
     return duration
+
+
+_LILYPOND_ENGRAVE_TEMPLATE = """
+lilypond \
+        -s \
+        {args} \
+        --{out_format} \
+        -o {out_path} \
+        {in_path}
+""".strip()
+
+
+def engrave(
+    lilypond,
+    out_format="png",
+    transparent=True,
+    trim=True,
+    hide_footer=True,
+    args=None,
+    timeout=60,
+):
+    if out_format not in ["png", "pdf"]:
+        raise ValueError()
+    if args is not None and not isinstance(args, str):
+        raise ValueError()
+
+    # Adjust lilypond
+    if hide_footer:
+        lilypond += "\n\\header { tagline = ##f }"
+
+    # Engrave
+    with tempfile.TemporaryDirectory() as d:
+        # Create cmd
+        in_path = pathlib.Path(d, "in.ly")
+        with open(in_path, "w") as f:
+            f.write(lilypond)
+        args = "" if args is None else args
+        if out_format != "pdf":
+            args += " -dpixmap-format=pngalpha"
+        cmd = _LILYPOND_ENGRAVE_TEMPLATE.format(
+            args=args,
+            out_format=out_format,
+            out_path=pathlib.Path(d, "out"),
+            in_path=in_path,
+        )
+
+        # Run cmd
+        status, stdout, stderr = run_cmd_sync(cmd, timeout=timeout)
+        if status != 0:
+            raise Exception(f"Failed to engrave ({status}): {stderr}")
+
+        # Load output pages
+        out_paths = sorted(
+            [p for p in pathlib.Path(d).glob(f"out*.{out_format}") if p.is_file()]
+        )
+        if len(out_paths) == 0:
+            raise Exception("No output")
+        assert len(out_paths) == 1 or out_format == "png"
+        pages = []
+        for p in out_paths:
+            with open(p, "rb") as f:
+                pages.append(f.read())
+
+    # Post processes
+    if out_format == "pdf":
+        assert len(out_paths) == 1
+        result_bytes = pages[0]
+    else:
+
+        def _png_to_image(png_bytes):
+            return Image.open(BytesIO(png_bytes))
+
+        def _image_to_png(im):
+            bio = BytesIO()
+            im.save(bio, format="png")
+            return bio.getvalue()
+
+        def _concatenate(pages_bytes):
+            pages = [_png_to_image(p) for p in pages_bytes]
+            cat_width = max([p.width for p in pages])
+            cat_height = sum([p.height for p in pages])
+            cat = Image.new("RGB", (cat_width, cat_height))
+            h = 0
+            for p in pages:
+                cat.paste(p, (0, h))
+                h += p.height
+            return _image_to_png(cat)
+
+        def _trim(page_bytes):
+            im = _png_to_image(page_bytes)
+            bbox = im.getbbox()
+            if bbox is not None:
+                im = im.crop(bbox)
+            return _image_to_png(im)
+
+        def _remove_transparency(page_bytes):
+            im = _png_to_image(page_bytes).convert("RGBA")
+            background = Image.new("RGBA", im.size, (255, 255, 255))
+            im = Image.alpha_composite(background, im)
+            return _image_to_png(im)
+
+        if len(pages) == 1:
+            result_bytes = pages[0]
+        else:
+            result_bytes = _concatenate(pages)
+
+        if trim:
+            result_bytes = _trim(result_bytes)
+        if not transparent:
+            result_bytes = _remove_transparency(result_bytes)
+
+    return result_bytes

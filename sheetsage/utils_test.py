@@ -12,6 +12,7 @@ from .utils import (
     compute_checksum,
     decode_audio,
     encode_audio,
+    engrave,
     get_approximate_audio_length,
     retrieve_audio_bytes,
     run_cmd_sync,
@@ -169,7 +170,7 @@ class TestUtils(unittest.TestCase):
                 decode_audio(f.name + ".noexist")
             with open(f.name, "w") as f:
                 f.write("Text data cannot be decoded as audio.")
-            with self.assertRaisesRegex(RuntimeError, "Unknown format"):
+            with self.assertRaisesRegex(RuntimeError, "Unknown audio format"):
                 decode_audio(f.name)
 
     def test_encode_audio(self):
@@ -204,3 +205,36 @@ class TestUtils(unittest.TestCase):
         mp3_path = retrieve_asset("TEST_MP3")
         duration_approx = get_approximate_audio_length(mp3_path)
         self.assertAlmostEqual(duration_approx, 4.65, places=2)
+
+    def test_engrave(self):
+        # Test simple
+        lilypond = """{c' e' g' e'}"""
+        self.assertEqual(
+            compute_checksum(engrave(lilypond)),
+            "171de501a9f35f5aad2effed6652ab2f69de0461c3a73eef7dff402b34163bb8",
+        )
+        self.assertEqual(
+            compute_checksum(
+                engrave(lilypond, transparent=False, trim=False, hide_footer=False)
+            ),
+            "e6770af93dbc3f013936ff141d55f25b8a14032a22a49d79d28670de9f51051f",
+        )
+        self.assertNotEqual(
+            compute_checksum(engrave(lilypond, out_format="pdf")),
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        )
+
+        # Test logo
+        lilypond = r"""
+{
+    \once \override Staff.TimeSignature #'stencil = ##f
+    \time 3/4
+    \relative c'' {
+        a g e ||
+    }
+}
+        """.strip()
+        self.assertEqual(
+            compute_checksum(engrave(lilypond)),
+            "65612051db7398924340d5b8b3c059d5d743e4f82b7685b4dcfa215c53089dcb",
+        )

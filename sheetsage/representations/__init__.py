@@ -1,4 +1,10 @@
-class Representation:
-    def extract(self, audio_path, offset=0.0, duration=None):
-        # NOTE: Should return tuple containing (rate: float, features: np.ndarray)
-        raise NotImplementedError()
+import numpy as np
+
+from ..assets import retrieve_asset
+from .handcrafted import OAFMelSpec as Handcrafted
+from .jukebox import Jukebox as _Jukebox
+
+
+class Jukebox(_Jukebox):
+    def __init__(self):
+        super().__init__(num_layers=53, fp16=False, log=False)

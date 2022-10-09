@@ -28,5 +28,18 @@
     "path": "test/representations/jukebox/legacy_ref.npy",
     "url": "https://nlp.stanford.edu/data/cdonahue/sheetsage/test/representations/jukebox/legacy_ref.npy",
     "checksum": "17eedefb640beb036acd264d37f49e7dcd11dd7636d397fa8f758e1c32dc4390"
+  },
+  "TEST_COMMONCHORDS_JSON": {
+    "path": "test/theorytab/CommonChords.json",
+    "checksum": "dd5e09331dcb4a4b4cfaed9d333135b7600ebea0e739491009d4d750154cfcc4"
+  },
+  "TEST_EXAMPLEANALYSIS_JSON": {
+    "path": "test/theorytab/ExampleAnalysis.json",
+    "checksum": "5f745055d1e2e795c87c92a764bc37712526f18f5e363eedb92cc1e8b011fa83"
+  },
+  "TEST_FISHIN": {
+    "path": "test/fishin.mp3",
+    "url": "https://freemusicarchive.org/track/09_Lets_Go_Fishin/download/",
+    "checksum": "3c84bcb51aa0d44601e82e328ce07f66949b79ed919ea07ed14aa27f50a09573"
   }
 }

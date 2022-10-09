@@ -74,9 +74,8 @@ RUN python -m pip install --no-cache-dir mir_eval==0.7
 RUN python -m pip install --no-cache-dir git+https://github.com/yt-dlp/yt-dlp.git@2022.05.18
 RUN ln -s $(which yt-dlp) /usr/local/bin/youtube-dl
 
-# Install Flask
-RUN python -m pip install --no-cache-dir Flask==2.0.1
-RUN python -m pip install --no-cache-dir Flask-Cors==3.0.10
+# Install validators
+RUN python -m pip install --no-cache-dir validators==0.20.0
 
 # Create workdir and cache
 ARG WORKDIR=/sheetsage

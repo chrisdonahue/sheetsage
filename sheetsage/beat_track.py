@@ -1,3 +1,4 @@
+import math
 import tempfile
 
 from scipy.io.wavfile import write as wavwrite
@@ -5,7 +6,10 @@ from scipy.io.wavfile import write as wavwrite
 from .utils import run_cmd_sync
 
 
-def madmom(sr, audio, beats_per_bar=None):
+def madmom(sr, audio, beats_per_bar=None, beats_per_minute_hint=None):
+    if beats_per_minute_hint is not None and beats_per_minute_hint < 0:
+        raise ValueError()
+
     # Run madmom
     with tempfile.NamedTemporaryFile(suffix=".wav") as f:
         wavwrite(f.name, sr, audio)
@@ -16,8 +20,13 @@ def madmom(sr, audio, beats_per_bar=None):
             else:
                 beats_per_bar_str = str(beats_per_bar)
             beats_per_bar_arg = f"--beats_per_bar {beats_per_bar_str}"
+        beats_per_minute_arg = ""
+        if beats_per_minute_hint is not None:
+            min_bpm = beats_per_minute_hint * math.pow(2, -0.5)
+            max_bpm = beats_per_minute_hint * math.pow(2, 0.5)
+            beats_per_minute_arg = f"--min_bpm {min_bpm} --max_bpm {max_bpm}"
         result, stdout, stderr = run_cmd_sync(
-            f"DBNDownBeatTracker {beats_per_bar_arg} single {f.name}"
+            f"DBNDownBeatTracker {beats_per_bar_arg} {beats_per_minute_arg} single {f.name}"
         )
         if result != 0:
             raise Exception(stderr)
