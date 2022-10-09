@@ -31,10 +31,12 @@
   },
   "TEST_COMMONCHORDS_JSON": {
     "path": "test/theorytab/CommonChords.json",
+    "url": "https://nlp.stanford.edu/data/cdonahue/sheetsage/test/theorytab/CommonChords.json",
     "checksum": "dd5e09331dcb4a4b4cfaed9d333135b7600ebea0e739491009d4d750154cfcc4"
   },
   "TEST_EXAMPLEANALYSIS_JSON": {
     "path": "test/theorytab/ExampleAnalysis.json",
+    "url": "https://nlp.stanford.edu/data/cdonahue/sheetsage/test/theorytab/ExampleAnalysis.json",
     "checksum": "5f745055d1e2e795c87c92a764bc37712526f18f5e363eedb92cc1e8b011fa83"
   },
   "TEST_FISHIN": {
