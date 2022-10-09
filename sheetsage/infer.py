@@ -246,8 +246,8 @@ def _split_into_chunks(
     segment_start_downbeat,
     segment_end_beat,
     avoid_chunking_if_possible,
+    legacy_behavior,
 ):
-    chunks = []
     beats_per_chunk = beats_per_measure * measures_per_chunk
     if avoid_chunking_if_possible:
         chunk_start_tertiary = segment_start_downbeat * _TERTIARIES_PER_BEAT
@@ -257,12 +257,23 @@ def _split_into_chunks(
         duration = chunk_tertiaries_times[-1] - chunk_tertiaries_times[0]
         if duration <= _JUKEBOX_CHUNK_DURATION_EDGE:
             beats_per_chunk = segment_end_beat
+
+    chunks = []
     for b in range(segment_start_downbeat, segment_end_beat, beats_per_chunk):
         chunk_start_tertiary = b * _TERTIARIES_PER_BEAT
-        chunk_end_tertiary = ((b + beats_per_chunk) * _TERTIARIES_PER_BEAT) + 1
-        chunk_end_tertiary = min(
-            chunk_end_tertiary, (segment_end_beat * _TERTIARIES_PER_BEAT) + 1
-        )
+        if legacy_behavior:
+            chunk_start_time = tertiaries_times[chunk_start_tertiary]
+            chunk_end_tertiary = chunk_start_tertiary
+            while (
+                tertiaries_times[chunk_end_tertiary] - chunk_start_time
+                <= _JUKEBOX_CHUNK_DURATION_EDGE
+            ):
+                chunk_end_tertiary += 1
+        else:
+            chunk_end_tertiary = ((b + beats_per_chunk) * _TERTIARIES_PER_BEAT) + 1
+            chunk_end_tertiary = min(
+                chunk_end_tertiary, (segment_end_beat * _TERTIARIES_PER_BEAT) + 1
+            )
         assert chunk_end_tertiary <= tertiaries_times.shape[0]
         chunk_slice = slice(chunk_start_tertiary, chunk_end_tertiary)
         chunk_tertiaries_times = tertiaries_times[chunk_slice]
@@ -273,6 +284,8 @@ def _split_into_chunks(
                 "Dynamic chunking not implemented. Try halving measures_per_chunk."
             )
         chunks.append(chunk_slice)
+        if legacy_behavior:
+            break
     return chunks
 
 
@@ -465,8 +478,9 @@ def sheetsage(
     beats_per_minute_hint=None,
     detect_melody=True,
     detect_harmony=True,
-    avoid_chunking_if_possible=True,
     beat_detection_padding=15.0,
+    avoid_chunking_if_possible=True,
+    legacy_behavior=False,
     tqdm=lambda x: x,
 ):
     """Main driver function for Sheet Sage: music audio -> lead sheet.
@@ -501,6 +515,8 @@ def sheetsage(
        Amount of audio padding to use when running beat detection on segment.
     avoid_chunking_if_possible : bool
        If False, uses chunking even for segments shorter than training length.
+    legacy_behavior : bool
+       If True, ignores segment_end_hint and transcribes exactly one max-length chunk.
 
     Returns
     -------
@@ -576,6 +592,7 @@ def sheetsage(
         segment_start_downbeat,
         segment_end_beat,
         avoid_chunking_if_possible,
+        legacy_behavior,
     )
 
     # Extract features
