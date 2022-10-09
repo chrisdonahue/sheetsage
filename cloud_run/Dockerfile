@@ -41,6 +41,10 @@ RUN python -m pip install --no-cache-dir pretty_midi==0.2.9
 RUN python -m pip install --no-cache-dir Cython==0.29.24
 RUN python -m pip install --no-cache-dir madmom==0.16.1
 
+# Install other deps
+RUN python -m pip install --no-cache-dir scipy==1.5.4
+RUN python -m pip install --no-cache-dir Pillow==8.4.0
+
 # Create build dir
 ARG BUILD_DIR=/tmp/build
 WORKDIR $BUILD_DIR
@@ -63,9 +67,6 @@ RUN rm -rf $BUILD_DIR
 
 # Install lilypond
 RUN apt-get install -y lilypond
-
-# Install mir_eval
-RUN python -m pip install --no-cache-dir mir_eval==0.7
 
 # Install youtube-dl
 RUN python -m pip install --no-cache-dir git+https://github.com/yt-dlp/yt-dlp.git@2022.05.18
