@@ -77,6 +77,10 @@ RUN ln -s $(which yt-dlp) /usr/local/bin/youtube-dl
 # Install validators
 RUN python -m pip install --no-cache-dir validators==0.20.0
 
+# Install Flask
+RUN python -m pip install --no-cache-dir Flask==2.0.3
+RUN python -m pip install --no-cache-dir Flask-Cors==3.0.10
+
 # Create workdir and cache
 ARG WORKDIR=/sheetsage
 RUN mkdir -p $WORKDIR
