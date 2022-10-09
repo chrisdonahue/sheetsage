@@ -125,11 +125,18 @@ youtube-dl \
     --no-continue \
     --no-playlist \
     --format bestaudio/best \
+    {other} \
     {url}
 """
 
 
-def retrieve_audio_bytes(url, return_name=False, timeout=60.0):
+def retrieve_audio_bytes(
+    url,
+    return_name=False,
+    max_filesize_mb=None,
+    max_duration_seconds=None,
+    timeout=60.0,
+):
     """Retrieves encoded audio (as raw bytes) from specified URL.
 
     Parameters
@@ -152,19 +159,48 @@ def retrieve_audio_bytes(url, return_name=False, timeout=60.0):
     ------
     :class:`subprocess.TimeoutExpired`
        Specified timeout expired.
+    ValueError
+       Video too large or too long.
     Exception
        Error during retrieval.
     """
     with tempfile.TemporaryDirectory() as d:
         assert len(list(pathlib.Path(d).iterdir())) == 0
+        if max_duration_seconds is not None:
+            status, stdout, stderr = run_cmd_sync(
+                cmd=_RETRIEVE_AUDIO_CMD_TEMPLATE.format(
+                    url=url.strip(), other="--dump-json"
+                ),
+                cwd=d,
+                timeout=timeout,
+            )
+            try:
+                assert status == 0
+                metadata = json.loads(stdout)
+                duration = float(metadata["duration"])
+            except:
+                raise Exception(f"Failed to retrieve duration from {url}:\n{stderr}")
+            if duration > max_duration_seconds:
+                raise ValueError(
+                    f"Specified url is too long ({duration} > {max_duration_seconds})."
+                )
+
+        assert len(list(pathlib.Path(d).iterdir())) == 0
         status, stdout, stderr = run_cmd_sync(
-            cmd=_RETRIEVE_AUDIO_CMD_TEMPLATE.format(url=url.strip()),
+            cmd=_RETRIEVE_AUDIO_CMD_TEMPLATE.format(
+                url=url.strip(),
+                other=""
+                if max_filesize_mb is None
+                else f"--max-filesize {max_filesize_mb}m",
+            ),
             cwd=d,
             timeout=timeout,
         )
-        if status != 0:
-            raise Exception(f"Failed to retrieve from {url}:\n{stderr}")
+        if max_filesize_mb is not None and "File is larger than max" in stdout:
+            raise ValueError("Specified url is too large.")
         paths = list(pathlib.Path(d).iterdir())
+        if status != 0 or len(paths) == 0:
+            raise Exception(f"Failed to retrieve from {url}:\n{stderr}\n{stdout}")
         assert len(paths) == 1
         path = paths[0]
         with open(path, "rb") as f:
