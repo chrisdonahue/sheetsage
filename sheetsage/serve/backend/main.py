@@ -310,6 +310,7 @@ else:
     [parser.add_argument("--{}".format(a), type=t) for a, t in ARG_TO_TYPE.items()]
     parser.set_defaults(**dev_defaults())
     ARGS = vars(parser.parse_args())
+    print(ARGS)
 
 
 def __init():
