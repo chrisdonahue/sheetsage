@@ -97,9 +97,4 @@ RUN python -m pip install --no-cache-dir -e .
 # Download assets
 RUN python -m sheetsage.assets SHEETSAGE_V02_HANDCRAFTED
 
-CMD exec gunicorn \
-	--bind :$PORT \
-	--workers $GUNICORN_WORKERS \
-	--threads $GUNICORN_THREADS \
-	--timeout $GUNICORN_TIMEOUT \
-	sheetsage.serve.backend.main:APP
+ENTRYPOINT python -m sheetsage.serve.backend.main --port $PORT
