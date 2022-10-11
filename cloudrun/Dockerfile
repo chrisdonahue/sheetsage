@@ -1,5 +1,5 @@
 # Import Ubuntu/CUDA/cuDNN
-FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04
+FROM ubuntu:18.04
 
 # Configure shell
 ENV DEBIAN_FRONTEND=noninteractive
@@ -12,9 +12,6 @@ RUN apt-get install -y python3 python3-dev python3-pip
 RUN ln -s $(which python3) /usr/local/bin/python
 RUN python -m pip install --no-cache-dir --upgrade "pip<20.3" setuptools
 
-# Install dev deps
-RUN python -m pip install --no-cache-dir jupyter matplotlib
-
 # Install ffmpeg
 RUN \
 	apt-get install -y software-properties-common \
@@ -23,7 +20,7 @@ RUN \
 	&& apt-get install -y ffmpeg
 
 # Install Jukebox
-RUN python -m pip install --no-cache-dir torch==1.4.0+cu101 -f https://nelsonliu.me/files/pytorch/whl/torch_stable.html
+RUN python -m pip install --no-cache-dir torch==1.4.0
 RUN python -m pip install --no-cache-dir numba==0.48
 RUN python -m pip install --no-cache-dir resampy==0.2.2
 RUN python -m pip install --no-cache-dir librosa==0.7.2
@@ -43,6 +40,10 @@ RUN python -m pip install --no-cache-dir pretty_midi==0.2.9
 # Install madmom
 RUN python -m pip install --no-cache-dir Cython==0.29.24
 RUN python -m pip install --no-cache-dir madmom==0.16.1
+
+# Install other deps
+RUN python -m pip install --no-cache-dir scipy==1.5.4
+RUN python -m pip install --no-cache-dir Pillow==8.4.0
 
 # Create build dir
 ARG BUILD_DIR=/tmp/build
@@ -67,11 +68,8 @@ RUN rm -rf $BUILD_DIR
 # Install lilypond
 RUN apt-get install -y lilypond
 
-# Install mir_eval
-RUN python -m pip install --no-cache-dir mir_eval==0.7
-
 # Install youtube-dl
-RUN python -m pip install --no-cache-dir git+https://github.com/yt-dlp/yt-dlp.git@2022.05.18
+RUN python -m pip install --no-cache-dir git+https://github.com/yt-dlp/yt-dlp.git@2022.07.18
 RUN ln -s $(which yt-dlp) /usr/local/bin/youtube-dl
 
 # Install validators
@@ -90,16 +88,12 @@ RUN mkdir cache
 ENV SHEETSAGE_CACHE_DIR $WORKDIR/cache
 ENV JUKEBOX_CACHE_DIR $WORKDIR/cache
 
-# Install library placeholder
+# Install library
 COPY setup.py setup.py
-RUN mkdir sheetsage
+COPY sheetsage sheetsage/
 RUN python -m pip install --no-cache-dir -e .
 
-# Create placeholder folders
-RUN mkdir notebooks
+# Download assets
+RUN python -m sheetsage.assets SHEETSAGE_V02_HANDCRAFTED
 
-# Create user
-RUN useradd -ms /bin/bash sheetsage
-RUN chmod -R ugo+rw $WORKDIR
-RUN chown -R sheetsage $WORKDIR
-USER sheetsage
+ENTRYPOINT python -m sheetsage.serve.backend.main --port $PORT

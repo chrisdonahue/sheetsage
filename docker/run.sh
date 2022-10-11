@@ -26,6 +26,7 @@ docker run \
   -v ~/.local/share/jupyter:/.local/share/jupyter \
   -v ~/.config/wandb:/.config/wandb \
   -v ~/.netrc:/.netrc \
+  -p 8000:8000 \
   -p 8888:8888 \
   ${DOCKER_NAMESPACE}/${DOCKER_TAG} \
   bash

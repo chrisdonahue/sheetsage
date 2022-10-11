@@ -1,0 +1,20 @@
+# Ignore all by default
+*
+
+!Dockerfile
+!setup.py
+
+# NOTE: Must add folders individually
+!sheetsage
+!sheetsage/*.py
+!sheetsage/assets
+!sheetsage/assets/*.json
+!sheetsage/modules
+!sheetsage/modules/*.py
+!sheetsage/representations
+!sheetsage/representations/*.py
+!sheetsage/theory
+!sheetsage/theory/*.py
+!sheetsage/serve/
+!sheetsage/serve/backend
+!sheetsage/serve/backend/*.py

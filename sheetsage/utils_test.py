@@ -103,6 +103,12 @@ class TestUtils(unittest.TestCase):
             retrieve_audio_bytes(youtube_url, timeout=1e-3)
         with self.assertRaisesRegex(Exception, "Unsupported URL"):
             retrieve_audio_bytes("https://www.chrisdonahue.com")
+        with self.assertRaisesRegex(Exception, "Failed to retrieve"):
+            retrieve_audio_bytes("https://www.youtube.com/watch?v=00000000000")
+        with self.assertRaisesRegex(ValueError, "Specified url is too large"):
+            retrieve_audio_bytes(youtube_url, max_filesize_mb=0)
+        with self.assertRaisesRegex(ValueError, "Specified url is too long"):
+            retrieve_audio_bytes(youtube_url, max_duration_seconds=5)
 
     def test_decode_audio(self):
         # Load uncompressed WAV
