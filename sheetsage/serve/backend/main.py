@@ -1,13 +1,10 @@
 import json
-import logging
 import multiprocessing
-import os
 import pathlib
 import traceback
 from enum import Enum
 
 from flask import Flask, abort, jsonify, request, send_file
-from flask_cors import CORS
 
 from ...infer import Status as SheetSageStatus
 from ...infer import sheetsage
@@ -56,6 +53,7 @@ def _work(wid):
             _JOB_STATUS[jid] = s
 
         output = None
+        stack_trace = None
 
         # Fetch audio
         if isinstance(job_def["audio_path_bytes_or_url"], str):
@@ -70,11 +68,13 @@ def _work(wid):
                 job_def["audio_path_bytes_or_url"] = audio_bytes
             except ValueError:
                 output = BulkyAudioError()
+                stack_trace = traceback.format_exc()
             except Exception:
                 output = FetchAudioError()
+                stack_trace = traceback.format_exc()
 
         # Run
-        if output is None:
+        if stack_trace is None:
             status_change_callback(JobStatus.RUNNING)
             try:
                 lead_sheet, segment_beats, segment_beats_times = sheetsage(
@@ -93,10 +93,8 @@ def _work(wid):
                     )
                 output = output_path
             except Exception as e:
-                print(
-                    f"(WID {wid}) Exception during {jid}:\n{traceback.format_exc().strip()}"
-                )
                 output = JobError()
+                stack_trace = traceback.format_exc()
 
         # Finalize
         print(f"(WID {wid}) Finalizing {jid}")
@@ -104,6 +102,9 @@ def _work(wid):
         _JOB_OUTPUTS[jid] = output
         if isinstance(output, pathlib.Path):
             status_change_callback(JobStatus.FINALIZED)
+        else:
+            assert stack_trace is not None
+            print(f"(WID {wid}) Exception during {jid}:\n{stack_trace.strip()}")
 
 
 @APP.errorhandler(400)
@@ -200,7 +201,6 @@ def submit():
             job_def[k] = r[k]
 
     # Compute job ID
-    print(job_def)
     jid = compute_checksum(
         json.dumps(job_def, sort_keys=True, indent=2).encode("utf-8"),
         algorithm="sha1",
@@ -248,81 +248,48 @@ def download(jid):
     return send_file(output, download_name=f"{jid}.json", max_age=7 * 24 * 60 * 60)
 
 
-ARG_TO_TYPE = {
-    "port": int,
-    "cors": lambda s: bool(int(s)),
-    "tmp_dir": lambda s: pathlib.Path(s),
-    "jukebox": lambda s: bool(int(s)),
-    "num_workers": int,
-    "max_payload_size_mb": int,
-    "fetch_max_filesize_mb": int,
-    "fetch_max_duration_seconds": float,
-    "fetch_timeout_seconds": float,
-}
-
-
-def dev_defaults():
-    defaults = {k: None for k in ARG_TO_TYPE}
-    defaults["port"] = 8000
-    defaults["cors"] = 0
-    defaults["tmp_dir"] = "/tmp/sheetsage"
-    defaults["jukebox"] = 0
-    defaults["num_workers"] = 4
-    return defaults
-
-
-def prod_defaults():
-    defaults = {k: None for k in ARG_TO_TYPE}
-    defaults["port"] = 8000
-    defaults["cors"] = 1
-    defaults["tmp_dir"] = "/tmp/sheetsage"
-    defaults["jukebox"] = 0
-    defaults["num_workers"] = 4
-    defaults["max_payload_size_mb"] = 32
-    defaults["fetch_max_filesize_mb"] = 128
-    defaults["fetch_max_duration_seconds"] = 660
-    defaults["fetch_timeout_seconds"] = 60
-    return defaults
-
-
-# NOTE: This is True when running via gunicorn
-PROD = __name__ != "__main__"
-
-global ARGS
-if PROD:
-    # Intended to be executed via Google Cloud Run
-    ARGS = prod_defaults()
-    for k, v in list(os.environ.items()):
-        if not k.startswith("APP_"):
-            continue
-        k = k.lower()[4:]
-        if k in ARG_TO_TYPE:
-            v = ARG_TO_TYPE[k](v)
-            ARGS[k] = v
-        else:
-            logging.warning("{} not found in app args".format(k))
-    logging.info(ARGS)
-else:
-    # Running locally
+def __init():
+    import os
     from argparse import ArgumentParser
 
+    from flask_cors import CORS
+
     parser = ArgumentParser()
-    [parser.add_argument("--{}".format(a), type=t) for a, t in ARG_TO_TYPE.items()]
-    parser.set_defaults(**dev_defaults())
+    parser.add_argument("--port", type=int)
+    parser.add_argument("--cors", action="store_true")
+    parser.add_argument("--jukebox", action="store_true")
+    parser.add_argument("--num_workers", type=int)
+    parser.add_argument("--max_payload_size_mb", type=int)
+    parser.add_argument("--fetch_max_filesize_mb", type=int)
+    parser.add_argument("--fetch_max_duration_seconds", type=float)
+    parser.add_argument("--fetch_timeout_seconds", type=int)
+    parser.add_argument("--tmp_dir", type=str)
+    parser.set_defaults(
+        port=8000,
+        cors=False,
+        jukebox=False,
+        num_workers=1,
+        max_payload_size_mb=32,
+        fetch_max_filesize_mb=128,
+        fetch_max_duration_seconds=660,
+        fetch_timeout_seconds=60,
+        tmp_dir="/tmp/sheetsage",
+    )
+
+    global ARGS
     ARGS = vars(parser.parse_args())
     print(ARGS)
 
-
-def __init():
     # Indicate that Jukebox support is forthcoming
     if ARGS["jukebox"]:
         raise NotImplementedError()
 
-    # CORS
+    # Enable CORS
     if ARGS["cors"]:
         CORS(APP)
 
     # Create tmp dir
+    ARGS["tmp_dir"] = pathlib.Path(ARGS["tmp_dir"])
     ARGS["tmp_dir"].mkdir(parents=True, exist_ok=True)
 
     # Worker processes
@@ -332,13 +299,14 @@ def __init():
     ]
     [p.start() for p in processes]
 
-    # Start HTTP server (done via gunicorn on prod)
+    # Start HTTP server
     gunicorn = "gunicorn" in os.environ.get("SERVER_SOFTWARE", "")
     if not gunicorn:
         APP.run(debug=True, use_reloader=True, host="0.0.0.0", port=ARGS["port"])
 
-    # Join processes
+    # Join workers
     [p.join() for p in processes]
 
 
-__init()
+if __name__ == "__main__":
+    __init()
