@@ -79,7 +79,6 @@ RUN python -m pip install --no-cache-dir validators==0.20.0
 RUN python -m pip install --no-cache-dir requests==2.26.0
 RUN python -m pip install --no-cache-dir Flask==2.0.3
 RUN python -m pip install --no-cache-dir Flask-Cors==3.0.10
-RUN python -m pip install --no-cache-dir gunicorn==20.1.0
 
 # Create workdir and cache
 ARG WORKDIR=/sheetsage

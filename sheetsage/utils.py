@@ -165,7 +165,6 @@ def retrieve_audio_bytes(
        Error during retrieval.
     """
     with tempfile.TemporaryDirectory() as d:
-        assert len(list(pathlib.Path(d).iterdir())) == 0
         if max_duration_seconds is not None:
             status, stdout, stderr = run_cmd_sync(
                 cmd=_RETRIEVE_AUDIO_CMD_TEMPLATE.format(
