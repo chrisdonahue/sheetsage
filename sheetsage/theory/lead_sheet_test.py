@@ -51,17 +51,19 @@ class TestLeadSheet(unittest.TestCase):
         lily_expected = r"""
 #(set-default-paper-size "letter")
 
+
+
 <<
 
 \new ChordNames {
-    \set majorSevenSymbol = \markup { maj7 } 
+    \set majorSevenSymbol = \markup { maj7 }
     \set additionalPitchPrefix = #"add"
     \chordmode {
         s16*8 f16*4 g16*4 c16*16
     }
 }
 
-\new Staff { 
+\new Staff {
     {
         \clef treble
         \key c \major
@@ -125,17 +127,54 @@ class TestLeadSheet(unittest.TestCase):
         lily_expected = r"""
 #(set-default-paper-size "letter")
 
+
+
 <<
 
 \new ChordNames {
-    \set majorSevenSymbol = \markup { maj7 } 
+    \set majorSevenSymbol = \markup { maj7 }
     \set additionalPitchPrefix = #"add"
     \chordmode {
         s16*4 d16*12:m g16*20 c16*12 a16*16:m d16*16:m
     }
 }
 
-\new Staff { 
+\new Staff {
+    {
+        \clef treble
+        \key c \major
+        \time 4/4
+        \tempo 4 = 120
+        r8 c'8 d'4 e'4 f'4 | g'2 r2~ | r4 g'16 r2~ r8. | e'8 r2~ r4.~ | r1
+    }
+}
+
+>>
+
+\version "2.18.2"
+        """.strip()
+        self.assertEqual(lily, lily_expected)
+
+        lily = ls.as_lily(title="Foo", artist="Bar")
+        lily_expected = r"""
+#(set-default-paper-size "letter")
+
+\header {
+    title = "Foo"
+    composer = "Bar"
+}
+
+<<
+
+\new ChordNames {
+    \set majorSevenSymbol = \markup { maj7 }
+    \set additionalPitchPrefix = #"add"
+    \chordmode {
+        s16*4 d16*12:m g16*20 c16*12 a16*16:m d16*16:m
+    }
+}
+
+\new Staff {
     {
         \clef treble
         \key c \major

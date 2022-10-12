@@ -24,20 +24,29 @@ from .theorytab import (
 )
 from .utils import theorytab_find_applicable
 
+_LILY_HEADER_TEMPLATE = r"""
+\header {{
+    {title_line}
+    {composer_line}
+}}
+""".strip()
+
 _LILY_TEMPLATE = r"""
 #(set-default-paper-size "letter")
+
+{header}
 
 <<
 
 \new ChordNames {{
-    \set majorSevenSymbol = \markup {{ maj7 }} 
+    \set majorSevenSymbol = \markup {{ maj7 }}
     \set additionalPitchPrefix = #"add"
     \chordmode {{
         {harmony}
     }}
 }}
 
-\new Staff {{ 
+\new Staff {{
     {{
         \clef {clef}
         \key {key}
@@ -136,7 +145,12 @@ class LeadSheet(_ImmutableIterable):
         )
 
     def as_lily(
-        self, clef="treble", adjust_melody_octave=True, skip_unknown_chords=False
+        self,
+        clef="treble",
+        adjust_melody_octave=True,
+        skip_unknown_chords=False,
+        artist=None,
+        title=None,
     ):
         if clef not in ["treble", "bass"]:
             raise ValueError()
@@ -274,7 +288,15 @@ class LeadSheet(_ImmutableIterable):
         # Format notes
         melody_lily = " | ".join([" ".join(notes) for _, notes in bar_to_notes.items()])
 
+        header = ""
+        if title is not None or artist is not None:
+            header = _LILY_HEADER_TEMPLATE.format(
+                title_line="" if title is None else f'title = "{title}"',
+                composer_line="" if artist is None else f'composer = "{artist}"',
+            )
+
         return _LILY_TEMPLATE.format(
+            header=header,
             clef=clef,
             key=key_lily,
             meter=meter_lily,
