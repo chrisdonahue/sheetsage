@@ -1,3 +1,4 @@
+from functools import lru_cache
 import gzip
 import hashlib
 import json
@@ -130,6 +131,7 @@ youtube-dl \
 """
 
 
+@lru_cache(maxsize=1)
 def retrieve_audio_bytes(
     url,
     return_name=False,
