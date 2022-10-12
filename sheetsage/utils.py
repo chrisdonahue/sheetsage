@@ -1,4 +1,3 @@
-from functools import lru_cache
 import gzip
 import hashlib
 import json
@@ -7,6 +6,7 @@ import shlex
 import subprocess
 import tempfile
 import warnings
+from functools import lru_cache
 from io import BytesIO
 
 import audioread
