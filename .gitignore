@@ -1,4 +1,6 @@
 .*.swp
 cache
+cloudrun/*.sh
+docker/*.sh
 docker/build_deps
 output/*
