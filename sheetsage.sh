@@ -19,7 +19,7 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
     # Flags
-    --segment_hints_are_downbeats|--skip_melody|--skip_harmony)
+    --segment_hints_are_downbeats|--skip_melody|--skip_harmony|--legacy_behavior)
       DOCKER_ARGS+=("$1")
       shift
       ;;

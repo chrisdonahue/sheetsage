@@ -757,6 +757,12 @@ if __name__ == "__main__":
         dest="detect_harmony",
         help="If set, skips chord recognition.",
     )
+    parser.add_argument(
+        "--legacy_behavior",
+        action="store_true",
+        dest="legacy_behavior",
+        help="If set, ignores segment_end_hint and transcribes exactly one max-length chunk.",
+    )
 
     parser.set_defaults(
         segment_start_hint=None,
@@ -768,6 +774,7 @@ if __name__ == "__main__":
         beats_per_measure=None,
         detect_melody=True,
         detect_harmony=True,
+        legacy_behavior=False,
     )
 
     args = parser.parse_args()
@@ -785,6 +792,7 @@ if __name__ == "__main__":
         beats_per_minute_hint=args.beats_per_minute_hint,
         detect_melody=args.detect_melody,
         detect_harmony=args.detect_harmony,
+        legacy_behavior=args.legacy_behavior,
         tqdm=tqdm,
     )
 
