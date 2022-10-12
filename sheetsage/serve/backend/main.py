@@ -159,6 +159,7 @@ def submit():
         "audio_path_bytes_or_url": None,
         "segment_start_hint": None,
         "segment_end_hint": None,
+        "use_jukebox": ARGS["jukebox"],
         "legacy_behavior": False,
     }
 
@@ -281,7 +282,7 @@ def __init():
     print(ARGS)
 
     # Indicate that Jukebox support is forthcoming
-    if ARGS["jukebox"]:
+    if ARGS["jukebox"] and ARGS["num_workers"] > 1:
         raise NotImplementedError()
 
     # Enable CORS
@@ -293,6 +294,8 @@ def __init():
     ARGS["tmp_dir"].mkdir(parents=True, exist_ok=True)
 
     # Worker processes
+    if ARGS["num_workers"] <= 0:
+        raise ValueError()
     processes = [
         multiprocessing.Process(target=_work, args=(wid,))
         for wid in range(ARGS["num_workers"])
