@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # NOTE: Override this with a local directory of your choosing
-SHEETSAGE_CACHE_DIR=$(python -c "import pathlib; print(pathlib.Path(pathlib.Path.home(), '.sheetsage').resolve())")
+SHEETSAGE_CACHE_DIR=$(python3 -c "import pathlib; print(pathlib.Path(pathlib.Path.home(), '.sheetsage').resolve())")
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -21,7 +21,6 @@ docker run \
   -it \
   --rm \
   -u $(id -u) \
-  -v $(pwd)/sheetsage:/sheetsage/sheetsage \
   -v $SHEETSAGE_CACHE_DIR:/sheetsage/cache \
   chrisdonahue/sheetsage \
   /bin/bash -c \

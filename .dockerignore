@@ -1,3 +1,21 @@
+# Ignore all
 *
+
+# Allow some files
 !setup.py
 !docker/build_deps/*
+
+# NOTE: Must add folders individually
+!sheetsage
+!sheetsage/*.py
+!sheetsage/assets
+!sheetsage/assets/*.json
+!sheetsage/modules
+!sheetsage/modules/*.py
+!sheetsage/representations
+!sheetsage/representations/*.py
+!sheetsage/theory
+!sheetsage/theory/*.py
+!sheetsage/serve/
+!sheetsage/serve/backend
+!sheetsage/serve/backend/*.py

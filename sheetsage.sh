@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # NOTE: Override these with local directories of your choosing
-SHEETSAGE_CACHE_DIR=$(python -c "import pathlib; print(pathlib.Path(pathlib.Path.home(), '.sheetsage').resolve())")
+SHEETSAGE_CACHE_DIR=$(python3 -c "import pathlib; print(pathlib.Path(pathlib.Path.home(), '.sheetsage').resolve())")
 SHEETSAGE_OUTPUT_DIR=$(pwd)/output
 
 DOCKER_CPUS=$(python3 -c "import os; cpus=os.sched_getaffinity(0); print(','.join(map(str,cpus)))")
@@ -57,7 +57,6 @@ docker run \
   ${DOCKER_CPU_ARG} \
   ${DOCKER_GPU_ARG} \
   -u $(id -u) \
-  -v $(pwd)/sheetsage:/sheetsage/sheetsage \
   -v $SHEETSAGE_CACHE_DIR:/sheetsage/cache \
   -v $SHEETSAGE_OUTPUT_DIR:/sheetsage/output \
   chrisdonahue/sheetsage \

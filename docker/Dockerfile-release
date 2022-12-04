@@ -1,0 +1,3 @@
+FROM chrisdonahue/sheetsage-dev
+RUN rm -rf sheetsage
+COPY sheetsage/ sheetsage/
