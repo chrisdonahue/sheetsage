@@ -713,6 +713,18 @@ if __name__ == "__main__":
         help="Approximate timestamp of end downbeat (to transcribe a segment of the audio).",
     )
     parser.add_argument(
+        "-t",
+        "--title",
+        type=str,
+        help="Title of the song.",
+    )
+    parser.add_argument(
+        "-a",
+        "--artist",
+        type=str,
+        help="Name of the artist or composer.",
+    )
+    parser.add_argument(
         "-o",
         "--output_dir",
         type=str,
@@ -767,6 +779,8 @@ if __name__ == "__main__":
     parser.set_defaults(
         segment_start_hint=None,
         segment_end_hint=None,
+        title=None,
+        artist=None,
         output_dir="./output",
         use_jukebox=False,
         measures_per_chunk=8,
@@ -781,7 +795,7 @@ if __name__ == "__main__":
 
     logging.basicConfig(level=logging.INFO)
 
-    lead_sheet = sheetsage(
+    lead_sheet, segment_beats, segment_beats_times = sheetsage(
         args.audio_path_or_url,
         segment_start_hint=args.segment_start_hint,
         segment_end_hint=args.segment_end_hint,
@@ -796,9 +810,31 @@ if __name__ == "__main__":
         tqdm=tqdm,
     )
 
+    # Create output directory
     output_dir = pathlib.Path(args.output_dir).resolve()
     if output_dir == pathlib.Path("./output").resolve():
         uuid = uuid.uuid4().hex
         output_dir = pathlib.Path(output_dir, uuid)
     logging.info(f"Writing to {output_dir}")
     output_dir.mkdir(parents=True, exist_ok=True)
+
+    # Write lead sheet
+    lily = lead_sheet.as_lily(artist=args.artist, title=args.title)
+    with open(pathlib.Path(output_dir, "output.ly"), "w") as f:
+        f.write(lily)
+    with open(pathlib.Path(output_dir, "output.pdf"), "wb") as f:
+        f.write(
+            engrave(
+                lily, out_format="pdf", transparent=False, trim=False, hide_footer=False
+            )
+        )
+
+    # Write MIDI
+    with open(pathlib.Path(output_dir, "output.midi"), "wb") as f:
+        f.write(
+            lead_sheet.as_midi(
+                pulse_to_time_fn=create_beat_to_time_fn(
+                    segment_beats, segment_beats_times
+                )
+            )
+        )

@@ -8,6 +8,12 @@ DOCKER_CPUS=$(python3 -c "import os; cpus=os.sched_getaffinity(0); print(','.joi
 DOCKER_CPU_ARG="--cpuset-cpus ${DOCKER_CPUS}"
 DOCKER_GPU_ARG=""
 
+if [ -f "$(pwd)/setup.py" ] && [ -d "$(pwd)/sheetsage" ]; then
+  DOCKER_LINK_LIB_ARG="-v $(pwd)/sheetsage:/sheetsage/sheetsage"
+else
+  DOCKER_LINK_LIB_ARG=""
+fi
+
 DOCKER_ARGS=()
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -57,6 +63,7 @@ docker run \
   ${DOCKER_CPU_ARG} \
   ${DOCKER_GPU_ARG} \
   -u $(id -u) \
+  ${DOCKER_LINK_LIB_ARG} \
   -v $SHEETSAGE_CACHE_DIR:/sheetsage/cache \
   -v $SHEETSAGE_OUTPUT_DIR:/sheetsage/output \
   chrisdonahue/sheetsage \
