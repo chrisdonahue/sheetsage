@@ -2,19 +2,19 @@
 <img src="static/banner.png" width="99%"/>
 </p>
 
-**Sheet Sage** transcribes your favorite pop song into a lead sheet!
+**Sheet Sage** transcribes your favorite pop song into a lead sheet containing the melody and chords!
 
 ## Quickstart: Transcribe a song
 
-First, ensure you are using a Linux machine w/ [Docker installed](https://docs.docker.com/desktop/install/linux-install/). Then, run this one time setup command, which will download a ~4GB Docker container and ~100MB of data to a cache directory (`~/.sheetsage` by default).
+First, ensure you are running Linux and have [Docker installed](https://docs.docker.com/desktop/install/linux-install/). Then, run this one time setup command, which will download a ~4GB Docker container and ~100MB of data to a cache directory (`~/.sheetsage` by default).
 
 `ROOT=https://raw.githubusercontent.com/chrisdonahue/sheetsage/main; wget $ROOT/prepare.sh && wget $ROOT/sheetsage.sh && chmod +x *.sh && ./prepare.sh`
 
-Once set up is complete, transcribing a song is as simple as running:
+Once this setup completes, transcribing a song is as simple as running:
 
 **`./sheetsage.sh https://www.youtube.com/watch?v=fHI8X4OXluQ`**
 
-This will create a directory called `output/` containing ...
+This will create a directory called `output/` containing a PDF with the lead sheet (along with the corresponding LilyPond file), and a MIDI file containing audio-aligned melody and harmony.
 
 You can also run Sheet Sage on a local file:
 
