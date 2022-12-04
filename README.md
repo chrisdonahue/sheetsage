@@ -2,7 +2,7 @@
 <img src="static/banner.png" width="99%"/>
 </p>
 
-**Sheet Sage** transcribes any Western music audio into a lead sheet!
+**Sheet Sage** transcribes your favorite pop song into a lead sheet!
 
 ## Quickstart: Transcribe a song
 
