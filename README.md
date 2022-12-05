@@ -8,7 +8,9 @@
 
 First, ensure you are running Linux and have [Docker installed](https://docs.docker.com/desktop/install/linux-install/). Then, run this one time setup command, which will download a ~4GB Docker container and ~100MB of data to a cache directory (`~/.sheetsage` by default).
 
-`ROOT=https://raw.githubusercontent.com/chrisdonahue/sheetsage/main; wget $ROOT/prepare.sh && wget $ROOT/sheetsage.sh && chmod +x *.sh && ./prepare.sh`
+```
+ROOT=https://raw.githubusercontent.com/chrisdonahue/sheetsage/main; wget $ROOT/prepare.sh && wget $ROOT/sheetsage.sh && chmod +x *.sh && ./prepare.sh
+```
 
 Once this setup completes, transcribing a song is as simple as running:
 
