@@ -2,19 +2,19 @@
 <img src="static/banner.png" width="99%"/>
 </p>
 
-**Sheet Sage** transcribes your favorite pop song into a lead sheet!
+**Sheet Sage** transcribes your favorite pop song into a lead sheet containing the melody and chords!
 
 ## Quickstart: Transcribe a song
 
-First, ensure you are using a Linux machine w/ [Docker installed](https://docs.docker.com/desktop/install/linux-install/). Then, run this one time setup command, which will download a ~4GB Docker container and ~100MB of data to a cache directory (`~/.sheetsage` by default).
+First, ensure you are running Linux and have [Docker installed](https://docs.docker.com/desktop/install/linux-install/). Then, run this one time setup command, which will download a ~4GB Docker container and ~100MB of data to a cache directory (`~/.sheetsage` by default).
 
 `ROOT=https://raw.githubusercontent.com/chrisdonahue/sheetsage/main; wget $ROOT/prepare.sh && wget $ROOT/sheetsage.sh && chmod +x *.sh && ./prepare.sh`
 
-Once set up is complete, transcribing a song is as simple as running:
+Once this setup completes, transcribing a song is as simple as running:
 
 **`./sheetsage.sh https://www.youtube.com/watch?v=fHI8X4OXluQ`**
 
-This will create a directory called `output/` containing ...
+This will create a directory `output/<UUID>` containing a PDF with the lead sheet (along with the corresponding LilyPond file), and a MIDI file containing audio-aligned melody and harmony.
 
 You can also run Sheet Sage on a local file:
 
@@ -46,11 +46,11 @@ Our [paper]() demonstrates that using features from [OpenAI Jukebox](https://ope
 
 **`./sheetsage.sh -j <YOUR_SONG>`**
 
-Note that this will likely take several minutes to complete - consider transcribing a shorter segment when using Jukebox.
+Note that this will likely take several minutes to complete - consider transcribing a shorter segment when using Jukebox (see [above](#transcribing-a-shorter-segment))
 
 ## HookTheory dataset
 
-Along with Sheet Sage, we also release a new dataset of **50 hours of aligned melody and harmony annotations** derived from [Hooktheory's TheoryTab DB](https://www.hooktheory.com/theorytab) under [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US). **[The dataset can be downloaded here as a simple, MIR-friendly JSON format (20MB)](https://nlp.stanford.edu/data/cdonahue/sheetsage/hooktheory/Hooktheory.json.gz "917b7cd58f5f4e07d6c36acf7bfad958c99ee05472dab3555399141094698e0c").** Because the annotations are of commercial music, no audio is included in the dataset. **[Click here for a standalone IPython notebook demonstrating how to explore the dataset](https://github.com/chrisdonahue/sheetsage/blob/main/notebooks/Dataset.ipynb)**. 
+Sheet Sage was trained on a new dataset of **50 hours of aligned melody and harmony annotations** derived from [Hooktheory's TheoryTab DB](https://www.hooktheory.com/theorytab), which we release alongside this system under a [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US) license. **[The dataset can be downloaded here as a simple, MIR-friendly JSON format (20MB)](https://nlp.stanford.edu/data/cdonahue/sheetsage/hooktheory/Hooktheory.json.gz "917b7cd58f5f4e07d6c36acf7bfad958c99ee05472dab3555399141094698e0c")** (no audio is included). **[Click here for a standalone IPython notebook demonstrating how to explore the dataset](https://github.com/chrisdonahue/sheetsage/blob/main/notebooks/Dataset.ipynb)**. 
 
 The dataset is a simple JSON object where each annotation is keyed by its HookTheory ID. We pre-split the data (see the `split` field) into train, validation, and testing subsets in a 8:1:1 ratio stratified by artist name. The `tags` field contains various high-level tags; for training melody transcription models, we recommend filtering down to annotations that contain the `AUDIO_AVAILABLE` and `MELODY` tags, and filtering out annotations that contain the `TEMPO_CHANGES` tag. In the `alignment` field, we include both the original user-specified alignment from HookTheory and our refined alignment (see our paper for details); your system may use either (or neither!) during training.
 
@@ -75,7 +75,7 @@ To get started with development, start by running:
 
 `git clone git@github.com:chrisdonahue/sheetsage.git --single-branch`
 
-Because Sheet Sage has a considerable number of (fairly brittle) dependencies, development through Docker is strongly recommended. To do so, navigate to the `docker` directory and run the `./run.sh` script, which will launch a development container in the background. Then run ./shell.sh to tunnel into the container.
+Because Sheet Sage has a considerable number of (fairly brittle) dependencies, development through Docker is strongly recommended. To do so, navigate to the `docker` directory and run the `./run.sh` script, which will launch a development container in the background (any changes to the library on the host will propagate to the container). Then run `./shell.sh` to tunnel into the container.
 
 Once in the container, try running `python -m unittest discover -v` to run the test cases. You may also need to run `python -m sheetsage.assets` to download *all* development assets.
 
@@ -85,8 +85,8 @@ Especially when using Jukebox, it can be convenient to run transcription in a Ju
 
 ## Licensing considerations
 
-While all of the _code_ in this repository is released under a permissive MIT license, **the "Sheet Sage" system as a whole contains numerous additional licensing considerations especially regarding commercial use**.
+While all of the _code_ in this repository is released under a permissive MIT license, **the "Sheet Sage" system as a whole contains numerous additional licensing considerations that especially affect commercial use**.
 
-Because they are derived from user contributions to [HookTheory](https://forum.hooktheory.com/tos), all of the files referenced in [`hooktheory.json`](https://github.com/chrisdonahue/sheetsage/blob/main/sheetsage/assets/hooktheory.json) and [`sheetsage.json`](https://github.com/chrisdonahue/sheetsage/blob/main/sheetsage/assets/sheetsage.json) (which are downloaded by the [`prepare.sh`](https://github.com/chrisdonahue/sheetsage/blob/main/prepare.sh) script and used by [`sheetsage.sh`](https://github.com/chrisdonahue/sheetsage/blob/main/sheetsage.sh)) are released under [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US). Moreover, Sheet Sage makes use of [`madmom`](https://github.com/CPJKU/madmom), [Jukebox](https://github.com/openai/jukebox), and [Melisma](https://www.link.cs.cmu.edu/melisma/intro.html), which all have additional licensing terms affecting commercial use.
+Because they are trained on user contributions to [HookTheory](https://forum.hooktheory.com/tos), the transcription models underneath the hood of Sheet Sage (specifically, all of the files referenced in [`sheetsage.json`](https://github.com/chrisdonahue/sheetsage/blob/main/sheetsage/assets/sheetsage.json) which are downloaded by the [`prepare.sh`](https://github.com/chrisdonahue/sheetsage/blob/main/prepare.sh) script) are released under [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US). Moreover, Sheet Sage makes use of [`madmom`](https://github.com/CPJKU/madmom), [Jukebox](https://github.com/openai/jukebox), and [Melisma](https://www.link.cs.cmu.edu/melisma/intro.html), which all have additional licensing terms affecting commercial use.
 
 Please ensure your use of Sheet Sage complies with all licensing terms.
