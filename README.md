@@ -24,7 +24,7 @@ You can also run Sheet Sage on a local file:
 
 ### Improving results
 
-Hopefully, the above command will produce reasonable results for most Western music (especially pop) without user configuration. If the results are unsatisfactory, there are a few things you can try.
+Hopefully, the above command will produce reasonable results for most Western music (especially pop) without additional configuration. If the results are unsatisfactory, there are a few things you can try.
 
 #### Transcribing a shorter segment
 
