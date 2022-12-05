@@ -32,9 +32,15 @@ Sheet Sage was trained on short (~24 second) segments of music. If you only want
 
 This will configure Sheet Sage to transcribe a 24s segment from the detected downbeat closest to 17s. Hopefully, the results will be improved over that same segment within the context of the full song.
 
+#### Fixing tempo issues
+
+Sheet Sage runs beat detection on your input so that it can output a reasonable sheet music score. Occasionally, the beat detection system will detect the tempo as twice or half as fast as the actual tempo, leading to quarter notes rendering as half notes or eighth notes. To fix this, first [estimate the tempo](https://taptempo.io/) (no need to be super precise) and then pass this estimate to Sheet Sage:
+
+**`./sheetsage.sh --beats_per_minute_hint 120 <YOUR_SONG>`**
+
 #### Fixing downbeat issues
 
-In order to draw measures correctly in the output, Sheet Sage must detect not only *beats* but also *downbeats*. Thanks to [`madmom`](https://github.com/CPJKU/madmom), the detection of the former is quite good, but the latter can be brittle, leading to poor transcriptions. If Sheet Sage is detecting the wrong beats as downbeats for your song, you can override the automatic detection by forcing Sheet Sage to interpret your input segment timestamps as downbeats, which should improve transcription quality:
+In order to draw bar lines in the output, Sheet Sage must detect not only *beats* but also *downbeats*. Thanks to [`madmom`](https://github.com/CPJKU/madmom), the detection of the former is quite good, but the latter can be brittle, leading to poor transcriptions. If Sheet Sage is detecting the wrong beats as downbeats for your song, you can override the automatic detection by forcing Sheet Sage to interpret your input segment timestamps as downbeats, which should improve transcription quality:
 
 **`./sheetsage.sh -s 17.0 -e 40.0 --segment_hints_are_downbeats <YOUR_SONG>`**
 
