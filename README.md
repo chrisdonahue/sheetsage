@@ -50,7 +50,7 @@ If the downbeats are *still* incorrect, try nudging your timestamps until the co
 
 #### Using Jukebox for general quality improvements (GPU required)
 
-Our [paper](https://raw.githubusercontent.com/chrisdonahue/sheetsage/paper/sheetsage.pdf) demonstrates that using features from [OpenAI Jukebox](https://openai.com/blog/jukebox) can improve transcription performance. To enable this feature, you must first ensure you have a GPU w/ at least 12GB memory and CUDA installed (`nvidia-smi` should list your GPU). Then, run `./prepare.sh -j` which will download ~10GB of additional files (most of this is the Jukebox model) to `~/.sheetsage`. Then, run:
+Our [paper](https://arxiv.org/abs/2212.01884) demonstrates that using features from [OpenAI Jukebox](https://openai.com/blog/jukebox) can improve transcription performance. To enable this feature, you must first ensure you have a GPU w/ at least 12GB memory and CUDA installed (`nvidia-smi` should list your GPU). Then, run `./prepare.sh -j` which will download ~10GB of additional files (most of this is the Jukebox model) to `~/.sheetsage`. Then, run:
 
 **`./sheetsage.sh -j <YOUR_SONG>`**
 
@@ -60,7 +60,7 @@ Note that this will likely take several minutes to complete - consider transcrib
 
 Sheet Sage was trained on a new dataset of **50 hours of aligned melody and harmony annotations** derived from [Hooktheory's TheoryTab DB](https://www.hooktheory.com/theorytab), which we release alongside this system under a [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US) license. **[The dataset can be downloaded here as a simple, MIR-friendly JSON format (20MB)](https://nlp.stanford.edu/data/cdonahue/sheetsage/hooktheory/Hooktheory.json.gz "917b7cd58f5f4e07d6c36acf7bfad958c99ee05472dab3555399141094698e0c")** (no audio is included). **[Click here for a standalone IPython notebook demonstrating how to explore the dataset](https://github.com/chrisdonahue/sheetsage/blob/main/notebooks/Dataset.ipynb)**. 
 
-The dataset is a simple JSON object where each annotation is keyed by its HookTheory ID. We pre-split the data (see the `split` field) into train, validation, and testing subsets in a 8:1:1 ratio stratified by artist name. The `tags` field contains various high-level tags; for training melody transcription models, we recommend filtering down to annotations that contain the `AUDIO_AVAILABLE` and `MELODY` tags, and filtering out annotations that contain the `TEMPO_CHANGES` tag. In the `alignment` field, we include both the original user-specified alignment from HookTheory and our refined alignment (see [our paper](https://raw.githubusercontent.com/chrisdonahue/sheetsage/paper/sheetsage.pdf) for details); your system may use either (or neither!) during training.
+The dataset is a simple JSON object where each annotation is keyed by its HookTheory ID. We pre-split the data (see the `split` field) into train, validation, and testing subsets in a 8:1:1 ratio stratified by artist name. The `tags` field contains various high-level tags; for training melody transcription models, we recommend filtering down to annotations that contain the `AUDIO_AVAILABLE` and `MELODY` tags, and filtering out annotations that contain the `TEMPO_CHANGES` tag. In the `alignment` field, we include both the original user-specified alignment from HookTheory and our refined alignment (see [our paper](https://arxiv.org/abs/2212.01884) for details); your system may use either (or neither!) during training.
 
 To simplify evaluation and decouple the melody transcription _task_ from our internal format, we also release the test set annotations as standard audio-aligned MIDI files using our refined alignments: [`Hooktheory_Test_MIDI.tar.gz`](https://nlp.stanford.edu/data/cdonahue/sheetsage/hooktheory/Hooktheory_Test_MIDI.tar.gz "3baebe9d4e19a5006d0f24bc7f0c92a4f66039ab376be86bf7b37a136d4fb6c8"). To evaluate a new melody transcription system, use only the information available in [`Hooktheory_Test_Segments.json`](https://nlp.stanford.edu/data/cdonahue/sheetsage/hooktheory/Hooktheory_Test_Segments.json "72be80045d4d28842352383e605e8712d50b3437a07b15faa541ee9d17283d5a") as input (audio identifier and, optionally, segment boundaries) and have your system output a MIDI file (named using the dataset key) to a directory. Then, run `python -m sheetsage.eval Hooktheory_Test_MIDI.tar.gz <MY_OUTPUT_DIR> --allow_abstain` to evaluate your system. Along with the evaluation metrics, we recommend reporting the percentage of annotations you were able to evaluate on at time of publication, and evaluating all models you are comparing on the same set of audio files.
 
@@ -98,3 +98,16 @@ While all of the _code_ in this repository is released under a permissive MIT li
 Because they are trained on user contributions to [HookTheory](https://forum.hooktheory.com/tos), the transcription models underneath the hood of Sheet Sage (specifically, all of the files referenced in [`sheetsage.json`](https://github.com/chrisdonahue/sheetsage/blob/main/sheetsage/assets/sheetsage.json) which are downloaded by the [`prepare.sh`](https://github.com/chrisdonahue/sheetsage/blob/main/prepare.sh) script) are released under [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US). Moreover, Sheet Sage makes use of [`madmom`](https://github.com/CPJKU/madmom), [Jukebox](https://github.com/openai/jukebox), and [Melisma](https://www.link.cs.cmu.edu/melisma/intro.html), which all have additional licensing terms affecting commercial use.
 
 Please ensure your use of Sheet Sage complies with all licensing terms.
+
+## Attribution
+
+If you use this code or dataset in your research, please cite us via the following BibTeX:
+
+```
+@inproceedings{donahue2022melody,
+  title={Melody transcription via generative pre-training},
+  author={Donahue, Chris and Thickstun, John and Liang, Percy},
+  booktitle={ISMIR},
+  year={2022}
+}
+```
