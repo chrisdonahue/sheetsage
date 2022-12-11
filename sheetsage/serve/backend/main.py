@@ -133,6 +133,8 @@ def submit():
         "segment_start_hint": float,
         "segment_end_hint": float,
         "legacy_behavior": lambda i: bool(int(i)),
+        "melody_threshold": float,
+        "harmony_threshold": float,
     }
 
     # Check arguments
@@ -161,6 +163,8 @@ def submit():
         "segment_end_hint": None,
         "use_jukebox": ARGS["jukebox"],
         "legacy_behavior": False,
+        "melody_threshold": None,
+        "harmony_threshold": None,
     }
 
     # Parse audio_url and audio_file
@@ -197,7 +201,13 @@ def submit():
         abort(400, description="No audio specified")
 
     # Parse float args
-    for k in ["segment_start_hint", "segment_end_hint", "legacy_behavior"]:
+    for k in [
+        "segment_start_hint",
+        "segment_end_hint",
+        "legacy_behavior",
+        "melody_threshold",
+        "harmony_threshold",
+    ]:
         if k in r:
             job_def[k] = r[k]
 
@@ -258,6 +268,9 @@ def __init():
     parser = ArgumentParser()
     parser.add_argument("--port", type=int)
     parser.add_argument("--cors", action="store_true")
+    parser.add_argument("--cors_allow", type=str)
+    parser.add_argument("--ssl_crt_path", type=str)
+    parser.add_argument("--ssl_key_path", type=str)
     parser.add_argument("--jukebox", action="store_true")
     parser.add_argument("--num_workers", type=int)
     parser.add_argument("--max_payload_size_mb", type=int)
@@ -268,6 +281,9 @@ def __init():
     parser.set_defaults(
         port=8000,
         cors=False,
+        cors_allow=None,
+        ssl_crt_path=None,
+        ssl_key_path=None,
         jukebox=False,
         num_workers=1,
         max_payload_size_mb=32,
@@ -286,8 +302,11 @@ def __init():
         raise NotImplementedError()
 
     # Enable CORS
-    if ARGS["cors"]:
-        CORS(APP)
+    if ARGS["cors"] or ARGS["cors_allow"] is not None:
+        kwargs = {}
+        if ARGS["cors_allow"] is not None:
+            kwargs["origins"] = [o.strip() for o in ARGS["cors_allow"].split(",")]
+        CORS(APP, **kwargs)
 
     # Create tmp dir
     ARGS["tmp_dir"] = pathlib.Path(ARGS["tmp_dir"])
@@ -305,7 +324,15 @@ def __init():
     # Start HTTP server
     gunicorn = "gunicorn" in os.environ.get("SERVER_SOFTWARE", "")
     if not gunicorn:
-        APP.run(debug=True, use_reloader=True, host="0.0.0.0", port=ARGS["port"])
+        kwargs = {
+            "debug": True,
+            "use_reloader": True,
+            "host": "0.0.0.0",
+            "port": ARGS["port"],
+        }
+        if ARGS["ssl_crt_path"] is not None and ARGS["ssl_key_path"] is not None:
+            kwargs["ssl_context"] = (ARGS["ssl_crt_path"], ARGS["ssl_key_path"])
+        APP.run(**kwargs)
 
     # Join workers
     [p.join() for p in processes]
