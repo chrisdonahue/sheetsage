@@ -786,6 +786,7 @@ if __name__ == "__main__":
         measures_per_chunk=8,
         segment_hints_are_downbeats=False,
         beats_per_measure=None,
+        beats_per_minute_hint=None,
         detect_melody=True,
         detect_harmony=True,
         legacy_behavior=False,
