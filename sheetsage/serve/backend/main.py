@@ -258,6 +258,7 @@ def __init():
     parser = ArgumentParser()
     parser.add_argument("--port", type=int)
     parser.add_argument("--cors", action="store_true")
+    parser.add_argument("--cors_allow", type=str)
     parser.add_argument("--jukebox", action="store_true")
     parser.add_argument("--num_workers", type=int)
     parser.add_argument("--max_payload_size_mb", type=int)
@@ -268,6 +269,7 @@ def __init():
     parser.set_defaults(
         port=8000,
         cors=False,
+        cors_allow=None,
         jukebox=False,
         num_workers=1,
         max_payload_size_mb=32,
@@ -286,8 +288,11 @@ def __init():
         raise NotImplementedError()
 
     # Enable CORS
-    if ARGS["cors"]:
-        CORS(APP)
+    if ARGS["cors"] or ARGS["cors_allow"] is not None:
+        kwargs = {}
+        if ARGS["cors_allow"] is not None:
+            kwargs["origins"] = [o.strip() for o in ARGS["cors_allow"].split(",")]
+        CORS(APP, **kwargs)
 
     # Create tmp dir
     ARGS["tmp_dir"] = pathlib.Path(ARGS["tmp_dir"])
