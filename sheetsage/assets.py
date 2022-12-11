@@ -52,7 +52,7 @@ def _download(url, dest_path, chunk_size=_DEFAULT_CHUNK_SIZE):
 
 
 def retrieve_asset(tag, delete_wrong=False, chunk_size=_DEFAULT_CHUNK_SIZE, log=True):
-    """Attempts to acquire and/or verify existance of a tagged asset in the cache.
+    """Attempts to acquire and/or verify existence of a tagged asset in the cache.
 
     Returns
     -------
