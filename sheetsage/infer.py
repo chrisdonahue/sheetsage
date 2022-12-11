@@ -8,6 +8,7 @@ from functools import lru_cache as cache
 import numpy as np
 import torch
 import validators
+from scipy.special import softmax
 
 from .align import create_beat_to_time_fn
 from .assets import retrieve_asset
@@ -437,14 +438,25 @@ def _format_lead_sheet(
     segment_start_downbeat,
     segment_end_beat,
     total_num_tertiary,
+    melody_threshold=None,
+    harmony_threshold=None,
 ):
+    def decode(logits, threshold=None):
+        if threshold is None:
+            preds = np.argmax(logits, axis=-1)
+        else:
+            probs_nonnull = 1 - softmax(logits, axis=-1)[:, 0]
+            preds_nonnull = 1 + np.argmax(logits[:, 1:], axis=-1)
+            preds = np.where(probs_nonnull >= threshold, preds_nonnull, 0)
+        return preds
+
     # Decode melody
     if melody_logits is None:
         melody = Melody()
     else:
         melody_logits = np.concatenate(melody_logits, axis=0)
         assert melody_logits.shape[0] == total_num_tertiary
-        melody_preds = np.argmax(melody_logits, axis=-1)
+        melody_preds = decode(melody_logits, threshold=melody_threshold)
         melody_onsets = []
         for o, p in enumerate(melody_preds):
             if p != 0:
@@ -467,7 +479,7 @@ def _format_lead_sheet(
     else:
         harmony_logits = np.concatenate(harmony_logits, axis=0)
         assert harmony_logits.shape[0] == total_num_tertiary
-        harmony_preds = np.argmax(harmony_logits, axis=-1)
+        harmony_preds = decode(harmony_logits, threshold=harmony_threshold)
         harmony = []
         last_chord = None
         for o, c in enumerate(harmony_preds):
@@ -530,6 +542,8 @@ def sheetsage(
     beats_per_minute_hint=None,
     detect_melody=True,
     detect_harmony=True,
+    melody_threshold=None,
+    harmony_threshold=None,
     beat_detection_padding=15.0,
     avoid_chunking_if_possible=True,
     legacy_behavior=False,
@@ -565,6 +579,10 @@ def sheetsage(
        If False, skips melody transcription.
     detect_harmony : bool
        If False, skips chord recognition.
+    melody_threshold : float
+       If specified, overrides default melody threshold (0-1, lower for more notes.)
+    harmony_threshold : float
+       If specified, overrides default harmony threshold (0-1, lower for more chords.)
     beat_detection_padding : float
        Amount of audio padding to use when running beat detection on segment.
     avoid_chunking_if_possible : bool
@@ -681,6 +699,8 @@ def sheetsage(
         segment_start_downbeat,
         segment_end_beat,
         total_num_tertiary,
+        melody_threshold=melody_threshold,
+        harmony_threshold=harmony_threshold,
     )
 
     status_change_callback(Status.DONE)
@@ -764,6 +784,16 @@ if __name__ == "__main__":
         help="If specified, helps the beat detector find the right tempo. Useful if detected tempo is a factor of 2 off from real tempo.",
     )
     parser.add_argument(
+        "--melody_threshold",
+        type=float,
+        help="If specified, overrides default melody threshold (0-1, lower for more notes.)",
+    )
+    parser.add_argument(
+        "--harmony_threshold",
+        type=float,
+        help="If specified, overrides default harmony threshold (0-1, lower for more chords.)",
+    )
+    parser.add_argument(
         "--skip_melody",
         action="store_false",
         dest="detect_melody",
@@ -792,6 +822,9 @@ if __name__ == "__main__":
         measures_per_chunk=8,
         segment_hints_are_downbeats=False,
         beats_per_measure=None,
+        beats_per_minute_hint=None,
+        melody_threshold=None,
+        harmony_threshold=None,
         detect_melody=True,
         detect_harmony=True,
         legacy_behavior=False,
@@ -812,6 +845,8 @@ if __name__ == "__main__":
         beats_per_minute_hint=args.beats_per_minute_hint,
         detect_melody=args.detect_melody,
         detect_harmony=args.detect_harmony,
+        melody_threshold=args.melody_threshold,
+        harmony_threshold=args.harmony_threshold,
         legacy_behavior=args.legacy_behavior,
         tqdm=tqdm,
     )
