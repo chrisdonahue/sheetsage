@@ -133,6 +133,8 @@ def submit():
         "segment_start_hint": float,
         "segment_end_hint": float,
         "legacy_behavior": lambda i: bool(int(i)),
+        "melody_threshold": float,
+        "harmony_threshold": float,
     }
 
     # Check arguments
@@ -161,6 +163,8 @@ def submit():
         "segment_end_hint": None,
         "use_jukebox": ARGS["jukebox"],
         "legacy_behavior": False,
+        "melody_threshold": None,
+        "harmony_threshold": None,
     }
 
     # Parse audio_url and audio_file
@@ -197,7 +201,13 @@ def submit():
         abort(400, description="No audio specified")
 
     # Parse float args
-    for k in ["segment_start_hint", "segment_end_hint", "legacy_behavior"]:
+    for k in [
+        "segment_start_hint",
+        "segment_end_hint",
+        "legacy_behavior",
+        "melody_threshold",
+        "harmony_threshold",
+    ]:
         if k in r:
             job_def[k] = r[k]
 
