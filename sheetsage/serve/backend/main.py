@@ -269,6 +269,8 @@ def __init():
     parser.add_argument("--port", type=int)
     parser.add_argument("--cors", action="store_true")
     parser.add_argument("--cors_allow", type=str)
+    parser.add_argument("--ssl_crt_path", type=str)
+    parser.add_argument("--ssl_key_path", type=str)
     parser.add_argument("--jukebox", action="store_true")
     parser.add_argument("--num_workers", type=int)
     parser.add_argument("--max_payload_size_mb", type=int)
@@ -280,6 +282,8 @@ def __init():
         port=8000,
         cors=False,
         cors_allow=None,
+        ssl_crt_path=None,
+        ssl_key_path=None,
         jukebox=False,
         num_workers=1,
         max_payload_size_mb=32,
@@ -320,7 +324,15 @@ def __init():
     # Start HTTP server
     gunicorn = "gunicorn" in os.environ.get("SERVER_SOFTWARE", "")
     if not gunicorn:
-        APP.run(debug=True, use_reloader=True, host="0.0.0.0", port=ARGS["port"])
+        kwargs = {
+            "debug": True,
+            "use_reloader": True,
+            "host": "0.0.0.0",
+            "port": ARGS["port"],
+        }
+        if ARGS["ssl_crt_path"] is not None and ARGS["ssl_key_path"] is not None:
+            kwargs["ssl_context"] = (ARGS["ssl_crt_path"], ARGS["ssl_key_path"])
+        APP.run(**kwargs)
 
     # Join workers
     [p.join() for p in processes]
