@@ -534,6 +534,7 @@ def sheetsage(
     avoid_chunking_if_possible=True,
     legacy_behavior=False,
     status_change_callback=lambda s: logging.info(s.name),
+    return_intermediaries=False,
     tqdm=lambda x: x,
 ):
     """Main driver function for Sheet Sage: music audio -> lead sheet.
@@ -572,6 +573,8 @@ def sheetsage(
        If True, ignores segment_end_hint and transcribes exactly one max-length chunk.
     status_change_callback : Callable
        If specified, calls this method upon changes in `Status`.
+    return_intermediaries : bool
+       If True, returns intermediate high-level results.
 
     Returns
     -------
@@ -681,7 +684,10 @@ def sheetsage(
     )
 
     status_change_callback(Status.DONE)
-    return lead_sheet, segment_beats, segment_beats_times
+    result = lead_sheet, segment_beats, segment_beats_times
+    if return_intermediaries:
+        result = result + (chunks_tertiaries, melody_logits, harmony_logits)
+    return result
 
 
 if __name__ == "__main__":
