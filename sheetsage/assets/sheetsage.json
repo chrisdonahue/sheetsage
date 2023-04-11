@@ -1,67 +1,67 @@
 {
   "SHEETSAGE_V02_HANDCRAFTED_MOMENTS": {
     "path": "sheetsage/v0.2/oafmelspec_moments.npy",
-    "url": "https://nlp.stanford.edu/data/cdonahue/sheetsage/sheetsage/v0.2/oafmelspec_moments.npy",
+    "url": "https://sheetsage.s3.amazonaws.com/sheetsage/v0.2/oafmelspec_moments.npy",
     "checksum": "81d20995052676ca4cd60afd2657c8fa0c10e21c0895b39cda85fe3f4d1255e5"
   },
   "SHEETSAGE_V02_HANDCRAFTED_HARMONY_CFG": {
     "path": "sheetsage/v0.2/0919_02_e0908_oafmelspecnorm/5b739ce5efa2b6d4d70c5f1feac802684f0ee6f4.cfg.json",
-    "url": "https://nlp.stanford.edu/data/cdonahue/sheetsage/sheetsage/v0.2/0919_02_e0908_oafmelspecnorm/5b739ce5efa2b6d4d70c5f1feac802684f0ee6f4.cfg.json",
+    "url": "https://sheetsage.s3.amazonaws.com/sheetsage/v0.2/0919_02_e0908_oafmelspecnorm/5b739ce5efa2b6d4d70c5f1feac802684f0ee6f4.cfg.json",
     "checksum": "5b739ce5efa2b6d4d70c5f1feac802684f0ee6f4"
   },
   "SHEETSAGE_V02_HANDCRAFTED_HARMONY_STEP": {
     "path": "sheetsage/v0.2/0919_02_e0908_oafmelspecnorm/step.pkl",
-    "url": "https://nlp.stanford.edu/data/cdonahue/sheetsage/sheetsage/v0.2/0919_02_e0908_oafmelspecnorm/step.pkl",
+    "url": "https://sheetsage.s3.amazonaws.com/sheetsage/v0.2/0919_02_e0908_oafmelspecnorm/step.pkl",
     "checksum": "06fa1073e4fea8a9af2e5560e11f67fc91b6089d218d872f0b70cad5318fd583"
   },
   "SHEETSAGE_V02_HANDCRAFTED_HARMONY_MODEL": {
     "path": "sheetsage/v0.2/0919_02_e0908_oafmelspecnorm/model.pt",
-    "url": "https://nlp.stanford.edu/data/cdonahue/sheetsage/sheetsage/v0.2/0919_02_e0908_oafmelspecnorm/model.pt",
+    "url": "https://sheetsage.s3.amazonaws.com/sheetsage/v0.2/0919_02_e0908_oafmelspecnorm/model.pt",
     "checksum": "d7f6dae6902618ba285d78459010a5388002efcd685f1f2ce334297eec6c799f"
   },
   "SHEETSAGE_V02_HANDCRAFTED_MELODY_CFG": {
     "path": "sheetsage/v0.2/0919_00_e0830_oafmelspecnorm/7d82e6839e582936ea428a823a0d868075a52dc5.cfg.json",
-    "url": "https://nlp.stanford.edu/data/cdonahue/sheetsage/sheetsage/v0.2/0919_00_e0830_oafmelspecnorm/7d82e6839e582936ea428a823a0d868075a52dc5.cfg.json",
+    "url": "https://sheetsage.s3.amazonaws.com/sheetsage/v0.2/0919_00_e0830_oafmelspecnorm/7d82e6839e582936ea428a823a0d868075a52dc5.cfg.json",
     "checksum": "7d82e6839e582936ea428a823a0d868075a52dc5"
   },
   "SHEETSAGE_V02_HANDCRAFTED_MELODY_STEP": {
     "path": "sheetsage/v0.2/0919_00_e0830_oafmelspecnorm/step.pkl",
-    "url": "https://nlp.stanford.edu/data/cdonahue/sheetsage/sheetsage/v0.2/0919_00_e0830_oafmelspecnorm/step.pkl",
+    "url": "https://sheetsage.s3.amazonaws.com/sheetsage/v0.2/0919_00_e0830_oafmelspecnorm/step.pkl",
     "checksum": "287bdfc444a79ebee76722726d29f57169d2170c95363ed122866ea534206006"
   },
   "SHEETSAGE_V02_HANDCRAFTED_MELODY_MODEL": {
     "path": "sheetsage/v0.2/0919_00_e0830_oafmelspecnorm/model.pt",
-    "url": "https://nlp.stanford.edu/data/cdonahue/sheetsage/sheetsage/v0.2/0919_00_e0830_oafmelspecnorm/model.pt",
+    "url": "https://sheetsage.s3.amazonaws.com/sheetsage/v0.2/0919_00_e0830_oafmelspecnorm/model.pt",
     "checksum": "70f10a4146da8f1294597516622901d93621c5cd1bbb4e9dc831f9c43c081ef4"
   },
   "SHEETSAGE_V02_JUKEBOX_HARMONY_CFG": {
     "path": "sheetsage/v0.2/0920_01_e0908_jukebox53/f94f45ed03c8696f187a8bfded0f0d65476b4d48.cfg.json",
-    "url": "https://nlp.stanford.edu/data/cdonahue/sheetsage/sheetsage/v0.2/0920_01_e0908_jukebox53/f94f45ed03c8696f187a8bfded0f0d65476b4d48.cfg.json",
+    "url": "https://sheetsage.s3.amazonaws.com/sheetsage/v0.2/0920_01_e0908_jukebox53/f94f45ed03c8696f187a8bfded0f0d65476b4d48.cfg.json",
     "checksum": "f94f45ed03c8696f187a8bfded0f0d65476b4d48"
   },
   "SHEETSAGE_V02_JUKEBOX_HARMONY_STEP": {
     "path": "sheetsage/v0.2/0920_01_e0908_jukebox53/step.pkl",
-    "url": "https://nlp.stanford.edu/data/cdonahue/sheetsage/sheetsage/v0.2/0920_01_e0908_jukebox53/step.pkl",
+    "url": "https://sheetsage.s3.amazonaws.com/sheetsage/v0.2/0920_01_e0908_jukebox53/step.pkl",
     "checksum": "05f8ed82a062f152fc805dbf3e78996fa3b24d23b719ce90f4f3656e1b292a49"
   },
   "SHEETSAGE_V02_JUKEBOX_HARMONY_MODEL": {
     "path": "sheetsage/v0.2/0920_01_e0908_jukebox53/model.pt",
-    "url": "https://nlp.stanford.edu/data/cdonahue/sheetsage/sheetsage/v0.2/0920_01_e0908_jukebox53/model.pt",
+    "url": "https://sheetsage.s3.amazonaws.com/sheetsage/v0.2/0920_01_e0908_jukebox53/model.pt",
     "checksum": "a8d4641852c1efeae707a6fcf7d6ecddc7e2f33fa8c9753495684ae5b2e352bd"
   },
   "SHEETSAGE_V02_JUKEBOX_MELODY_CFG": {
     "path": "sheetsage/v0.2/0920_00_e0830_jukebox53/e968ecb8349156b2e9761ae61606454988fa614d.cfg.json",
-    "url": "https://nlp.stanford.edu/data/cdonahue/sheetsage/sheetsage/v0.2/0920_00_e0830_jukebox53/e968ecb8349156b2e9761ae61606454988fa614d.cfg.json",
+    "url": "https://sheetsage.s3.amazonaws.com/sheetsage/v0.2/0920_00_e0830_jukebox53/e968ecb8349156b2e9761ae61606454988fa614d.cfg.json",
     "checksum": "e968ecb8349156b2e9761ae61606454988fa614d"
   },
   "SHEETSAGE_V02_JUKEBOX_MELODY_STEP": {
     "path": "sheetsage/v0.2/0920_00_e0830_jukebox53/step.pkl",
-    "url": "https://nlp.stanford.edu/data/cdonahue/sheetsage/sheetsage/v0.2/0920_00_e0830_jukebox53/step.pkl",
+    "url": "https://sheetsage.s3.amazonaws.com/sheetsage/v0.2/0920_00_e0830_jukebox53/step.pkl",
     "checksum": "4443a859b4d1fd6f93a5b4351a0056522a12a771f2912b8c308e985c7a0695f1"
   },
   "SHEETSAGE_V02_JUKEBOX_MELODY_MODEL": {
     "path": "sheetsage/v0.2/0920_00_e0830_jukebox53/model.pt",
-    "url": "https://nlp.stanford.edu/data/cdonahue/sheetsage/sheetsage/v0.2/0920_00_e0830_jukebox53/model.pt",
+    "url": "https://sheetsage.s3.amazonaws.com/sheetsage/v0.2/0920_00_e0830_jukebox53/model.pt",
     "checksum": "e4a2cbce0a5a027e05ac753d72794ca723be2d18312f07daa0e43980d054249e"
   }
 }
