@@ -71,7 +71,7 @@ RUN apt-get install -y lilypond
 RUN python -m pip install --no-cache-dir mir_eval==0.7
 
 # Install youtube-dl
-RUN python -m pip install --no-cache-dir git+https://github.com/yt-dlp/yt-dlp.git@2022.05.18
+RUN wget https://github.com/yt-dlp/yt-dlp/releases/download/2023.03.04/yt-dlp_linux -O /usr/local/bin/yt-dlp && chmod +x /usr/local/bin/yt-dlp
 RUN ln -s $(which yt-dlp) /usr/local/bin/youtube-dl
 
 # Install validators
