@@ -1,7 +1,7 @@
 window.ismir = window.ismir || {};
 
 (function (JSZip, Tone, ns) {
-  const ROOT = "https://dblblnd.github.io/ismir22/static";
+  const ROOT = "static";
 
   const REPLAY_AMOUNT = 4;
 
