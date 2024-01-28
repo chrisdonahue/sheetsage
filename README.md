@@ -6,9 +6,11 @@
 
 ## Quickstart: Transcribe a song
 
-First, ensure you are running Linux and have [Docker installed](https://docs.docker.com/desktop/install/linux-install/). Then, run this one time setup command, which will download a ~4GB Docker container and ~100MB of data to a cache directory (`~/.sheetsage` by default).
+First, ensure you are running Linux and have [Docker installed](https://docs.docker.com/desktop/install/linux-install/). Then, run the following one time setup command, which will build a ~6GB Docker image and download ~100MB of data to a cache directory (`~/.sheetsage` by default).
 
 ```
+cd ./docker
+docker build -t sheetsage .
 ROOT=https://raw.githubusercontent.com/chrisdonahue/sheetsage/main; wget $ROOT/prepare.sh && wget $ROOT/sheetsage.sh && chmod +x *.sh && ./prepare.sh
 ```
 
