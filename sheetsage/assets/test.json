@@ -11,32 +11,32 @@
   },
   "TEST_MP3_OAFMELSPEC_REF": {
     "path": "test/representations/oafmelspec/test_mp3_ref.npy",
-    "url": "https://sheetsage.s3.amazonaws.com/test/representations/oafmelspec/test_mp3_ref.npy",
+    "url": "https://github.com/chrisdonahue/sheetsage-data/raw/refs/heads/main/test/representations/oafmelspec/test_mp3_ref.npy",
     "checksum": "40ed817c33f40035346e7f8f42a2712fb52d20773924bd4ebfd57a4716029ecd"
   },
   "TEST_MP3_JUKEBOX_DECODE_REF": {
     "path": "test/representations/jukebox/test_mp3_decode_ref.wav",
-    "url": "https://sheetsage.s3.amazonaws.com/test/representations/jukebox/test_mp3_decode_ref.wav",
+    "url": "https://github.com/chrisdonahue/sheetsage-data/raw/refs/heads/main/test/representations/jukebox/test_mp3_decode_ref.wav",
     "checksum": "152ddee1ddc4a2967213b354a4fa87818ec01b007a9b5a4808f6316b1601343d"
   },
   "TEST_JUKEBOX_LEGACY": {
     "path": "test/representations/jukebox/legacy.wav",
-    "url": "https://sheetsage.s3.amazonaws.com/test/representations/jukebox/legacy.wav",
+    "url": "https://github.com/chrisdonahue/sheetsage-data/raw/refs/heads/main/test/representations/jukebox/legacy.wav",
     "checksum": "728e445a61ebb2ab9cefe779a9af5c44cff39f20308a0a29bce3e3ea597aa592"
   },
   "TEST_JUKEBOX_LEGACY_REF": {
     "path": "test/representations/jukebox/legacy_ref.npy",
-    "url": "https://sheetsage.s3.amazonaws.com/test/representations/jukebox/legacy_ref.npy",
+    "url": "https://github.com/chrisdonahue/sheetsage-data/raw/refs/heads/main/test/representations/jukebox/legacy_ref.npy",
     "checksum": "17eedefb640beb036acd264d37f49e7dcd11dd7636d397fa8f758e1c32dc4390"
   },
   "TEST_COMMONCHORDS_JSON": {
     "path": "test/theorytab/CommonChords.json",
-    "url": "https://sheetsage.s3.amazonaws.com/test/theorytab/CommonChords.json",
+    "url": "https://github.com/chrisdonahue/sheetsage-data/raw/refs/heads/main/test/theorytab/CommonChords.json",
     "checksum": "dd5e09331dcb4a4b4cfaed9d333135b7600ebea0e739491009d4d750154cfcc4"
   },
   "TEST_EXAMPLEANALYSIS_JSON": {
     "path": "test/theorytab/ExampleAnalysis.json",
-    "url": "https://sheetsage.s3.amazonaws.com/test/theorytab/ExampleAnalysis.json",
+    "url": "https://github.com/chrisdonahue/sheetsage-data/raw/refs/heads/main/test/theorytab/ExampleAnalysis.json",
     "checksum": "5f745055d1e2e795c87c92a764bc37712526f18f5e363eedb92cc1e8b011fa83"
   },
   "TEST_FISHIN": {

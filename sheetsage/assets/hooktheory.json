@@ -1,42 +1,42 @@
 {
   "HOOKTHEORY": {
     "path": "hooktheory/Hooktheory.json.gz",
-    "url": "https://sheetsage.s3.amazonaws.com/hooktheory/Hooktheory.json.gz",
+    "url": "https://github.com/chrisdonahue/sheetsage-data/raw/refs/heads/main/hooktheory/Hooktheory.json.gz",
     "checksum": "917b7cd58f5f4e07d6c36acf7bfad958c99ee05472dab3555399141094698e0c"
   },
   "HOOKTHEORY_TRAIN_SEGMENTS": {
     "path": "hooktheory/Hooktheory_Train_Segments.json",
-    "url": "https://sheetsage.s3.amazonaws.com/hooktheory/Hooktheory_Train_Segments.json",
+    "url": "https://github.com/chrisdonahue/sheetsage-data/raw/refs/heads/main/hooktheory/Hooktheory_Train_Segments.json",
     "checksum": "f2601eb544f2e5028ffad54d3827912865578fb9ad96e6768b35e4714d5c7207"
   },
   "HOOKTHEORY_TRAIN_MIDI": {
     "path": "hooktheory/Hooktheory_Train_MIDI.tar.gz",
-    "url": "https://sheetsage.s3.amazonaws.com/hooktheory/Hooktheory_Train_MIDI.tar.gz",
+    "url": "https://github.com/chrisdonahue/sheetsage-data/raw/refs/heads/main/hooktheory/Hooktheory_Train_MIDI.tar.gz",
     "checksum": "a2345e13564c81740c087b79731b47e8323c4ceb7b85d40a1a11582af58145cb"
   },
   "HOOKTHEORY_VALID_SEGMENTS": {
     "path": "hooktheory/Hooktheory_Valid_Segments.json",
-    "url": "https://sheetsage.s3.amazonaws.com/hooktheory/Hooktheory_Valid_Segments.json",
+    "url": "https://github.com/chrisdonahue/sheetsage-data/raw/refs/heads/main/hooktheory/Hooktheory_Valid_Segments.json",
     "checksum": "12526962f77c2eb41cd117c8effa678b39c2b350384a7b048b327aff287b0c48"
   },
   "HOOKTHEORY_VALID_MIDI": {
     "path": "hooktheory/Hooktheory_Valid_MIDI.tar.gz",
-    "url": "https://sheetsage.s3.amazonaws.com/hooktheory/Hooktheory_Valid_MIDI.tar.gz",
+    "url": "https://github.com/chrisdonahue/sheetsage-data/raw/refs/heads/main/hooktheory/Hooktheory_Valid_MIDI.tar.gz",
     "checksum": "e369fd4a3072c7524e3cafe506bbdad6e908de969d0f1ba7abf08bf5148989fe"
   },
   "HOOKTHEORY_TEST_SEGMENTS": {
     "path": "hooktheory/Hooktheory_Test_Segments.json",
-    "url": "https://sheetsage.s3.amazonaws.com/hooktheory/Hooktheory_Test_Segments.json",
+    "url": "https://github.com/chrisdonahue/sheetsage-data/raw/refs/heads/main/hooktheory/Hooktheory_Test_Segments.json",
     "checksum": "72be80045d4d28842352383e605e8712d50b3437a07b15faa541ee9d17283d5a"
   },
   "HOOKTHEORY_TEST_MIDI": {
     "path": "hooktheory/Hooktheory_Test_MIDI.tar.gz",
-    "url": "https://sheetsage.s3.amazonaws.com/hooktheory/Hooktheory_Test_MIDI.tar.gz",
+    "url": "https://github.com/chrisdonahue/sheetsage-data/raw/refs/heads/main/hooktheory/Hooktheory_Test_MIDI.tar.gz",
     "checksum": "3baebe9d4e19a5006d0f24bc7f0c92a4f66039ab376be86bf7b37a136d4fb6c8"
   },
   "HOOKTHEORY_RAW": {
     "path": "hooktheory/Hooktheory_Raw.json.gz",
-    "url": "https://sheetsage.s3.amazonaws.com/hooktheory/Hooktheory_Raw.json.gz",
+    "url": "https://github.com/chrisdonahue/sheetsage-data/raw/refs/heads/main/hooktheory/Hooktheory_Raw.json.gz",
     "checksum": "716af2979f060400c302ab098dd45d9f8c5fe4d4b3b1fe61c478dd9bdf041634"
   }
 }

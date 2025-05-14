@@ -1,22 +1,22 @@
 {
   "RWC_RYY_SEGMENTS": {
     "path": "rwc/RWC_Ryy_Segments.json",
-    "url": "https://sheetsage.s3.amazonaws.com/rwc/RWC_Ryy_Segments.json",
+    "url": "https://github.com/chrisdonahue/sheetsage-data/raw/refs/heads/main/rwc/RWC_Ryy_Segments.json",
     "checksum": "2b7917af462615b9aa8dcc7250970f502904bc8940932457afbd44f7dd06a296"
   },
   "RWC_RYY_MIDI": {
     "path": "rwc/RWC_Ryy_MIDI.tar.gz",
-    "url": "https://sheetsage.s3.amazonaws.com/rwc/RWC_Ryy_MIDI.tar.gz",
+    "url": "https://github.com/chrisdonahue/sheetsage-data/raw/refs/heads/main/rwc/RWC_Ryy_MIDI.tar.gz",
     "checksum": "7ef2bbd2f6fc457f271812a706f1b7fa3d4e7e3c32572c48fb3c18737bc5af4a"
   },
   "RWC_RYYVOX_SEGMENTS": {
     "path": "rwc/RWC_RyyVox_Segments.json",
-    "url": "https://sheetsage.s3.amazonaws.com/rwc/RWC_RyyVox_Segments.json",
+    "url": "https://github.com/chrisdonahue/sheetsage-data/raw/refs/heads/main/rwc/RWC_RyyVox_Segments.json",
     "checksum": "2db81af696b8e6ab5cc2af789788de80a1bb3315d4b142d3757e8385c88da002"
   },
   "RWC_RYYVOX_MIDI": {
     "path": "rwc/RWC_RyyVox_MIDI.tar.gz",
-    "url": "https://sheetsage.s3.amazonaws.com/rwc/RWC_RyyVox_MIDI.tar.gz",
+    "url": "https://github.com/chrisdonahue/sheetsage-data/raw/refs/heads/main/rwc/RWC_RyyVox_MIDI.tar.gz",
     "checksum": "7099da70a3b983036e93e99218e2c10a2ed32b36b44becc24d0299929f235ff9"
   },
   "RWC_AUDIO_P012": {
