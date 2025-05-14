@@ -20,8 +20,7 @@ while [[ $# -gt 0 ]]; do
     # GPU
     -j|--use_jukebox)
       DOCKER_ARGS+=("$1")
-      DOCKER_GPUS=$(nvidia-smi -L | python3 -c "import sys; print(','.join([l.strip().split()[-1][:-1] for l in list(sys.stdin)]))")
-      DOCKER_GPU_ARG="--gpus device=${DOCKER_GPUS}"
+      DOCKER_GPU_ARG="--gpus all"
       shift
       ;;
     # Flags
@@ -64,7 +63,9 @@ docker run \
   ${DOCKER_GPU_ARG} \
   -u $(id -u) \
   ${DOCKER_LINK_LIB_ARG} \
+  -v $SHEETSAGE_CACHE_DIR:/.cache \
   -v $SHEETSAGE_CACHE_DIR:/sheetsage/cache \
+  -v $SHEETSAGE_CACHE_DIR:/home/sheetsage/.cache \
   -v $SHEETSAGE_OUTPUT_DIR:/sheetsage/output \
-  chrisdonahue/sheetsage \
+  sheetsage \
   python -m sheetsage.infer ${DOCKER_ARGS[@]}

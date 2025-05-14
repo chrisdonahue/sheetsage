@@ -29,8 +29,8 @@ class OAFMelSpec(Representation):
             normalize=False,
         )
         features = librosa.feature.melspectrogram(
-            audio[:, 0],
-            self._SR,
+            y=audio[:, 0],
+            sr=self._SR,
             n_fft=self._NFFT,
             hop_length=self._HOP_SIZE,
             fmin=self._FMIN,

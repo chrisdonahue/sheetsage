@@ -101,7 +101,7 @@ class Jukebox(Representation):
         audio = np.swapaxes(audio, 0, 1)
         audio = np.mean(audio, axis=1, keepdims=False)
         if sr != _SAMPLE_RATE:
-            audio = librosa.resample(audio, sr, _SAMPLE_RATE, res_type="kaiser_best")
+            audio = librosa.resample(audio, orig_sr=sr,target_sr=_SAMPLE_RATE, res_type="kaiser_best")
         if audio.shape[0] > 0:
             norm_factor = np.abs(audio).max()
             if norm_factor > 0:
